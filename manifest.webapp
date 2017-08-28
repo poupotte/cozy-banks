@@ -56,6 +56,16 @@
         "DELETE"
       ]
     },
+    "bills": {
+      "description": "Manage bills",
+      "type": "io.cozy.bills",
+      "verbs": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ]
+    },
     "settings": {
       "description": "Required by the cozy-bar to display Claudy and know which applications are coming soon",
       "type": "io.cozy.settings",
