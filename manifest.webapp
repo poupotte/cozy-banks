@@ -1,0 +1,116 @@
+{
+  "name": "Bank",
+  "slug": "Bank",
+  "icon": "icon-bank.svg",
+  "description": "Bank application",
+  "category": "cozy",
+  "version": "3.0.0",
+  "licence": "AGPL-3.0",
+  "source": "https://gitlab.cozycloud.cc/labs/cozy-bank.git@build",
+  "developer": {
+    "name": "Cozy",
+    "url": "https://cozy.io"
+  },
+  "default_locale": "en",
+  "locales": {},
+  "routes": {
+    "/": {
+      "folder": "/",
+      "index": "index.html",
+      "public": false
+    }
+  },
+  "services": {
+    "notifications": {
+      "type": "node",
+      "file": "notifications.js",
+      "trigger": "@event io.cozy.bank.operations:CREATED",
+      "debounce": "3m"
+    }
+  },
+  "permissions": {
+    "apps": {
+      "description": "Required by the cozy-bar to display the icons of the apps",
+      "type": "io.cozy.apps",
+      "verbs": [
+        "GET"
+      ]
+    },
+    "notifications": {
+      "description": "Used to send notifications",
+      "type": "io.cozy.notifications",
+      "verbs": [
+        "POST"
+      ]
+    },
+    "bank.settings": {
+      "description": "Used to manage your bank settings",
+      "type": "io.cozy.bank.settings",
+      "verbs": [
+        "GET",
+        "POST",
+        "PUT"
+      ]
+    },
+    "bank.accounts": {
+      "description": "Used to list your bank accounts",
+      "type": "io.cozy.bank.accounts",
+      "verbs": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ]
+    },
+    "bank.operations": {
+      "description": "Used to manage your bank operations",
+      "type": "io.cozy.bank.operations",
+      "verbs": [
+        "GET",
+        "POST",
+        "PUT"
+      ]
+    },
+    "bank.groups": {
+      "description": "Manage groups of bank accounts",
+      "type": "io.cozy.bank.groups",
+      "verbs": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ]
+    },
+    "bills": {
+      "description": "Manage bills",
+      "type": "io.cozy.bills",
+      "verbs": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ]
+    },
+    "settings": {
+      "description": "Required by the cozy-bar to display Claudy and know which applications are coming soon",
+      "type": "io.cozy.settings",
+      "verbs": [
+        "GET"
+      ]
+    },
+    "sharings": {
+      "description": "Handle shared bank accounts",
+      "type": "io.cozy.mocks.sharings",
+      "verbs": [
+        "GET"
+      ]
+    },
+    "recipients": {
+      "description": "Get recipients for shared accounts",
+      "type": "io.cozy.mocks.recipients",
+      "verbs": [
+        "GET"
+      ]
+    }
+  }
+}
