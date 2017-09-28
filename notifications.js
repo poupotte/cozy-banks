@@ -69280,13 +69280,13 @@ module.exports = buildFormatLocale
 /* 422 */
 /***/ (function(module, exports) {
 
-module.exports = {"Loading":{"loading":"Loading...","error":"An error occured while loading the data. Please try again later."},"Nav":{"categorisation":"Categorization","settings":"Settings","savings":"Savings","projections":"Forecasts","balance":"Current balance","movements":"Movements"},"Error":{"more-information":"More information","less-information":"Less information"},"AccountSwitch":{"account_counter":"%{smart_count} account |||| %{smart_count} accounts","all_accounts":"All accounts","manage_groups":"Manage my groups","groups":"Groups","accounts":"Accounts","manage_accounts":"Manage my accounts"},"AccountDetails":{"label":"Label","institutionLabel":"Bank","number":"Number","type":"Type"},"AccountSettings":{"details":"Details","sharing":"Sharing","back-to-accounts":"Back to accounts"},"Balance":{"bank_name":"Name of the bank","subtitle":{"all":"Total of all your accounts","group":"Total group %{label}","account":"Total account %{label}"},"title":"Current balance","solde":"Balance","account_number":"Account number","account_name":"Account name"},"SelectDates":{"last_12_months":"Last 12 months"},"Accounts":{"account":"Account","no-accounts":"You do not have any account yet.","shared-accounts":"Accounts shared to me","no-shared-accounts":"You do not have any shared account yet.","my-accounts":"My accounts","shared":"Shared","add-account":"Add an account","type":"Type","bank":"Bank","label":"Label"},"Groups":{"edit_group":"Edit Group","edit":"edit","create":"Create a group","label":"Label","accounts":"Accounts","groups":"Groups","delete":"remove","no-groups":"Using groups, you can easily gather several accounts, feel free to create one.","back-to-groups":"Back to groups","rename":"Rename","save":"Save"},"Data":{"subcategories":{"taxi":"Taxi","journeys":"traveling","telecom":"Internet, TV, Telecom","property_tax":"Taxes of land, dwelling","vehicle_loan_refund":"Vehicle loan repayment","car_insurance":"Vehicle insurance","vehicle_rental":"Car rent","security_purchases":"Shopping","lessons":"Courses, tutoring","electricity":"Electricity, gas, heating","saving_transfer":"Savings transfers","cosmetics":"Hairdresser, aesthetics, cosmetics, care","fuel":"Fuel","releasings":"Unblocking loans, credits, reserves","advances":"Advances","expenses_bill":"Expense notes (+/-)","rental_incomes":"Rental income","press":"Tobacco, Press","wealth_tax":"ISF","complementary_incomes":"Supplementary income","housing_others":"Other (Housing, Real Estate)","daily_life_others":"Other (Daily life)","garage":"Garage, private parking","donations":"Charitable donations","restaurants":"Restaurants, Nightlife","school_insurance":"School Insurance","education_supplies":"Books, school supplies","allowances":"Aid, allowances","financial_consulting":"Financial Advisory Services","out-budget_others":"Other (Out of budget)","trips_others":"Other (travel)","multimedia":"Music, books, movies","leasures_others":"Other (Sports, Recreation)","pets":"Animals","uncategorized_others":"Other (To categorize)","replacement_incomes":"Replacement income","income_others":"Other income)","dividends":"dividends","security_sales":"Sales of securities","withdrawals":"Cash withdrawals","water":"Water","pocket_money":"Pocket money","uncategorized_transfers":"Uncategorized transfers","internal_transfer":"Internal transfers","home_help":"Home help","school_restaurant":"School catering","leasures_subscription":"Sports, leisure","children_activities":"Child Activities","furnitures":"Furniture, equipment","legal_consulting":"legal advice","school_fees":"Registration, schooling","leasures_supplies":"Sports equipment","health_insurance":"Mutual contribution, provident","house_works":"Work, decoration, garden","student_load_refund":"Student loan repayment","toys":"Toys, gifts","electronic":"Electronics, multimedia","post":"Post office","child-care":"Child Care","vehicle_maintenance":"Maintenance, vehicle equipment","interests":"Interests","shopping":"Shopping / e-commerce","services_others":"Other services)","education_others":"Other (Education, training)","health_costs":"Medical bills","car_purchase":"Vehicle Purchase","housing_insurance":"Business Consulting","children_others":"Other (Children)","income_tax":"Income taxes","taxes_others":"Other (Taxes)","leasures_lessons":"Sports, leisure","bank_charges":"Bank charges","cultural_trips":"Cultural outings","health_refunds":"Health Reimbursement","rent":"Rent","hobbies":"Passion, hobby","mortgage_refund":"Home loan repayment","public_transportation":"Public transportation","clothing":"Clothing","housing_costs":"Housing charges","social_contributions":"Social contributions","personal_loan_refund":"Consumable Loan Repayment","trips_transportation":"Airplane, train, boat","child_support":"Pension paid","health_others":"Other (Health)","cheques":"checks","deferred_debit":"Debit card debit","gifts":"Gifts","transportation_others":"Other (Transport, vehicles)","meals":"Snacks, fast food, meals at work","parking_costs":"Parking, tolls, PV","gift_incomes":"Gifts, donations received","salary":"Salary / Income from activities","relaxation_trips":"Relaxation","regular_shopping":"Food, supermarket","refunds":"refunds","pension":"Retirement"},"categories":{"transportation":"Transportation, vehicles","daily-life":"Everyday life","out-budget":"Out of budget","services":"Services","education":"Education, training","children":"children","housing":"Housing, real estate","taxes":"Taxes, taxes","health":"Health","income":"earnings","leasures":"Leisure, sports","trips":"Outings, trips","uncategorized":"To be categorized"}},"Categories":{"filter":{"credit":"earnings","total":"Total","debit":"Total excl. earnings"},"headers":{"operations":"Operations","credit":"Credit","total":"Total","categories":"Categories","debit":"Debit"},"board":{"debit-header":"Spent","credit-header":"Earnings","total-header":"Total"},"title":{"empty_text":"No categories to display.","total":"Balance of the period","general":"Categorization","debit":"Net expenditure"}},"Movements":{"title":"Movements","no-movements":"No movements to display","total":"Total","operations":"Operations","debit":"Debit","credit":"Credit","actions":{"refund":"Check your refunds","comment":"Add a comment","app":"Access your space %{appName}","bill":"View your invoice","alert":"Create an alert","attach":"Attach a document","more":"More"}},"Notifications":{"title":"Notifications","weekly_summary":{"description":"You will receive a summary of your expenses and revenues every Monday of every week.","title":"Weekly Synthesis"},"when_month_revenue":{"description":"You will receive an email at the reception of your salary each month.","title":"Payment of salary"},"monthly_summary":{"description":"You will receive a summary of your expenses and income each month.","title":"Monthly summary"},"if_balance_lower":{"description":"You will receive an email if your balance is less than","title":"Balance threshold","notification":{"one":{"title":"Balance alert: '%{label}' account is at %{balance}%{currency}","debitContent":"Debit of %{amount}%{currency}: '%{label}'.","creditContent":"Credit of %{amount}%{currency}: '%{label}'."},"several":{"title":"%{accountsLength} accounts are below your threshold amount of %{lowerBalance}%{currency}","content":"Balance of %{balance}%{currency} on '%{label}' account."}}},"if_operation_greater":{"description":"You will receive a notification if a movement is greater than","title":"Movement amount","notification":{"debit":{"title":"Debit of %{amount}%{currency}","content":"%{label}"},"credit":{"title":"Credit of %{amount}%{currency}","content":"%{label}"},"others":{"title":"%{operationsLength} operations greater then %{maxAmount}€","debitContent":"Debit of %{amount}%{currency} with label '%{label}'.","creditContent":"Credit of %{amount}%{currency} with label '%{label}'."}}},"no_revenue":{"description":"You will be notified if you have not received your salary at the %{input} of each month.","title":"Salary Delay"}},"ComingSoon":{"description":"These features will soon be available.","title":"To come up"},"Settings":{"title":"Settings","accounts":"Accounts","groups":"Groups","notifications":"Notifications"},"Onboarding":{"connect-bank-account":"Connect your bank accounts","manage-budget":{"description":"The situation of all your accounts in 1 glance","title":"Control your budget"},"save-time":{"description":"Your invoices at your fingertips directly from your statements","title":"Save Time"},"cozy-assistant":{"description":"Health accounts of your entire family automatically updated","title":"Cozy works for you"},"title":"Connect your bank accounts"}}
+module.exports = {"Loading":{"loading":"Loading...","error":"An error occured while loading the data. Please try again later."},"Nav":{"categorisation":"Categorization","settings":"Settings","savings":"Savings","projections":"Forecasts","balance":"Current balance","movements":"Movements"},"Error":{"more-information":"More information","less-information":"Less information"},"AccountSwitch":{"account_counter":"%{smart_count} account |||| %{smart_count} accounts","all_accounts":"All accounts","manage_groups":"Manage my groups","groups":"Groups","accounts":"Accounts","manage_accounts":"Manage my accounts"},"AccountDetails":{"label":"Label","institutionLabel":"Bank","number":"Number","type":"Type","types":{"Checkings":"Checkings","Savings":"Savings","CreditCard":"Credit card","Loan":"Loan"}},"AccountSettings":{"details":"Details","sharing":"Sharing","back-to-accounts":"Back to accounts"},"Balance":{"bank_name":"Name of the bank","subtitle":{"all":"Total of all your accounts","group":"Total group %{label}","account":"Total account %{label}"},"title":"Current balance","solde":"Balance","account_number":"Account number","account_name":"Account name"},"SelectDates":{"last_12_months":"Last 12 months"},"Accounts":{"account":"Account","no-accounts":"You do not have any account yet.","shared-accounts":"Accounts shared to me","no-shared-accounts":"You do not have any shared account yet.","my-accounts":"My accounts","shared":"Shared","add-account":"Add an account","type":"Type","bank":"Bank","label":"Label"},"Groups":{"edit_group":"Edit Group","edit":"edit","create":"Create a group","label":"Label","accounts":"Accounts","groups":"Groups","delete":"remove","no-groups":"Using groups, you can easily gather several accounts, feel free to create one.","back-to-groups":"Back to groups","rename":"Rename","save":"Save"},"Data":{"subcategories":{"uncategorized":"Uncategorized","potentialTransfer":"Potential transfer","check":"Check","incomeTheme":"Income","incomeCat":"Income","activityIncome":"Activity income","replacementIncome":"Replacement income","interests":"Interests","dividends":"Dividends","donationsReceived":"Donations received","allocations":"Allocations","rentalIncome":"Rental income","additionalIncome":"Additional income","retirement":"Retirement","atm":"Cash dispenser","expenseTheme":"Expense theme","dailyLife":"Daily life","supermarket":"Supermarket","tobaccoPress":"Tobacco press","shoppingECommerce":"Shopping and E-commerce","consumerLoan":"Consumer loan","dressing":"Dressing","pets":"Pets","telecom":"Telecom","snaksAndworkMeals":"Snaks and work meals","charity":"Charity","giftsOffered":"Gifts offered","personalCare":"Personal care","transportation":"Transportation","vehiculePurchase":"Vehicule purchase","vehiculeLoan":"Vehicule loan","vehiculeRental":"Vehicule rental","vehiculeInsurance":"Vehicule insurance","vehiculeMaintenance":"Vehicule maintenance","vehiculeGas":"Vehicule gas","privateParking":"Private parking","parkingAndToll":"Parking and toll","publicTransportation":"Public transportation","taxi":"Taxi","services":"Services","post":"Post service","legalCounsel":"Legal counseling","homeAssistance":"Home assistance","bankFees":"Bank fees","financialAdvisor":"Financial advisor","kids":"Kids","kidsAllowance":"Kids allowance","schoolRestaurant":"School restaurant","childCare":"Child care","schoolInsurance":"School insurance","toysAndGifts":"Toys and gifts","pensionPaid":"Pension paid","kidsActivities":"Kids activities","tax":"Tax","incomeTax":"Income tax","socialTax":"Social tax","wealthTax":"Wealth tax","realEstateTax":"Real estate tax","health":"Health","healthExpenses":"Health expenses","healthInsurance":"Health insurance","activities":"Activities","activityFees":"Activity fees","activityEquipments":"Activity equipments","activityLessons":"Activity lessons","electronicsAndMultimedia":"Electronics and multimedia","booksMoviesMusic":"Books movies music","hobbyAndPassion":"Hobby and passion","goingOutAndTravel":"Going out and travel","restaurantsAndBars":"Restaurants and bars","goingOutEntertainment":"Going out entertainment","goingOutCulture":"Going out culture","travel":"Travel","journey":"Journey","educationAndTraining":"Education and training","tuition":"Tuition","eduBooksAndSupplies":"Edu books and supplies","studentLoan":"Student loan","eduLessons":"Edu lessons","homeAndRealEstate":"Home and real estate","realEstateLoan":"Real estate loan","rent":"Rent","homeCharges":"Home charges","homeInsurance":"Home insurance","homeImprovement":"Home improvement","homeHardware":"Home hardware","water":"Water","power":"Power","excludeFromBudgetTheme":"Excluded from budget","excludeFromBudgetCat":"Excluded from budget","internalTransfer":"Internal transfer","creditCardPayment":"Credit card payment","loanCredit":"Loan credit","professionalExpenses":"Professional expenses","investmentBuySell":"Investment buy sell","friendBorrowing":"Friend borrowing","savings":"Savings"},"categories":{"transportation":"Transportation, vehicles","dailyLife":"Everyday life","excludeFromBudgetTheme":"Out of budget","services":"Services","education":"Education, training","kids":"Children","homeAndRealEstate":"Housing, real estate","tax":"Taxes, taxes","health":"Health","incomeCat":"earnings","activities":"Leisure, sports","goingOutAndTravel":"Outings, trips","uncategorized":"To be categorized"}},"Categories":{"filter":{"credit":"earnings","total":"Total","debit":"Total excl. earnings"},"headers":{"transactions":"Transactions","credit":"Credit","total":"Total","categories":"Categories","debit":"Debit"},"board":{"debit-header":"Spent","credit-header":"Earnings","total-header":"Total"},"title":{"empty_text":"No categories to display.","total":"Balance of the period","general":"Categorization","debit":"Net expenditure"}},"Transactions":{"title":"Movements","no-movements":"No movements to display","total":"Total","transactions":"Transactions","debit":"Debit","credit":"Credit","header":{"date":"Date","description":"Description","amount":"Amount","action":"Action"},"actions":{"refund":"Check your refunds","comment":"Add a comment","app":"Access your space %{appName}","bill":"View your invoice","alert":"Create an alert","attach":"Attach a document","more":"More"}},"Notifications":{"title":"Notifications","weekly_summary":{"description":"You will receive a summary of your expenses and revenues every Monday of every week.","title":"Weekly Synthesis"},"when_month_revenue":{"description":"You will receive an email at the reception of your salary each month.","title":"Payment of salary"},"monthly_summary":{"description":"You will receive a summary of your expenses and income each month.","title":"Monthly summary"},"if_balance_lower":{"description":"You will receive an email if your balance is less than","title":"Balance threshold","notification":{"one":{"title":"Balance alert: '%{label}' account is at %{balance}%{currency}","debitContent":"Debit of %{amount}%{currency}: '%{label}'.","creditContent":"Credit of %{amount}%{currency}: '%{label}'."},"several":{"title":"%{accountsLength} accounts are below your threshold amount of %{lowerBalance}%{currency}","content":"Balance of %{balance}%{currency} on '%{label}' account."}}},"if_transaction_greater":{"description":"You will receive a notification if a movement is greater than","title":"Movement amount","notification":{"debit":{"title":"Debit of %{amount}%{currency}","content":"%{label}"},"credit":{"title":"Credit of %{amount}%{currency}","content":"%{label}"},"others":{"title":"%{transactionsLength} transactions greater then %{maxAmount}€","debitContent":"Debit of %{amount}%{currency} with label '%{label}'.","creditContent":"Credit of %{amount}%{currency} with label '%{label}'."}}},"no_revenue":{"description":"You will be notified if you have not received your salary at the %{input} of each month.","title":"Salary Delay"}},"ComingSoon":{"description":"These features will soon be available.","title":"To come up"},"Settings":{"title":"Settings","accounts":"Accounts","groups":"Groups","notifications":"Notifications"},"Onboarding":{"connect-bank-account":"Connect your bank accounts","manage-budget":{"description":"The situation of all your accounts in 1 glance","title":"Control your budget"},"save-time":{"description":"Your invoices at your fingertips directly from your statements","title":"Save Time"},"cozy-assistant":{"description":"Health accounts of your entire family automatically updated","title":"Cozy works for you"},"title":"Connect your bank accounts"}}
 
 /***/ }),
 /* 423 */
 /***/ (function(module, exports) {
 
-module.exports = {"Loading":{"loading":"Chargement...","error":"Il y a eu une erreur pendant le chargement des données. Merci de réessayer plus tard."},"Error":{"more-information":"More information","less-information":"Less information"},"AccountSwitch":{"all_accounts":"Tous les comptes","accounts":"Comptes","groups":"Groupes","manage_groups":"Gérer mes groupes","manage_accounts":"Gérer mes comptes","account_counter":"%{smart_count} compte |||| %{smart_count} comptes"},"Nav":{"movements":"Mouvements","balance":"Solde actuel","categorisation":"Catégorisation","projections":"Prévisions","savings":"Economiser","settings":"Paramètres"},"AccountDetails":{"label":"Libellé","institutionLabel":"Banque","number":"Numéro","type":"Type"},"AccountSettings":{"details":"Détails","sharing":"Partage","back-to-accounts":"Revenir aux comptes"},"Accounts":{"account":"Compte ","add-account":"Ajouter un compte","bank":"Banque","label":"Libellé","my-accounts":"Mes comptes","no-accounts":"Vous n'avez pas encore de compte.","no-shared-accounts":"Vous n'avez pas encore de compte partagé.","shared":"Partagé","shared-accounts":"Comptes que l'on m'a partagé","type":"Type"},"Balance":{"title":"Solde actuel","subtitle":{"all":"Total de tous vos comptes","group":"Total du groupe %{label}","account":"Total du compte %{label}"},"account_name":"Nom du compte","solde":"Solde","bank_name":"Nom de la banque","account_number":"Numéro du compte"},"Movements":{"title":"Mouvements","no-movements":"Pas de mouvements à afficher","total":"Total","operations":"Opérations","debit":"Débit","credit":"Crédit","actions":{"more":"Plus","bill":"Afficher votre facture","refund":"Vérifier vos remboursements","app":"Accéder à votre espace %{appName}","attach":"Attacher un document","alert":"Créer une alerte","comment":"Ajouter un commentaire"}},"Categories":{"board":{"debit-header":"Dépense","credit-header":"Revenu","total-header":"Total"},"filter":{"debit":"Total hors categ. revenus","credit":"Revenus","total":"Total"},"title":{"general":"Catégorisation","total":"Solde de la période","debit":"Dépense nette","empty_text":"Pas de catégories à afficher."},"headers":{"categories":"Catégories","operations":"Opérations","debit":"Débit","credit":"Crédit","total":"Total"}},"Data":{"categories":{"children":"Enfants","daily-life":"Vie quotidienne","education":"Education, formation","health":"Santé","housing":"Logement, immobilier","income":"Revenus","leasures":"Loisirs, sports","out-budget":"Hors budget","services":"Services","taxes":"Impôts, taxes","transportation":"Transports, véhicules","trips":"Sorties, voyages","uncategorized":"À catégoriser"},"subcategories":{"children_activities":"Activités enfants","pocket_money":"Argent de poche","school_insurance":"Assurance scolaire","child-care":"Garde d'enfants","toys":"Jouets, cadeaux","child_support":"Pension versée","school_restaurant":"Restauration scolaire","children_others":"Autres (Enfants)","regular_shopping":"Alimentation, supermarché","pets":"Animaux","gifts":"Cadeaux offerts","cosmetics":"Coiffeur, esthétique, cosmétique, soins","donations":"Dons caritatifs","clothing":"Habillement","telecom":"Internet, TV, télécom","personal_loan_refund":"Remboursement prêt consommation","shopping":"Shopping / e-commerce","meals":"Snacks, fast-foods, repas au travail","press":"Tabac, Presse","daily_life_others":"Autres (Vie quotidienne)","lessons":"Cours, soutien scolaire","school_fees":"Inscription, scolarité","education_supplies":"Livres, fournitures scolaires","student_load_refund":"Remboursement prêt étudiant","education_others":"Autres (Education, formation)","health_insurance":"Cotisation mutuelle, prévoyance","health_costs":"Frais de santé","health_refunds":"Remboursement de santé","health_others":"Autres (Santé)","housing_insurance":"Assurance logement","housing_costs":"Charges logement","water":"Eau","electricity":"Electricité, gaz, chauffage","rent":"Loyer","furnitures":"Meubles, équipements","mortgage_refund":"Remboursement prêt immobilier","house_works":"Travaux, décoration, jardin","housing_others":"Autres (Logement, immobilier)","allowances":"Aides, allocations","gift_incomes":"Cadeaux, dons reçus","dividends":"Dividendes","interests":"Intérêts","pension":"Retraite","complementary_incomes":"Revenus complémentaires","replacement_incomes":"Revenus de remplacement","rental_incomes":"Revenus locatifs","salary":"Salaire / Revenus d'activités","income_others":"Autres (Revenus)","leasures_subscription":"Cotisation sports, loisirs","leasures_lessons":"Cours sports, loisirs","electronic":"Electronique, multimédia","leasures_supplies":"Equipement sports, loisirs","multimedia":"Musique, livres, films","hobbies":"Passion, hobby","leasures_others":"Autres (Sports, loisirs)","security_purchases":"Achats","security_sales":"Ventes de titres","advances":"Avances","refunds":"Remboursements","releasings":"Déblocage prêt, crédits, réserves","expenses_bill":"Notes de frais (+/-)","deferred_debit":"Prélèvement carte débit différé","saving_transfer":"Virements d'épargne","internal_transfer":"Virements internes","out-budget_others":"Autres (Hors budget)","home_help":"Aide à domicile","financial_consulting":"Conseil financier","legal_consulting":"Conseil juridique","bank_charges":"Frais bancaires","post":"Poste, courrier","services_others":"Autres (Services)","social_contributions":"Contributions sociales","income_tax":"Impôts sur le revenu","wealth_tax":"ISF","property_tax":"Taxes foncières, d'habitation","taxes_others":"Autres (Impôts, taxes)","car_purchase":"Achat véhicule","car_insurance":"Assurance véhicule","fuel":"Carburant","vehicle_maintenance":"Entretien, équipements véhicules","garage":"Garage, parking privé","vehicle_rental":"Location véhicule","parking_costs":"Parking, péages, PV","vehicle_loan_refund":"Remboursement prêt véhicule","taxi":"Taxi","public_transportation":"Transports en commun","transportation_others":"Autres (Transports, véhicules)","trips_transportation":"Avion, train, bateau","restaurants":"Restaurants, soirées","cultural_trips":"Sorties culturelles","relaxation_trips":"Sorties détente","journeys":"Voyages","trips_others":"Autres (Sorties, voyages)","cheques":"Chèques","withdrawals":"Retraits d'espèces","uncategorized_transfers":"Virements non categorisés","uncategorized_others":"Autres (À catégoriser)"}},"Groups":{"groups":"Groupes","label":"Libellé","accounts":"Comptes","create":"Créer un groupe","edit":"éditer","delete":"supprimer","edit_group":"Editer le groupe","no-groups":"Avec les groupes, vous pouvez facilement rassembler plusieurs comptes, n'hésitez pas à en créer un !","back-to-groups":"Revenir aux groupes","rename":"Renommer","save":"Sauver"},"SelectDates":{"last_12_months":"Les 12 derniers mois"},"Notifications":{"title":"Notifications","if_balance_lower":{"title":"Seuil de solde","description":"Vous recevrez un email, si votre solde est inférieur à","notification":{"one":{"title":"Alerte solde : le compte '%{label}' est à %{balance}%{currency}","debitContent":"Dépense de %{amount}%{currency} : '%{label}'.","creditContent":"Versement de %{amount}%{currency} : '%{label}'."},"several":{"title":"%{accountsLength} comptes sont en dessous de votre seuil de %{lowerBalance}%{currency}","content":"Solde de %{balance}%{currency} sur le compte '%{label}'."}}},"if_operation_greater":{"title":"Montant de mouvement","description":"Vous recevrez une notification, si un mouvement est supérieur à","notification":{"debit":{"title":"Dépense de %{amount}%{currency}","content":"%{label}"},"credit":{"title":"Versement de %{amount}%{currency}","content":"%{label}"},"others":{"title":"%{operationsLength} mouvements de plus de %{maxAmount}€","debitContent":"Dépense de %{amount}%{currency} avec le libellé '%{label}'.","creditContent":"Versement de %{amount}%{currency} avec le libellé '%{label}'."}}},"no_revenue":{"title":"Retard de salaire","description":"Vous serez prévenu si vous n’avez pas reçu votre salaire au %{input} de chaque mois."},"when_month_revenue":{"title":"Versement de salaire","description":"Vous recevrez un email à la réception de votre salaire chaque mois."},"weekly_summary":{"title":"Synthèse hebdomadaire","description":"Vous recevrez un récapitulatif de vos dépenses et de vos revenus tous les lundis de chaque semaine."},"monthly_summary":{"title":"Synthèse mensuelle","description":"Vous recevrez un récapitulatif de vos dépenses et de vos revenus tous les premiers de chaque mois."}},"ComingSoon":{"title":"À venir","description":"Ces fonctionnalités seront bientôt disponibles."},"Settings":{"title":"Paramètres","accounts":"Comptes","groups":"Groupes","notifications":"Notifications"},"Onboarding":{"title":"Se connecter à son espace bancaire","connect-bank-account":"Connecter vos comptes bancaires","manage-budget":{"title":"Maîtrisez votre budget","description":"La situation de tous vos comptes en 1 coup d'œil"},"save-time":{"title":"Gagnez du temps","description":"Vos factures à portée de main directement depuis vos relevés"},"cozy-assistant":{"title":"Cozy travaille pour vous","description":"Les décomptes de santé de toute votre famille à jour automatiquement"}}}
+module.exports = {"Loading":{"loading":"Chargement...","error":"Il y a eu une erreur pendant le chargement des données. Merci de réessayer plus tard."},"Error":{"more-information":"More information","less-information":"Less information"},"AccountSwitch":{"all_accounts":"Tous les comptes","accounts":"Comptes","groups":"Groupes","manage_groups":"Gérer mes groupes","manage_accounts":"Gérer mes comptes","account_counter":"%{smart_count} compte |||| %{smart_count} comptes"},"Nav":{"movements":"Mouvements","balance":"Solde actuel","categorisation":"Catégorisation","projections":"Prévisions","savings":"Economiser","settings":"Paramètres"},"AccountDetails":{"label":"Libellé","institutionLabel":"Banque","number":"Numéro","type":"Type","types":{"Checkings":"Compte courant","Savings":"Épargne","CreditCard":"Carte de crédit","Loan":"Prêt"}},"AccountSettings":{"details":"Détails","sharing":"Partage","back-to-accounts":"Revenir aux comptes"},"Accounts":{"account":"Compte ","add-account":"Ajouter un compte","bank":"Banque","label":"Libellé","my-accounts":"Mes comptes","no-accounts":"Vous n'avez pas encore de compte.","no-shared-accounts":"Vous n'avez pas encore de compte partagé.","shared":"Partagé","shared-accounts":"Comptes que l'on m'a partagé","type":"Type"},"Balance":{"title":"Solde actuel","subtitle":{"all":"Total de tous vos comptes","group":"Total du groupe %{label}","account":"Total du compte %{label}"},"account_name":"Nom du compte","solde":"Solde","bank_name":"Nom de la banque","account_number":"Numéro du compte"},"Transactions":{"title":"Mouvements","no-movements":"Pas de mouvements à afficher","total":"Total","transactions":"Opérations","debit":"Débit","credit":"Crédit","header":{"date":"Date","description":"Description","amount":"Montant","action":"Action"},"actions":{"more":"Plus","bill":"Afficher votre facture","refund":"Vérifier vos remboursements","app":"Accéder à votre espace %{appName}","attach":"Attacher un document","alert":"Créer une alerte","comment":"Ajouter un commentaire"}},"Categories":{"board":{"debit-header":"Dépense","credit-header":"Revenu","total-header":"Total"},"filter":{"debit":"Total hors categ. revenus","credit":"Revenus","total":"Total"},"title":{"general":"Catégorisation","total":"Solde de la période","debit":"Dépense nette","empty_text":"Pas de catégories à afficher."},"headers":{"categories":"Catégories","transactions":"Opérations","debit":"Débit","credit":"Crédit","total":"Total"}},"Data":{"categories":{"children":"Enfants","dailyLife":"Vie quotidienne","education":"Education, formation","health":"Santé","homeAndRealEstate":"Logement, immobilier","incomeCat":"Revenus","leasures":"Loisirs, sports","out-budget":"Hors budget","services":"Services","taxes":"Impôts, taxes","transportation":"Transports, véhicules","trips":"Sorties, voyages","uncategorized":"À catégoriser","goingOutAndTravel":"Sorties/voyages","activities":"Activités"},"subcategories":{"taxi":"Taxi","telecom":"Télecommunication","giftsOffered":"Cadeaux offerts","eduBooksAndSupplies":"Livres et fournitures scolaire","homeImprovement":"Amélioration de l'habitat","parkingAndToll":"Parking et péage","goingOutAndTravel":"Sortir et voyager","retirement":"Retraite","vehiculeInsurance":"Assurance véhicule","childCare":"Garde d'enfants","dressing":"Vêtements","incomeTheme":"Revenu","activities":"Activités","internalTransfer":"Transfert interne","bankFees":"Frais bancaires","incomeCat":"Revenu","rentalIncome":"Revenus locatifs","tobaccoPress":"Bureau tabac","loanCredit":"Crédit de prêt","activityEquipments":"Équipements d'activités","professionalExpenses":"Frais professionnels","wealthTax":"Impôt sur le patrimoine","activityFees":"Frais d'activité","allocations":"Allocations","schoolRestaurant":"Restaurant scolaire","schoolInsurance":"Assurance scolaire","vehiculeRental":"Location de véhicules","toysAndGifts":"Jouets et cadeaux","activityLessons":"Cours d'activité","vehiculePurchase":"Achat de véhicules","financialAdvisor":"Conseiller financier","goingOutEntertainment":"Sorties/divertissements","homeAssistance":"Assistance à domicile","socialTax":"Taxes sociales","health":"Santé","pets":"Animaux domestiques","excludeFromBudgetCat":"Exclus du budget","investmentBuySell":"Investissements","pensionPaid":"Pensions","booksMoviesMusic":"Livres, musiques, films","restaurantsAndBars":"Restaurants et bars","transportation":"Transport","power":"Energie","dailyLife":"Vie quotidienne","dividends":"Dividendes","supermarket":"Supermarché","tuition":"Cours","water":"Eau","homeHardware":"Quincaillerie","consumerLoan":"Prêt a la consommation","publicTransportation":"Transports publics","donationsReceived":"Dons reçus","post":"Service après-vente","electronicsAndMultimedia":"Électronique et multimédia","studentLoan":"Prêt étudiant","kids":"Enfants","expenseTheme":"Thème des dépenses","eduLessons":"Cours","atm":"Distributeur de billets","privateParking":"Parking privé","vehiculeGas":"Gaz de véhicules","realEstateTax":"Taxe foncière","homeAndRealEstate":"Maison et immobilier","homeCharges":"Frais à la maison","personalCare":"Soins personnels","healthInsurance":"Assurance santé","activityIncome":"Revenu d'activité","kidsActivities":"Activités pour enfants","legalCounsel":"Conseils juridiques","interests":"Intérêts","vehiculeMaintenance":"Entretien des véhicules","kidsAllowance":"Allocation pour enfants","charity":"Charité","replacementIncome":"Revenu de remplacement","incomeTax":"Impôt sur le revenu","creditCardPayment":"Paiement par carte de crédit","vehiculeLoan":"Prêt véhicule","tax":"Impôts","excludeFromBudgetTheme":"Exclus du budget","rent":"Location","goingOutCulture":"Sortir de la culture","check":"Vérifier","shoppingECommerce":"Shopping et commerce électronique","travel":"Voyages","hobbyAndPassion":"Loisirs et passion","snaksAndworkMeals":"Snacks et repas au travail","uncategorized":"Non catégorisé","friendBorrowing":"Prêt à un ami","potentialTransfer":"Transfert potentiel","healthExpenses":"Frais de santé","additionalIncome":"Revenu supplémentaire","journey":"Voyages","services":"Prestations de service","educationAndTraining":"Éducation et formation","savings":"Des économies","realEstateLoan":"Prêt immobilier","homeInsurance":"Assurance habitation"}},"Groups":{"groups":"Groupes","label":"Libellé","accounts":"Comptes","create":"Créer un groupe","edit":"éditer","delete":"supprimer","edit_group":"Editer le groupe","no-groups":"Avec les groupes, vous pouvez facilement rassembler plusieurs comptes, n'hésitez pas à en créer un !","back-to-groups":"Revenir aux groupes","rename":"Renommer","save":"Sauver"},"SelectDates":{"last_12_months":"Les 12 derniers mois"},"Notifications":{"title":"Notifications","if_balance_lower":{"title":"Seuil de solde","description":"Vous recevrez un email, si votre solde est inférieur à","notification":{"one":{"title":"Alerte solde : le compte '%{label}' est à %{balance}%{currency}","debitContent":"Dépense de %{amount}%{currency} : '%{label}'.","creditContent":"Versement de %{amount}%{currency} : '%{label}'."},"several":{"title":"%{accountsLength} comptes sont en dessous de votre seuil de %{lowerBalance}%{currency}","content":"Solde de %{balance}%{currency} sur le compte '%{label}'."}}},"if_transaction_greater":{"title":"Montant de mouvement","description":"Vous recevrez une notification, si un mouvement est supérieur à","notification":{"debit":{"title":"Dépense de %{amount}%{currency}","content":"%{label}"},"credit":{"title":"Versement de %{amount}%{currency}","content":"%{label}"},"others":{"title":"%{transactionsLength} mouvements de plus de %{maxAmount}€","debitContent":"Dépense de %{amount}%{currency} avec le libellé '%{label}'.","creditContent":"Versement de %{amount}%{currency} avec le libellé '%{label}'."}}},"no_revenue":{"title":"Retard de salaire","description":"Vous serez prévenu si vous n’avez pas reçu votre salaire au %{input} de chaque mois."},"when_month_revenue":{"title":"Versement de salaire","description":"Vous recevrez un email à la réception de votre salaire chaque mois."},"weekly_summary":{"title":"Synthèse hebdomadaire","description":"Vous recevrez un récapitulatif de vos dépenses et de vos revenus tous les lundis de chaque semaine."},"monthly_summary":{"title":"Synthèse mensuelle","description":"Vous recevrez un récapitulatif de vos dépenses et de vos revenus tous les premiers de chaque mois."}},"ComingSoon":{"title":"À venir","description":"Ces fonctionnalités seront bientôt disponibles."},"Settings":{"title":"Paramètres","accounts":"Comptes","groups":"Groupes","notifications":"Notifications"},"Onboarding":{"title":"Se connecter à son espace bancaire","connect-bank-account":"Connecter vos comptes bancaires","manage-budget":{"title":"Maîtrisez votre budget","description":"La situation de tous vos comptes en 1 coup d'œil"},"save-time":{"title":"Gagnez du temps","description":"Vos factures à portée de main directement depuis vos relevés"},"cozy-assistant":{"title":"Cozy travaille pour vous","description":"Les décomptes de santé de toute votre famille à jour automatiquement"}}}
 
 /***/ }),
 /* 424 */
@@ -69312,9 +69312,9 @@ var dictRequire = function dictRequire(lang) {
 var translation = (0, _translation.initTranslation)(lang, dictRequire);
 var t = translation.t.bind(translation);
 
-var getOperationsChanges = function () {
+var getTransactionsChanges = function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(lastSeq) {
-    var result, newLastSeq, operations;
+    var result, newLastSeq, transactions;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -69325,10 +69325,10 @@ var getOperationsChanges = function () {
           case 2:
             result = _context.sent;
             newLastSeq = result.last_seq;
-            operations = result.results.map(function (x) {
+            transactions = result.results.map(function (x) {
               return x.doc;
             });
-            return _context.abrupt('return', { newLastSeq: newLastSeq, operations: operations });
+            return _context.abrupt('return', { newLastSeq: newLastSeq, transactions: transactions });
 
           case 6:
           case 'end':
@@ -69338,19 +69338,19 @@ var getOperationsChanges = function () {
     }, _callee, undefined);
   }));
 
-  return function getOperationsChanges(_x) {
+  return function getTransactionsChanges(_x) {
     return _ref.apply(this, arguments);
   };
 }();
 
-var getAccountsOfOperations = function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(operations) {
+var getAccountsOfTransactions = function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(transactions) {
     var accountsIds, result, accounts;
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            accountsIds = Array.from(new Set(operations.map(function (x) {
+            accountsIds = Array.from(new Set(transactions.map(function (x) {
               return x.accountId;
             })));
             _context2.next = 3;
@@ -69371,7 +69371,7 @@ var getAccountsOfOperations = function () {
     }, _callee2, undefined);
   }));
 
-  return function getAccountsOfOperations(_x2) {
+  return function getAccountsOfTransactions(_x2) {
     return _ref2.apply(this, arguments);
   };
 }();
@@ -69438,7 +69438,7 @@ var saveLastSeqInConfig = function () {
 
 var sendNotifications = function () {
   var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
-    var config, notifications, enabledNotifications, lastSeq, _ref6, newLastSeq, operations, accounts, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, notification;
+    var config, notifications, enabledNotifications, lastSeq, _ref6, newLastSeq, transactions, accounts, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, notification;
 
     return regeneratorRuntime.wrap(function _callee5$(_context5) {
       while (1) {
@@ -69458,7 +69458,7 @@ var sendNotifications = function () {
             return _context5.abrupt('return');
 
           case 5:
-            notifications = [new _notifications.OperationGreater(_extends({}, config.notifications.operationGreater, { t: t })), new _notifications.BalanceLower(_extends({}, config.notifications.balanceLower, { t: t }))];
+            notifications = [new _notifications.TransactionGreater(_extends({}, config.notifications.transactionGreater, { t: t })), new _notifications.BalanceLower(_extends({}, config.notifications.balanceLower, { t: t }))];
             enabledNotifications = notifications.filter(function (notif) {
               return notif.isEnabled();
             });
@@ -69473,20 +69473,20 @@ var sendNotifications = function () {
           case 9:
             lastSeq = getLastSeqFromConfig(config);
             _context5.next = 12;
-            return getOperationsChanges(lastSeq);
+            return getTransactionsChanges(lastSeq);
 
           case 12:
             _ref6 = _context5.sent;
             newLastSeq = _ref6.newLastSeq;
-            operations = _ref6.operations;
+            transactions = _ref6.transactions;
 
-            if (!(operations.length > 0)) {
+            if (!(transactions.length > 0)) {
               _context5.next = 51;
               break;
             }
 
             _context5.next = 18;
-            return getAccountsOfOperations(operations);
+            return getAccountsOfTransactions(transactions);
 
           case 18:
             accounts = _context5.sent;
@@ -69505,7 +69505,7 @@ var sendNotifications = function () {
             notification = _step.value;
             _context5.prev = 26;
             _context5.next = 29;
-            return notification.sendNotification(accounts, operations);
+            return notification.sendNotification(accounts, transactions);
 
           case 29:
             _context5.next = 34;
@@ -75184,7 +75184,7 @@ if (nodeVer) {
 }
 
 if (false) {
-    console.error("iconv-lite warning: javascript files are loaded not with utf-8 encoding. See https://github.com/ashtuchkin/iconv-lite/wiki/Javascript-source-file-encodings for more info.");
+    console.error("iconv-lite warning: javascript files use encoding different from utf-8. See https://github.com/ashtuchkin/iconv-lite/wiki/Javascript-source-file-encodings for more info.");
 }
 
 
@@ -75296,8 +75296,6 @@ module.exports = {
     utf16le: "ucs2",
 
     binary: { type: "_internal" },
-    iso88591: "binary",
-
     base64: { type: "_internal" },
     hex:    { type: "_internal" },
 
@@ -76125,8 +76123,6 @@ module.exports = {
 
     "cp819": "iso88591",
     "ibm819": "iso88591",
-    "cp28591": "iso88591",
-    "28591": "iso88591",
 
     "cyrillic": "iso88595",
 
@@ -76257,6 +76253,7 @@ module.exports = {
   "1256": "windows1256",
   "1257": "windows1257",
   "1258": "windows1258",
+  "28591": "iso88591",
   "28592": "iso88592",
   "28593": "iso88593",
   "28594": "iso88594",
@@ -76309,7 +76306,7 @@ module.exports = {
   "cp1254": "windows1254",
   "windows1255": {
     "type": "_sbcs",
-    "chars": "€�‚ƒ„…†‡ˆ‰�‹�����‘’“”•–—˜™�›���� ¡¢£₪¥¦§¨©×«¬­®¯°±²³´µ¶·¸¹÷»¼½¾¿ְֱֲֳִֵֶַָֹ�ֻּֽ־ֿ׀ׁׂ׃װױײ׳״�������אבגדהוזחטיךכלםמןנסעףפץצקרשת��‎‏�"
+    "chars": "€�‚ƒ„…†‡ˆ‰�‹�����‘’“”•–—˜™�›���� ¡¢£₪¥¦§¨©×«¬­®¯°±²³´µ¶·¸¹÷»¼½¾¿ְֱֲֳִֵֶַָֹֺֻּֽ־ֿ׀ׁׂ׃װױײ׳״�������אבגדהוזחטיךכלםמןנסעףפץצקרשת��‎‏�"
   },
   "win1255": "windows1255",
   "cp1255": "windows1255",
@@ -76331,6 +76328,11 @@ module.exports = {
   },
   "win1258": "windows1258",
   "cp1258": "windows1258",
+  "iso88591": {
+    "type": "_sbcs",
+    "chars": " ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ"
+  },
+  "cp28591": "iso88591",
   "iso88592": {
     "type": "_sbcs",
     "chars": " Ą˘Ł¤ĽŚ§¨ŠŞŤŹ­ŽŻ°ą˛ł´ľśˇ¸šşťź˝žżŔÁÂĂÄĹĆÇČÉĘËĚÍÎĎĐŃŇÓÔŐÖ×ŘŮÚŰÜÝŢßŕáâăäĺćçčéęëěíîďđńňóôőö÷řůúűüýţ˙"
@@ -109579,20 +109581,20 @@ module.exports = {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.OperationGreater = exports.BalanceLower = undefined;
+exports.TransactionGreater = exports.BalanceLower = undefined;
 
 var _BalanceLower = __webpack_require__(795);
 
 var _BalanceLower2 = _interopRequireDefault(_BalanceLower);
 
-var _OperationGreater = __webpack_require__(796);
+var _TransactionGreater = __webpack_require__(796);
 
-var _OperationGreater2 = _interopRequireDefault(_OperationGreater);
+var _TransactionGreater2 = _interopRequireDefault(_TransactionGreater);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.BalanceLower = _BalanceLower2.default;
-exports.OperationGreater = _OperationGreater2.default;
+exports.TransactionGreater = _TransactionGreater2.default;
 
 /***/ }),
 /* 795 */
@@ -109639,8 +109641,8 @@ var BalanceLower = function () {
   }, {
     key: 'sendNotification',
     value: function () {
-      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(accounts, operations) {
-        var accountsFiltered, notification, translateKey, account, operationsFiltered, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, operation, key, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, accountFiltered;
+      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(accounts, transactions) {
+        var accountsFiltered, notification, translateKey, account, transactionsFiltered, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, transaction, key, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, accountFiltered;
 
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
@@ -109666,7 +109668,7 @@ var BalanceLower = function () {
 
                 translateKey += 'one';
                 account = accountsFiltered[0];
-                operationsFiltered = operations.filter(function (op) {
+                transactionsFiltered = transactions.filter(function (op) {
                   return op.account === account._id;
                 });
 
@@ -109680,14 +109682,14 @@ var BalanceLower = function () {
                 _didIteratorError = false;
                 _iteratorError = undefined;
                 _context.prev = 14;
-                for (_iterator = operationsFiltered[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                  operation = _step.value;
-                  key = operation.amount > 0 ? 'credit' : 'debit';
+                for (_iterator = transactionsFiltered[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                  transaction = _step.value;
+                  key = transaction.amount > 0 ? 'credit' : 'debit';
 
                   notification.content += this.t(translateKey + '.' + key + 'Content', {
-                    amount: operation.amount,
-                    currency: operation.currency,
-                    label: operation.label
+                    amount: transaction.amount,
+                    currency: transaction.currency,
+                    label: transaction.label
                   }) + '\n';
                 }
                 _context.next = 22;
@@ -109782,18 +109784,14 @@ var BalanceLower = function () {
                 return _context.finish(46);
 
               case 54:
-                _context.next = 56;
-                return _cozyKonnectorLibs.cozyClient.fetchJSON('POST', '/notifications', {
+                return _context.abrupt('return', _cozyKonnectorLibs.cozyClient.fetchJSON('POST', '/notifications', {
                   data: {
                     type: 'io.cozy.notifications',
                     attributes: notification
                   }
-                });
+                }));
 
-              case 56:
-                return _context.abrupt('return', _context.sent);
-
-              case 57:
+              case 55:
               case 'end':
                 return _context.stop();
             }
@@ -109837,41 +109835,41 @@ var abs = function abs(number) {
   return number < 0 ? -number : number;
 };
 
-var OperationGreater = function () {
-  function OperationGreater(config) {
-    _classCallCheck(this, OperationGreater);
+var TransactionGreater = function () {
+  function TransactionGreater(config) {
+    _classCallCheck(this, TransactionGreater);
 
     this.t = config.t;
     this.enabled = config.enabled;
     this.maxAmount = config.value;
   }
 
-  _createClass(OperationGreater, [{
+  _createClass(TransactionGreater, [{
     key: 'isEnabled',
     value: function isEnabled() {
       return this.enabled;
     }
   }, {
     key: 'filter',
-    value: function filter(operations) {
+    value: function filter(transactions) {
       var maxAmount = abs(this.maxAmount);
-      return operations.filter(function (op) {
+      return transactions.filter(function (op) {
         return abs(op.amount) > maxAmount;
       });
     }
   }, {
     key: 'sendNotification',
     value: function () {
-      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(accounts, operations) {
-        var operationsFiltered, notification, translateKey, operation, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, operationFiltered, key;
+      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(accounts, transactions) {
+        var transactionsFiltered, notification, translateKey, transaction, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, transactionFiltered, key;
 
         return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                operationsFiltered = this.filter(operations);
+                transactionsFiltered = this.filter(transactions);
 
-                if (!(operationsFiltered.length === 0)) {
+                if (!(transactionsFiltered.length === 0)) {
                   _context.next = 3;
                   break;
                 }
@@ -109879,26 +109877,26 @@ var OperationGreater = function () {
                 return _context.abrupt('return');
 
               case 3:
-                notification = { reference: 'operation_greater' };
-                translateKey = 'Notifications.if_operation_greater.notification.';
+                notification = { reference: 'transaction_greater' };
+                translateKey = 'Notifications.if_transaction_greater.notification.';
 
-                if (!(operationsFiltered.length === 1)) {
+                if (!(transactionsFiltered.length === 1)) {
                   _context.next = 12;
                   break;
                 }
 
-                operation = operationsFiltered[0];
+                transaction = transactionsFiltered[0];
 
-                translateKey += operation.amount > 0 ? 'credit' : 'debit';
-                notification.title = this.t(translateKey + '.title', { amount: operation.amount, currency: operation.currency });
-                notification.content = this.t(translateKey + '.content', { label: operation.label });
+                translateKey += transaction.amount > 0 ? 'credit' : 'debit';
+                notification.title = this.t(translateKey + '.title', { amount: transaction.amount, currency: transaction.currency });
+                notification.content = this.t(translateKey + '.content', { label: transaction.label });
                 _context.next = 34;
                 break;
 
               case 12:
                 translateKey += 'others';
                 notification.title = this.t(translateKey + '.title', {
-                  operationsLength: operationsFiltered.length,
+                  transactionsLength: transactionsFiltered.length,
                   maxAmount: this.maxAmount
                 });
                 notification.content = '';
@@ -109906,12 +109904,12 @@ var OperationGreater = function () {
                 _didIteratorError = false;
                 _iteratorError = undefined;
                 _context.prev = 18;
-                for (_iterator = operationsFiltered[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                  operationFiltered = _step.value;
-                  key = operationFiltered.amount > 0 ? 'credit' : 'debit';
+                for (_iterator = transactionsFiltered[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                  transactionFiltered = _step.value;
+                  key = transactionFiltered.amount > 0 ? 'credit' : 'debit';
 
                   notification.content += this.t(translateKey + '.' + key + 'Content', {
-                    amount: operationFiltered.amount, currency: operationFiltered.currency, label: operationFiltered.label
+                    amount: transactionFiltered.amount, currency: transactionFiltered.currency, label: transactionFiltered.label
                   }) + '\n';
                 }
                 _context.next = 26;
@@ -109948,18 +109946,14 @@ var OperationGreater = function () {
                 return _context.finish(26);
 
               case 34:
-                _context.next = 36;
-                return _cozyKonnectorLibs.cozyClient.fetchJSON('POST', '/notifications', {
+                return _context.abrupt('return', _cozyKonnectorLibs.cozyClient.fetchJSON('POST', '/notifications', {
                   data: {
                     type: 'io.cozy.notifications',
                     attributes: notification
                   }
-                });
+                }));
 
-              case 36:
-                return _context.abrupt('return', _context.sent);
-
-              case 37:
+              case 35:
               case 'end':
                 return _context.stop();
             }
@@ -109975,10 +109969,10 @@ var OperationGreater = function () {
     }()
   }]);
 
-  return OperationGreater;
+  return TransactionGreater;
 }();
 
-exports.default = OperationGreater;
+exports.default = TransactionGreater;
 
 /***/ }),
 /* 797 */
