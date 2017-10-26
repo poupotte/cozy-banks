@@ -5644,7 +5644,7 @@ formats['pkcs1'] = __webpack_require__(132);
 formats['pkcs8'] = __webpack_require__(78);
 formats['rfc4253'] = __webpack_require__(47);
 formats['ssh'] = __webpack_require__(307);
-formats['ssh-private'] = __webpack_require__(95);
+formats['ssh-private'] = __webpack_require__(96);
 formats['openssh'] = formats['ssh-private'];
 
 function Key(opts) {
@@ -6103,7 +6103,7 @@ formats['pem'] = __webpack_require__(35);
 formats['pkcs1'] = __webpack_require__(132);
 formats['pkcs8'] = __webpack_require__(78);
 formats['rfc4253'] = __webpack_require__(47);
-formats['ssh-private'] = __webpack_require__(95);
+formats['ssh-private'] = __webpack_require__(96);
 formats['openssh'] = formats['ssh-private'];
 formats['ssh'] = formats['ssh-private'];
 
@@ -6464,7 +6464,7 @@ if (__webpack_require__(20)) {
   var speciesConstructor = __webpack_require__(154);
   var ArrayIterators = __webpack_require__(116);
   var Iterators = __webpack_require__(56);
-  var $iterDetect = __webpack_require__(80);
+  var $iterDetect = __webpack_require__(81);
   var setSpecies = __webpack_require__(117);
   var arrayFill = __webpack_require__(112);
   var arrayCopyWithin = __webpack_require__(157);
@@ -7032,7 +7032,7 @@ var crypto = __webpack_require__(3);
 var errs = __webpack_require__(28);
 var utils = __webpack_require__(11);
 var asn1 = __webpack_require__(36);
-var SSHBuffer = __webpack_require__(96);
+var SSHBuffer = __webpack_require__(97);
 
 var InvalidAlgorithmError = errs.InvalidAlgorithmError;
 var SignatureParseError = errs.SignatureParseError;
@@ -7343,12 +7343,10 @@ Signature._oldVersionDetect = function (obj) {
 
 "use strict";
 /**
- * Copyright 2014-2015, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2014-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -7414,11 +7412,9 @@ module.exports = warning;
 "use strict";
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -7554,7 +7550,7 @@ var PrivateKey = __webpack_require__(16);
 
 var pkcs1 = __webpack_require__(132);
 var pkcs8 = __webpack_require__(78);
-var sshpriv = __webpack_require__(95);
+var sshpriv = __webpack_require__(96);
 var rfc4253 = __webpack_require__(47);
 
 var errors = __webpack_require__(28);
@@ -11796,7 +11792,7 @@ var algs = __webpack_require__(15);
 var utils = __webpack_require__(11);
 var Key = __webpack_require__(14);
 var PrivateKey = __webpack_require__(16);
-var SSHBuffer = __webpack_require__(96);
+var SSHBuffer = __webpack_require__(97);
 
 function algToKeyType(alg) {
 	assert.string(alg);
@@ -12205,7 +12201,7 @@ function unescapeJsonPointer(str) {
 
 
 
-var _assign = __webpack_require__(97);
+var _assign = __webpack_require__(80);
 
 var ReactCurrentOwner = __webpack_require__(99);
 
@@ -14764,6 +14760,103 @@ Identity._oldVersionDetect = function (obj) {
 /* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+/*
+object-assign
+(c) Sindre Sorhus
+@license MIT
+*/
+
+
+/* eslint-disable no-unused-vars */
+var getOwnPropertySymbols = Object.getOwnPropertySymbols;
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+var propIsEnumerable = Object.prototype.propertyIsEnumerable;
+
+function toObject(val) {
+	if (val === null || val === undefined) {
+		throw new TypeError('Object.assign cannot be called with null or undefined');
+	}
+
+	return Object(val);
+}
+
+function shouldUseNative() {
+	try {
+		if (!Object.assign) {
+			return false;
+		}
+
+		// Detect buggy property enumeration order in older V8 versions.
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
+		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
+		test1[5] = 'de';
+		if (Object.getOwnPropertyNames(test1)[0] === '5') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test2 = {};
+		for (var i = 0; i < 10; i++) {
+			test2['_' + String.fromCharCode(i)] = i;
+		}
+		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
+			return test2[n];
+		});
+		if (order2.join('') !== '0123456789') {
+			return false;
+		}
+
+		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
+		var test3 = {};
+		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
+			test3[letter] = letter;
+		});
+		if (Object.keys(Object.assign({}, test3)).join('') !==
+				'abcdefghijklmnopqrst') {
+			return false;
+		}
+
+		return true;
+	} catch (err) {
+		// We don't expect any of the above to throw, but better to be safe.
+		return false;
+	}
+}
+
+module.exports = shouldUseNative() ? Object.assign : function (target, source) {
+	var from;
+	var to = toObject(target);
+	var symbols;
+
+	for (var s = 1; s < arguments.length; s++) {
+		from = Object(arguments[s]);
+
+		for (var key in from) {
+			if (hasOwnProperty.call(from, key)) {
+				to[key] = from[key];
+			}
+		}
+
+		if (getOwnPropertySymbols) {
+			symbols = getOwnPropertySymbols(from);
+			for (var i = 0; i < symbols.length; i++) {
+				if (propIsEnumerable.call(from, symbols[i])) {
+					to[symbols[i]] = from[symbols[i]];
+				}
+			}
+		}
+	}
+
+	return to;
+};
+
+
+/***/ }),
+/* 81 */
+/***/ (function(module, exports, __webpack_require__) {
+
 var ITERATOR = __webpack_require__(10)('iterator');
 var SAFE_CLOSING = false;
 
@@ -14789,7 +14882,7 @@ module.exports = function (exec, skipClosing) {
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ctx = __webpack_require__(24);
@@ -14820,7 +14913,7 @@ exports.RETURN = RETURN;
 
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14830,11 +14923,11 @@ var $export = __webpack_require__(1);
 var redefine = __webpack_require__(33);
 var redefineAll = __webpack_require__(52);
 var meta = __webpack_require__(73);
-var forOf = __webpack_require__(81);
+var forOf = __webpack_require__(82);
 var anInstance = __webpack_require__(53);
 var isObject = __webpack_require__(9);
 var fails = __webpack_require__(12);
-var $iterDetect = __webpack_require__(80);
+var $iterDetect = __webpack_require__(81);
 var setToStringTag = __webpack_require__(55);
 var inheritIfRequired = __webpack_require__(472);
 
@@ -14912,14 +15005,14 @@ module.exports = function (NAME, wrapper, methods, common, IS_MAP, IS_WEAK) {
 
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports) {
 
 exports.f = Object.getOwnPropertySymbols;
 
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14954,19 +15047,19 @@ module.exports = function (KEY, length, exec) {
 
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports) {
 
 module.exports = require("net");
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports) {
 
 module.exports = require("path");
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports) {
 
 /**
@@ -14995,13 +15088,13 @@ module.exports = bytesToUuid;
 
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Load modules
 
 var Http = __webpack_require__(32);
-var Hoek = __webpack_require__(89);
+var Hoek = __webpack_require__(90);
 
 
 // Declare internals
@@ -15319,13 +15412,13 @@ exports.badImplementation = function (message, data) {
 
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Load modules
 
 var Crypto = __webpack_require__(3);
-var Path = __webpack_require__(86);
+var Path = __webpack_require__(87);
 var Util = __webpack_require__(5);
 var Escape = __webpack_require__(577);
 
@@ -16318,13 +16411,13 @@ exports.shallow = function (source) {
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Load modules
 
 var Sntp = __webpack_require__(300);
-var Boom = __webpack_require__(88);
+var Boom = __webpack_require__(89);
 
 
 // Declare internals
@@ -16508,13 +16601,13 @@ exports.unauthorized = function (message, attributes) {
 
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports) {
 
 module.exports = require("querystring");
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Copyright (c) 2012, Mark Cavage. All rights reserved.
@@ -16726,12 +16819,12 @@ module.exports = _setExports(process.env.NODE_NDEBUG);
 
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Copyright 2012 Joyent, Inc.  All rights reserved.
 
-var assert = __webpack_require__(92);
+var assert = __webpack_require__(93);
 var sshpk = __webpack_require__(129);
 var util = __webpack_require__(5);
 
@@ -16844,7 +16937,7 @@ module.exports = {
 
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Basic Javascript Elliptic Curve implementation
@@ -17411,7 +17504,7 @@ module.exports = exports
 
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Copyright 2015 Joyent, Inc.
@@ -17432,7 +17525,7 @@ var Key = __webpack_require__(14);
 var PrivateKey = __webpack_require__(16);
 var pem = __webpack_require__(35);
 var rfc4253 = __webpack_require__(47);
-var SSHBuffer = __webpack_require__(96);
+var SSHBuffer = __webpack_require__(97);
 var errors = __webpack_require__(28);
 
 var bcrypt;
@@ -17678,7 +17771,7 @@ function write(key, options) {
 
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // Copyright 2015 Joyent, Inc.
@@ -17828,103 +17921,6 @@ SSHBuffer.prototype.write = function (buf) {
 		this.expand();
 	buf.copy(this._buffer, this._offset);
 	this._offset += buf.length;
-};
-
-
-/***/ }),
-/* 97 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/*
-object-assign
-(c) Sindre Sorhus
-@license MIT
-*/
-
-
-/* eslint-disable no-unused-vars */
-var getOwnPropertySymbols = Object.getOwnPropertySymbols;
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-var propIsEnumerable = Object.prototype.propertyIsEnumerable;
-
-function toObject(val) {
-	if (val === null || val === undefined) {
-		throw new TypeError('Object.assign cannot be called with null or undefined');
-	}
-
-	return Object(val);
-}
-
-function shouldUseNative() {
-	try {
-		if (!Object.assign) {
-			return false;
-		}
-
-		// Detect buggy property enumeration order in older V8 versions.
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=4118
-		var test1 = new String('abc');  // eslint-disable-line no-new-wrappers
-		test1[5] = 'de';
-		if (Object.getOwnPropertyNames(test1)[0] === '5') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test2 = {};
-		for (var i = 0; i < 10; i++) {
-			test2['_' + String.fromCharCode(i)] = i;
-		}
-		var order2 = Object.getOwnPropertyNames(test2).map(function (n) {
-			return test2[n];
-		});
-		if (order2.join('') !== '0123456789') {
-			return false;
-		}
-
-		// https://bugs.chromium.org/p/v8/issues/detail?id=3056
-		var test3 = {};
-		'abcdefghijklmnopqrst'.split('').forEach(function (letter) {
-			test3[letter] = letter;
-		});
-		if (Object.keys(Object.assign({}, test3)).join('') !==
-				'abcdefghijklmnopqrst') {
-			return false;
-		}
-
-		return true;
-	} catch (err) {
-		// We don't expect any of the above to throw, but better to be safe.
-		return false;
-	}
-}
-
-module.exports = shouldUseNative() ? Object.assign : function (target, source) {
-	var from;
-	var to = toObject(target);
-	var symbols;
-
-	for (var s = 1; s < arguments.length; s++) {
-		from = Object(arguments[s]);
-
-		for (var key in from) {
-			if (hasOwnProperty.call(from, key)) {
-				to[key] = from[key];
-			}
-		}
-
-		if (getOwnPropertySymbols) {
-			symbols = getOwnPropertySymbols(from);
-			for (var i = 0; i < symbols.length; i++) {
-				if (propIsEnumerable.call(from, symbols[i])) {
-					to[symbols[i]] = from[symbols[i]];
-				}
-			}
-		}
-	}
-
-	return to;
 };
 
 
@@ -24679,7 +24675,7 @@ exports.defer                 = defer
 
 var Crypto = __webpack_require__(3);
 var Url = __webpack_require__(17);
-var Utils = __webpack_require__(90);
+var Utils = __webpack_require__(91);
 
 
 // Declare internals
@@ -25433,11 +25429,9 @@ module.exports = Function.prototype.bind || implementation;
 
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * 
  */
@@ -43657,7 +43651,7 @@ var create = __webpack_require__(69);
 var redefineAll = __webpack_require__(52);
 var ctx = __webpack_require__(24);
 var anInstance = __webpack_require__(53);
-var forOf = __webpack_require__(81);
+var forOf = __webpack_require__(82);
 var $iterDefine = __webpack_require__(156);
 var step = __webpack_require__(155);
 var setSpecies = __webpack_require__(117);
@@ -43823,7 +43817,7 @@ module.exports = function (iterator, fn, value, entries) {
 
 // 19.1.2.1 Object.assign(target, source, ...)
 var getKeys = __webpack_require__(57);
-var gOPS = __webpack_require__(83);
+var gOPS = __webpack_require__(84);
 var pIE = __webpack_require__(72);
 var toObject = __webpack_require__(44);
 var IObject = __webpack_require__(107);
@@ -43867,7 +43861,7 @@ var getWeak = __webpack_require__(73).getWeak;
 var anObject = __webpack_require__(8);
 var isObject = __webpack_require__(9);
 var anInstance = __webpack_require__(53);
-var forOf = __webpack_require__(81);
+var forOf = __webpack_require__(82);
 var createArrayMethod = __webpack_require__(71);
 var $has = __webpack_require__(21);
 var validate = __webpack_require__(59);
@@ -43976,7 +43970,7 @@ module.exports = function (fn, args, that) {
 
 // all object keys, includes non-enumerable and symbols
 var gOPN = __webpack_require__(67);
-var gOPS = __webpack_require__(83);
+var gOPS = __webpack_require__(84);
 var anObject = __webpack_require__(8);
 var Reflect = __webpack_require__(7).Reflect;
 module.exports = Reflect && Reflect.ownKeys || function ownKeys(it) {
@@ -56213,7 +56207,7 @@ module.exports = __webpack_require__(578);
 // Load modules
 
 var Crypto = __webpack_require__(3);
-var Boom = __webpack_require__(88);
+var Boom = __webpack_require__(89);
 
 
 // Declare internals
@@ -56331,7 +56325,7 @@ function DiffieHellman(key) {
 			if (ecdh === undefined)
 				ecdh = __webpack_require__(303);
 			if (ec === undefined)
-				ec = __webpack_require__(94);
+				ec = __webpack_require__(95);
 			if (jsbn === undefined)
 				jsbn = __webpack_require__(45).BigInteger;
 
@@ -56660,7 +56654,7 @@ function generateECDSA(curve) {
 		if (ecdh === undefined)
 			ecdh = __webpack_require__(303);
 		if (ec === undefined)
-			ec = __webpack_require__(94);
+			ec = __webpack_require__(95);
 		if (jsbn === undefined)
 			jsbn = __webpack_require__(45).BigInteger;
 
@@ -56703,7 +56697,7 @@ function generateECDSA(curve) {
 
 var crypto = __webpack_require__(3);
 var BigInteger = __webpack_require__(45).BigInteger;
-var ECPointFp = __webpack_require__(94).ECPointFp;
+var ECPointFp = __webpack_require__(95).ECPointFp;
 exports.ECCurves = __webpack_require__(589);
 
 // zero prepad
@@ -57521,7 +57515,7 @@ var utils = __webpack_require__(11);
 var Key = __webpack_require__(14);
 var PrivateKey = __webpack_require__(16);
 
-var sshpriv = __webpack_require__(95);
+var sshpriv = __webpack_require__(96);
 
 /*JSSTYLED*/
 var SSHKEY_RE = /^([a-z0-9-]+)[ \t]+([a-zA-Z0-9+\/]+[=]*)([\n \t]+([^\n]+))?$/;
@@ -58565,7 +58559,7 @@ function dumpException(ex)
  */
 
 var db = __webpack_require__(601)
-var extname = __webpack_require__(86).extname
+var extname = __webpack_require__(87).extname
 
 /**
  * Module variables.
@@ -61743,7 +61737,7 @@ I18n.childContextTypes = {
 
 
 var _prodInvariant = __webpack_require__(63),
-    _assign = __webpack_require__(97);
+    _assign = __webpack_require__(80);
 
 var ReactNoopUpdateQueue = __webpack_require__(348);
 
@@ -61980,11 +61974,9 @@ module.exports = ReactNoopUpdateQueue;
 "use strict";
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  */
 
@@ -62335,12 +62327,10 @@ module.exports = ReactElementValidator;
 
 "use strict";
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 
@@ -69280,13 +69270,13 @@ module.exports = buildFormatLocale
 /* 422 */
 /***/ (function(module, exports) {
 
-module.exports = {"Loading":{"loading":"Loading...","error":"An error occured while loading the data. Please try again later."},"Nav":{"categorisation":"Categorization","settings":"Settings","savings":"Savings","projections":"Forecasts","balance":"Current balance","movements":"Movements"},"Error":{"more-information":"More information","less-information":"Less information"},"AccountSwitch":{"account_counter":"%{smart_count} account |||| %{smart_count} accounts","all_accounts":"All accounts","manage_groups":"Manage my groups","groups":"Groups","accounts":"Accounts","manage_accounts":"Manage my accounts"},"AccountDetails":{"label":"Label","institutionLabel":"Bank","number":"Number","type":"Type","types":{"Checkings":"Checkings","Savings":"Savings","CreditCard":"Credit card","Loan":"Loan"}},"AccountSettings":{"details":"Details","sharing":"Sharing","back-to-accounts":"Back to accounts"},"Balance":{"bank_name":"Name of the bank","subtitle":{"all":"Total of all your accounts","group":"Total group %{label}","account":"Total account %{label}"},"title":"Current balance","solde":"Balance","account_number":"Account number","account_name":"Account name"},"SelectDates":{"last_12_months":"Last 12 months"},"Accounts":{"account":"Account","no-accounts":"You do not have any account yet.","shared-accounts":"Accounts shared to me","no-shared-accounts":"You do not have any shared account yet.","my-accounts":"My accounts","shared":"Shared","add-account":"Add an account","type":"Type","bank":"Bank","label":"Label"},"Groups":{"edit_group":"Edit Group","edit":"edit","create":"Create a group","label":"Label","accounts":"Accounts","groups":"Groups","delete":"remove","no-groups":"Using groups, you can easily gather several accounts, feel free to create one.","back-to-groups":"Back to groups","rename":"Rename","save":"Save"},"Data":{"subcategories":{"uncategorized":"Uncategorized","potentialTransfer":"Potential transfer","check":"Check","incomeTheme":"Income","incomeCat":"Income","activityIncome":"Activity income","replacementIncome":"Replacement income","interests":"Interests","dividends":"Dividends","donationsReceived":"Donations received","allocations":"Allocations","rentalIncome":"Rental income","additionalIncome":"Additional income","retirement":"Retirement","atm":"Cash dispenser","expenseTheme":"Expense theme","dailyLife":"Daily life","supermarket":"Supermarket","tobaccoPress":"Tobacco press","shoppingECommerce":"Shopping and E-commerce","consumerLoan":"Consumer loan","dressing":"Dressing","pets":"Pets","telecom":"Telecom","snaksAndworkMeals":"Snaks and work meals","charity":"Charity","giftsOffered":"Gifts offered","personalCare":"Personal care","transportation":"Transportation","vehiculePurchase":"Vehicule purchase","vehiculeLoan":"Vehicule loan","vehiculeRental":"Vehicule rental","vehiculeInsurance":"Vehicule insurance","vehiculeMaintenance":"Vehicule maintenance","vehiculeGas":"Vehicule gas","privateParking":"Private parking","parkingAndToll":"Parking and toll","publicTransportation":"Public transportation","taxi":"Taxi","services":"Services","post":"Post service","legalCounsel":"Legal counseling","homeAssistance":"Home assistance","bankFees":"Bank fees","financialAdvisor":"Financial advisor","kids":"Kids","kidsAllowance":"Kids allowance","schoolRestaurant":"School restaurant","childCare":"Child care","schoolInsurance":"School insurance","toysAndGifts":"Toys and gifts","pensionPaid":"Pension paid","kidsActivities":"Kids activities","tax":"Tax","incomeTax":"Income tax","socialTax":"Social tax","wealthTax":"Wealth tax","realEstateTax":"Real estate tax","health":"Health","healthExpenses":"Health expenses","healthInsurance":"Health insurance","activities":"Activities","activityFees":"Activity fees","activityEquipments":"Activity equipments","activityLessons":"Activity lessons","electronicsAndMultimedia":"Electronics and multimedia","booksMoviesMusic":"Books movies music","hobbyAndPassion":"Hobby and passion","goingOutAndTravel":"Going out and travel","restaurantsAndBars":"Restaurants and bars","goingOutEntertainment":"Going out entertainment","goingOutCulture":"Going out culture","travel":"Travel","journey":"Journey","educationAndTraining":"Education and training","tuition":"Tuition","eduBooksAndSupplies":"Edu books and supplies","studentLoan":"Student loan","eduLessons":"Edu lessons","homeAndRealEstate":"Home and real estate","realEstateLoan":"Real estate loan","rent":"Rent","homeCharges":"Home charges","homeInsurance":"Home insurance","homeImprovement":"Home improvement","homeHardware":"Home hardware","water":"Water","power":"Power","excludeFromBudgetTheme":"Excluded from budget","excludeFromBudgetCat":"Excluded from budget","internalTransfer":"Internal transfer","creditCardPayment":"Credit card payment","loanCredit":"Loan credit","professionalExpenses":"Professional expenses","investmentBuySell":"Investment buy sell","friendBorrowing":"Friend borrowing","savings":"Savings"},"categories":{"activities":"Leisure, sports","dailyLife":"Everyday life","education":"Education, training","excludeFromBudgetCat":"Out of budget","goingOutAndTravel":"Outings, trips","health":"Health","homeAndRealEstate":"Housing, real estate","incomeCat":"earnings","kids":"Children","services":"Services","tax":"Taxes, taxes","transportation":"Transportation, vehicles","uncategorized":"To be categorized"}},"Categories":{"filter":{"credit":"earnings","total":"Total","debit":"Total excl. earnings"},"headers":{"transactions":"Transactions","credit":"Credit","total":"Total","categories":"Categories","debit":"Debit"},"board":{"debit-header":"Spent","credit-header":"Earnings","total-header":"Total"},"title":{"empty_text":"No categories to display.","total":"Balance of the period","general":"Categorization","debit":"Net expenditure"}},"Transactions":{"title":"Movements","no-movements":"No movements to display","total":"Total","transactions":"Transactions","debit":"Debit","credit":"Credit","header":{"date":"Date","description":"Description","amount":"Amount","action":"Action"},"actions":{"refund":"Check your refunds","comment":"Add a comment","app":"Access your space %{appName}","bill":"View your invoice","alert":"Create an alert","attach":"Attach a document","more":"More"}},"Notifications":{"title":"Notifications","weekly_summary":{"description":"You will receive a summary of your expenses and revenues every Monday of every week.","title":"Weekly Synthesis"},"when_month_revenue":{"description":"You will receive an email at the reception of your salary each month.","title":"Payment of salary"},"monthly_summary":{"description":"You will receive a summary of your expenses and income each month.","title":"Monthly summary"},"if_balance_lower":{"description":"You will receive an email if your balance is less than","title":"Balance threshold","notification":{"one":{"title":"Balance alert: '%{label}' account is at %{balance}%{currency}","debitContent":"Debit of %{amount}%{currency}: '%{label}'.","creditContent":"Credit of %{amount}%{currency}: '%{label}'."},"several":{"title":"%{accountsLength} accounts are below your threshold amount of %{lowerBalance}%{currency}","content":"Balance of %{balance}%{currency} on '%{label}' account."}}},"if_transaction_greater":{"description":"You will receive a notification if a movement is greater than","title":"Movement amount","notification":{"debit":{"title":"Debit of %{amount}%{currency}","content":"%{label}"},"credit":{"title":"Credit of %{amount}%{currency}","content":"%{label}"},"others":{"title":"%{transactionsLength} transactions greater then %{maxAmount}€","debitContent":"Debit of %{amount}%{currency} with label '%{label}'.","creditContent":"Credit of %{amount}%{currency} with label '%{label}'."}}},"no_revenue":{"description":"You will be notified if you have not received your salary at the %{input} of each month.","title":"Salary Delay"}},"ComingSoon":{"description":"These features will soon be available.","title":"To come up"},"Settings":{"title":"Settings","accounts":"Accounts","groups":"Groups","notifications":"Notifications","app":"App"},"AppSettings":{"reset":"reset","description":"By clicking Reset, you will be able to start your application over, and will only lose the data saved on your smartphone.","confirmation":{"title":"Reset this application?","description":"By logging out of your Cozy, you will erase all data synchronized locally by your mobile application.","cancel":"Cancel","confirm":"Reset"}},"Onboarding":{"connect-bank-account":"Connect your bank accounts","manage-budget":{"description":"The situation of all your accounts in 1 glance","title":"Control your budget"},"save-time":{"description":"Your invoices at your fingertips directly from your statements","title":"Save Time"},"cozy-assistant":{"description":"Health accounts of your entire family automatically updated","title":"Cozy works for you"},"title":"Connect your bank accounts"},"mobile":{"onboarding":{"welcome":{"title1":"Welcome to Cozy","title2":"Your own personal cloud","button":"Sign in to your Cozy","sign_up":"Sign up now!","no_account_link":"Don’t have an account? Request one here."},"server_selection":{"description":"This is the web address you use to access your Cozy.","cozy_address_placeholder":"tonystark.mycozy.cloud","button":"Next","wrong_address_with_email":"You typed an email address. To connect on your cozy you must type its url, something like https://tonystark.mycozy.cloud","wrong_address_v2":"You have just entered the address of old Cozy version. This application is only compatible with the latest version. [Please refer to our site for more information.](https://blog.cozycloud.cc/post/2016/11/21/On-the-road-to-Cozy-version-3?lang=en)","wrong_address":"This address doesn’t seem to be a cozy. Please check the address you provide.","wrong_address_cosy":"Woops, the address is not correct. Try with \"mycozy.cloud\" with a \"z\"!"},"password":{"placeholder":"Password","description":"You need to choose a strong password. Use numbers, uppercase latters, special characters…"},"email":{"cozy_email_placeholder":"tony.stark@cozy.cc","description":"We will send you an email to confirm the creation of your Cozy.","invalid":"This doesn't seem to be a valid email address.","taken":"There's already a Cozy bound to this email address."},"instance":{"placeholder":"tonystark","description":"This is the web address you use to sign it to your Cozy.  It might be a good idea to write it down.","existing":"This internet address is already used. Try adding extra characters.","blacklisted":"This internet address is not available.","invalid":"This internet address is not valid."},"waiting":{"description":"Preparing *%{domain}*…"}},"revoked":{"title":"Access revoked","description":"It appears you revoked this device from your Cozy. If you didn't, please let us know at contact@cozycloud.cc. All your local data related to your Cozy will be removed.","loginagain":"Log in again","logout":"Log out"}}}
+module.exports = {"Loading":{"loading":"Loading...","error":"An error occured while loading the data. Please try again later."},"Nav":{"categorisation":"Categorization","settings":"Settings","savings":"Savings","projections":"Forecasts","balance":"Current balance","movements":"Movements"},"Error":{"more-information":"More information","less-information":"Less information"},"AccountSwitch":{"account_counter":"%{smart_count} account |||| %{smart_count} accounts","all_accounts":"All accounts","manage_groups":"Manage my groups","groups":"Groups","accounts":"Accounts","manage_accounts":"Manage my accounts"},"AccountDetails":{"label":"Label","institutionLabel":"Bank","number":"Number","type":"Type","types":{"Checkings":"Checkings","Savings":"Savings","CreditCard":"Credit card","Loan":"Loan"}},"AccountSettings":{"details":"Details","sharing":"Sharing","back-to-accounts":"Back to accounts"},"Balance":{"bank_name":"Name of the bank","subtitle":{"all":"Total of all your accounts","group":"Total group %{label}","account":"Total account %{label}"},"title":"Current balance","solde":"Balance","account_number":"Account number","account_name":"Account name"},"SelectDates":{"last_12_months":"Last 12 months"},"Accounts":{"account":"Account","no-accounts":"You do not have any account yet.","shared-accounts":"Accounts shared to me","no-shared-accounts":"You do not have any shared account yet.","my-accounts":"My accounts","shared":"Shared","add-account":"Add an account","type":"Type","bank":"Bank","label":"Label"},"Groups":{"edit_group":"Edit Group","edit":"edit","create":"Create a group","label":"Label","accounts":"Accounts","groups":"Groups","delete":"remove","no-groups":"Using groups, you can easily gather several accounts, feel free to create one.","back-to-groups":"Back to groups","rename":"Rename","save":"Save","included":"Included","account-number":"Account number"},"Data":{"subcategories":{"uncategorized":"Uncategorized","potentialTransfer":"Potential transfer","check":"Check","incomeTheme":"Income","incomeCat":"Income","activityIncome":"Activity income","replacementIncome":"Replacement income","interests":"Interests","dividends":"Dividends","donationsReceived":"Donations received","allocations":"Allocations","rentalIncome":"Rental income","additionalIncome":"Additional income","retirement":"Retirement","atm":"Cash dispenser","expenseTheme":"Expense theme","dailyLife":"Daily life","supermarket":"Supermarket","tobaccoPress":"Tobacco press","shoppingECommerce":"Shopping and E-commerce","consumerLoan":"Consumer loan","dressing":"Dressing","pets":"Pets","telecom":"Telecom","snaksAndworkMeals":"Snacks and work meals","charity":"Charity","giftsOffered":"Gifts offered","personalCare":"Personal care","transportation":"Transportation","vehiculePurchase":"Vehicule purchase","vehiculeLoan":"Vehicule loan","vehiculeRental":"Vehicule rental","vehiculeInsurance":"Vehicule insurance","vehiculeMaintenance":"Vehicule maintenance","vehiculeGas":"Vehicule gas","privateParking":"Private parking","parkingAndToll":"Parking and toll","publicTransportation":"Public transportation","taxi":"Taxi","services":"Services","post":"Post service","legalCounsel":"Legal counseling","homeAssistance":"Home assistance","bankFees":"Bank fees","financialAdvisor":"Financial advisor","kids":"Kids","kidsAllowance":"Kids allowance","schoolRestaurant":"School restaurant","childCare":"Child care","schoolInsurance":"School insurance","toysAndGifts":"Toys and gifts","pensionPaid":"Pension paid","kidsActivities":"Kids activities","tax":"Tax","incomeTax":"Income tax","socialTax":"Social tax","wealthTax":"Wealth tax","realEstateTax":"Real estate tax","health":"Health","healthExpenses":"Health expenses","healthInsurance":"Health insurance","activities":"Activities","activityFees":"Activity fees","activityEquipments":"Activity equipments","activityLessons":"Activity lessons","electronicsAndMultimedia":"Electronics and multimedia","booksMoviesMusic":"Books movies music","hobbyAndPassion":"Hobby and passion","goingOutAndTravel":"Going out and travel","restaurantsAndBars":"Restaurants and bars","goingOutEntertainment":"Going out entertainment","goingOutCulture":"Going out culture","travel":"Travel","journey":"Journey","educationAndTraining":"Education and training","tuition":"Tuition","eduBooksAndSupplies":"Edu books and supplies","studentLoan":"Student loan","eduLessons":"Edu lessons","homeAndRealEstate":"Home and real estate","realEstateLoan":"Real estate loan","rent":"Rent","homeCharges":"Home charges","homeInsurance":"Home insurance","homeImprovement":"Home improvement","homeHardware":"Home hardware","water":"Water","power":"Power","excludeFromBudgetTheme":"Excluded from budget","excludeFromBudgetCat":"Excluded from budget","internalTransfer":"Internal transfer","creditCardPayment":"Credit card payment","loanCredit":"Loan credit","professionalExpenses":"Professional expenses","investmentBuySell":"Investment buy sell","friendBorrowing":"Friend borrowing","savings":"Savings"},"categories":{"activities":"Leisure, sports","dailyLife":"Everyday life","education":"Education, training","excludeFromBudgetCat":"Out of budget","goingOutAndTravel":"Outings, trips","health":"Health","homeAndRealEstate":"Housing, real estate","incomeCat":"earnings","kids":"Children","services":"Services","tax":"Taxes, taxes","transportation":"Transportation, vehicles","uncategorized":"To be categorized"}},"Categories":{"filter":{"credit":"earnings","total":"Total","debit":"Total excl. earnings"},"headers":{"transactions":"Transactions","credit":"Credit","total":"Total","categories":"Categories","debit":"Debit"},"board":{"debit-header":"Spent","credit-header":"Earnings","total-header":"Total"},"title":{"empty_text":"No categories to display.","total":"Balance of the period","general":"Categorization","debit":"Net expenditure"}},"Transactions":{"title":"Movements","no-movements":"No movements to display","total":"Total","transactions":"Transactions","debit":"Debit","credit":"Credit","header":{"date":"Date","description":"Description","amount":"Amount","action":"Action"},"actions":{"refund":"Check your refunds","comment":"Add a comment","app":"Access your space %{appName}","bill":"View your invoice","alert":"Create an alert","attach":"Attach a document","more":"More"}},"Notifications":{"title":"Notifications","weekly_summary":{"description":"You will receive a summary of your expenses and revenues every Monday of every week.","title":"Weekly Synthesis"},"when_month_revenue":{"description":"You will receive an email at the reception of your salary each month.","title":"Payment of salary"},"monthly_summary":{"description":"You will receive a summary of your expenses and income each month.","title":"Monthly summary"},"if_balance_lower":{"description":"You will receive an email if your balance is less than","title":"Balance threshold","notification":{"one":{"title":"Balance alert: '%{label}' account is at %{balance}%{currency}","debitContent":"Debit of %{amount}%{currency}: '%{label}'.","creditContent":"Credit of %{amount}%{currency}: '%{label}'."},"several":{"title":"%{accountsLength} accounts are below your threshold amount of %{lowerBalance}%{currency}","content":"Balance of %{balance}%{currency} on '%{label}' account."}}},"if_transaction_greater":{"description":"You will receive a notification if a movement is greater than","title":"Movement amount","notification":{"debit":{"title":"Debit of %{amount}%{currency}","content":"%{label}"},"credit":{"title":"Credit of %{amount}%{currency}","content":"%{label}"},"others":{"title":"%{transactionsLength} transactions greater then %{maxAmount}€","debitContent":"Debit of %{amount}%{currency} with label '%{label}'.","creditContent":"Credit of %{amount}%{currency} with label '%{label}'."}}},"no_revenue":{"description":"You will be notified if you have not received your salary at the %{input} of each month.","title":"Salary Delay"}},"ComingSoon":{"description":"These features will soon be available.","title":"To come up"},"Settings":{"title":"Settings","accounts":"Accounts","groups":"Groups","notifications":"Notifications","app":"App"},"AppSettings":{"reset":"reset","description":"By clicking Reset, you will be able to start your application over, and will only lose the data saved on your smartphone.","confirmation":{"title":"Reset this application?","description":"By logging out of your Cozy, you will erase all data synchronized locally by your mobile application.","cancel":"Cancel","confirm":"Reset"}},"Onboarding":{"connect-bank-account":"Connect your bank accounts","manage-budget":{"description":"The situation of all your accounts in 1 glance","title":"Control your budget"},"save-time":{"description":"Your invoices at your fingertips directly from your statements","title":"Save Time"},"cozy-assistant":{"description":"Health accounts of your entire family automatically updated","title":"Cozy works for you"},"title":"Connect your bank accounts"},"mobile":{"onboarding":{"welcome":{"title1":"Welcome to Cozy","title2":"Your own personal cloud","button":"Sign in to your Cozy","sign_up":"Sign up now!","no_account_link":"Don’t have an account? Request one here."},"server_selection":{"description":"This is the web address you use to access your Cozy.","cozy_address_placeholder":"tonystark.mycozy.cloud","button":"Next","wrong_address_with_email":"You typed an email address. To connect on your cozy you must type its url, something like https://tonystark.mycozy.cloud","wrong_address_v2":"You have just entered the address of old Cozy version. This application is only compatible with the latest version. [Please refer to our site for more information.](https://blog.cozycloud.cc/post/2016/11/21/On-the-road-to-Cozy-version-3?lang=en)","wrong_address":"This address doesn’t seem to be a cozy. Please check the address you provide.","wrong_address_cosy":"Woops, the address is not correct. Try with \"mycozy.cloud\" with a \"z\"!"},"password":{"placeholder":"Password","description":"You need to choose a strong password. Use numbers, uppercase latters, special characters…"},"email":{"cozy_email_placeholder":"tony.stark@cozy.cc","description":"We will send you an email to confirm the creation of your Cozy.","invalid":"This doesn't seem to be a valid email address.","taken":"There's already a Cozy bound to this email address."},"instance":{"placeholder":"tonystark","description":"This is the web address you use to sign it to your Cozy.  It might be a good idea to write it down.","existing":"This internet address is already used. Try adding extra characters.","blacklisted":"This internet address is not available.","invalid":"This internet address is not valid."},"waiting":{"description":"Preparing *%{domain}*…"}},"revoked":{"title":"Access revoked","description":"It appears you revoked this device from your Cozy. If you didn't, please let us know at contact@cozycloud.cc. All your local data related to your Cozy will be removed.","loginagain":"Log in again","logout":"Log out"}}}
 
 /***/ }),
 /* 423 */
 /***/ (function(module, exports) {
 
-module.exports = {"Loading":{"loading":"Chargement...","error":"Il y a eu une erreur pendant le chargement des données. Merci de réessayer plus tard."},"Error":{"more-information":"More information","less-information":"Less information"},"AccountSwitch":{"all_accounts":"Tous les comptes","accounts":"Comptes","groups":"Groupes","manage_groups":"Gérer mes groupes","manage_accounts":"Gérer mes comptes","account_counter":"%{smart_count} compte |||| %{smart_count} comptes"},"Nav":{"movements":"Mouvements","balance":"Solde actuel","categorisation":"Catégorisation","projections":"Prévisions","savings":"Economiser","settings":"Paramètres"},"AccountDetails":{"label":"Libellé","institutionLabel":"Banque","number":"Numéro","type":"Type","types":{"Checkings":"Compte courant","Savings":"Compte d'épargne","CreditCard":"Carte de crédit","Loan":"Prêt"}},"AccountSettings":{"details":"Détails","sharing":"Partage","back-to-accounts":"Revenir aux comptes"},"Accounts":{"account":"Compte ","add-account":"Ajouter un compte","bank":"Banque","label":"Libellé","my-accounts":"Mes comptes","no-accounts":"Vous n'avez pas encore de compte.","no-shared-accounts":"Vous n'avez pas encore de compte partagé.","shared":"Partagé","shared-accounts":"Comptes que l'on m'a partagé","type":"Type"},"Balance":{"title":"Solde actuel","subtitle":{"all":"Total de tous vos comptes","group":"Total du groupe %{label}","account":"Total du compte %{label}"},"account_name":"Nom du compte","solde":"Solde","bank_name":"Nom de la banque","account_number":"Numéro du compte"},"Transactions":{"title":"Mouvements","no-movements":"Pas de mouvements à afficher","total":"Total","transactions":"Opérations","debit":"Débit","credit":"Crédit","header":{"date":"Date","description":"Description","amount":"Montant","action":"Action"},"actions":{"more":"Plus","bill":"Afficher votre facture","refund":"Vérifier vos remboursements","app":"Accéder à votre espace %{appName}","attach":"Attacher un document","alert":"Créer une alerte","comment":"Ajouter un commentaire"}},"Categories":{"board":{"debit-header":"Dépense","credit-header":"Revenu","total-header":"Total"},"filter":{"debit":"Total hors categ. revenus","credit":"Revenus","total":"Total"},"title":{"general":"Catégorisation","total":"Solde de la période","debit":"Dépense nette","empty_text":"Pas de catégories à afficher."},"headers":{"categories":"Catégories","transactions":"Opérations","debit":"Débit","credit":"Crédit","total":"Total"}},"Data":{"categories":{"activities":"Activités","dailyLife":"Vie quotidienne","education":"Education, formation","excludeFromBudgetCat":"Hors budget","goingOutAndTravel":"Sorties/voyages","health":"Santé","homeAndRealEstate":"Logement, immobilier","incomeCat":"Revenus","kids":"Enfants","services":"Services","tax":"Impôts, taxes","transportation":"Transports, véhicules","uncategorized":"À catégoriser"},"subcategories":{"taxi":"Taxi","telecom":"Télecommunication","giftsOffered":"Cadeaux offerts","eduBooksAndSupplies":"Livres et fournitures scolaire","homeImprovement":"Amélioration de l'habitat","parkingAndToll":"Parking et péage","goingOutAndTravel":"Sortir et voyager","retirement":"Retraite","vehiculeInsurance":"Assurance véhicule","childCare":"Garde d'enfants","dressing":"Vêtements","incomeTheme":"Revenu","activities":"Activités","internalTransfer":"Transfert interne","bankFees":"Frais bancaires","incomeCat":"Revenu","rentalIncome":"Revenus locatifs","tobaccoPress":"Bureau tabac","loanCredit":"Crédit de prêt","activityEquipments":"Équipements d'activités","professionalExpenses":"Frais professionnels","wealthTax":"Impôt sur le patrimoine","activityFees":"Frais d'activité","allocations":"Allocations","schoolRestaurant":"Restaurant scolaire","schoolInsurance":"Assurance scolaire","vehiculeRental":"Location de véhicules","toysAndGifts":"Jouets et cadeaux","activityLessons":"Cours d'activité","vehiculePurchase":"Achat de véhicules","financialAdvisor":"Conseiller financier","goingOutEntertainment":"Sorties/divertissements","homeAssistance":"Assistance à domicile","socialTax":"Taxes sociales","health":"Santé","pets":"Animaux domestiques","excludeFromBudgetCat":"Exclus du budget","investmentBuySell":"Investissements","pensionPaid":"Pensions","booksMoviesMusic":"Livres, musiques, films","restaurantsAndBars":"Restaurants et bars","transportation":"Transport","power":"Energie","dailyLife":"Vie quotidienne","dividends":"Dividendes","supermarket":"Supermarché","tuition":"Cours","water":"Eau","homeHardware":"Quincaillerie","consumerLoan":"Prêt a la consommation","publicTransportation":"Transports publics","donationsReceived":"Dons reçus","post":"Service après-vente","electronicsAndMultimedia":"Électronique et multimédia","studentLoan":"Prêt étudiant","kids":"Enfants","expenseTheme":"Thème des dépenses","eduLessons":"Cours","atm":"Distributeur de billets","privateParking":"Parking privé","vehiculeGas":"Gaz de véhicules","realEstateTax":"Taxe foncière","homeAndRealEstate":"Maison et immobilier","homeCharges":"Frais à la maison","personalCare":"Soins personnels","healthInsurance":"Assurance santé","activityIncome":"Revenu d'activité","kidsActivities":"Activités pour enfants","legalCounsel":"Conseils juridiques","interests":"Intérêts","vehiculeMaintenance":"Entretien des véhicules","kidsAllowance":"Allocation pour enfants","charity":"Charité","replacementIncome":"Revenu de remplacement","incomeTax":"Impôt sur le revenu","creditCardPayment":"Paiement par carte de crédit","vehiculeLoan":"Prêt véhicule","tax":"Impôts","excludeFromBudgetTheme":"Exclus du budget","rent":"Location","goingOutCulture":"Sortir de la culture","check":"Vérifier","shoppingECommerce":"Shopping et commerce électronique","travel":"Voyages","hobbyAndPassion":"Loisirs et passion","snaksAndworkMeals":"Snacks et repas au travail","uncategorized":"Non catégorisé","friendBorrowing":"Prêt à un ami","potentialTransfer":"Transfert potentiel","healthExpenses":"Frais de santé","additionalIncome":"Revenu supplémentaire","journey":"Voyages","services":"Prestations de service","educationAndTraining":"Éducation et formation","savings":"Des économies","realEstateLoan":"Prêt immobilier","homeInsurance":"Assurance habitation"}},"Groups":{"groups":"Groupes","label":"Libellé","accounts":"Comptes","create":"Créer un groupe","edit":"éditer","delete":"supprimer","edit_group":"Editer le groupe","no-groups":"Avec les groupes, vous pouvez facilement rassembler plusieurs comptes, n'hésitez pas à en créer un !","back-to-groups":"Revenir aux groupes","rename":"Renommer","save":"Sauver"},"SelectDates":{"last_12_months":"Les 12 derniers mois"},"Notifications":{"title":"Notifications","if_balance_lower":{"title":"Seuil de solde","description":"Vous recevrez un email, si votre solde est inférieur à","notification":{"one":{"title":"Alerte solde : le compte '%{label}' est à %{balance}%{currency}","debitContent":"Dépense de %{amount}%{currency} : '%{label}'.","creditContent":"Versement de %{amount}%{currency} : '%{label}'."},"several":{"title":"%{accountsLength} comptes sont en dessous de votre seuil de %{lowerBalance}%{currency}","content":"Solde de %{balance}%{currency} sur le compte '%{label}'."}}},"if_transaction_greater":{"title":"Montant de mouvement","description":"Vous recevrez une notification, si un mouvement est supérieur à","notification":{"debit":{"title":"Dépense de %{amount}%{currency}","content":"%{label}"},"credit":{"title":"Versement de %{amount}%{currency}","content":"%{label}"},"others":{"title":"%{transactionsLength} mouvements de plus de %{maxAmount}€","debitContent":"Dépense de %{amount}%{currency} avec le libellé '%{label}'.","creditContent":"Versement de %{amount}%{currency} avec le libellé '%{label}'."}}},"no_revenue":{"title":"Retard de salaire","description":"Vous serez prévenu si vous n’avez pas reçu votre salaire au %{input} de chaque mois."},"when_month_revenue":{"title":"Versement de salaire","description":"Vous recevrez un email à la réception de votre salaire chaque mois."},"weekly_summary":{"title":"Synthèse hebdomadaire","description":"Vous recevrez un récapitulatif de vos dépenses et de vos revenus tous les lundis de chaque semaine."},"monthly_summary":{"title":"Synthèse mensuelle","description":"Vous recevrez un récapitulatif de vos dépenses et de vos revenus tous les premiers de chaque mois."}},"ComingSoon":{"title":"À venir","description":"Ces fonctionnalités seront bientôt disponibles."},"Settings":{"title":"Paramètres","accounts":"Comptes","groups":"Groupes","notifications":"Notifications"},"Onboarding":{"title":"Se connecter à son espace bancaire","connect-bank-account":"Connecter vos comptes bancaires","manage-budget":{"title":"Maîtrisez votre budget","description":"La situation de tous vos comptes en 1 coup d'œil"},"save-time":{"title":"Gagnez du temps","description":"Vos factures à portée de main directement depuis vos relevés"},"cozy-assistant":{"title":"Cozy travaille pour vous","description":"Les décomptes de santé de toute votre famille à jour automatiquement"}}}
+module.exports = {"Loading":{"loading":"Chargement...","error":"Il y a eu une erreur pendant le chargement des données. Merci de réessayer plus tard."},"Error":{"more-information":"More information","less-information":"Less information"},"AccountSwitch":{"all_accounts":"Tous les comptes","accounts":"Comptes","groups":"Groupes","manage_groups":"Gérer mes groupes","manage_accounts":"Gérer mes comptes","account_counter":"%{smart_count} compte |||| %{smart_count} comptes"},"Nav":{"movements":"Mouvements","balance":"Solde actuel","categorisation":"Catégorisation","projections":"Prévisions","savings":"Economiser","settings":"Paramètres"},"AccountDetails":{"label":"Libellé","institutionLabel":"Banque","number":"Numéro","type":"Type","types":{"Checkings":"Compte courant","Savings":"Compte d'épargne","CreditCard":"Carte de crédit","Loan":"Prêt"}},"AccountSettings":{"details":"Détails","sharing":"Partage","back-to-accounts":"Revenir aux comptes"},"Accounts":{"account":"Compte ","add-account":"Ajouter un compte","bank":"Banque","label":"Libellé","my-accounts":"Mes comptes","no-accounts":"Vous n'avez pas encore de compte.","no-shared-accounts":"Vous n'avez pas encore de compte partagé.","shared":"Partagé","shared-accounts":"Comptes que l'on m'a partagé","type":"Type"},"Balance":{"title":"Solde actuel","subtitle":{"all":"Total de tous vos comptes","group":"Total du groupe %{label}","account":"Total du compte %{label}"},"account_name":"Nom du compte","solde":"Solde","bank_name":"Nom de la banque","account_number":"Numéro du compte"},"Transactions":{"title":"Mouvements","no-movements":"Pas de mouvements à afficher","total":"Total","transactions":"Opérations","debit":"Débit","credit":"Crédit","header":{"date":"Date","description":"Description","amount":"Montant","action":"Action"},"actions":{"more":"Plus","bill":"Afficher votre facture","refund":"Vérifier vos remboursements","app":"Accéder à votre espace %{appName}","attach":"Attacher un document","alert":"Créer une alerte","comment":"Ajouter un commentaire"}},"Categories":{"board":{"debit-header":"Dépense","credit-header":"Revenu","total-header":"Total"},"filter":{"debit":"Total hors categ. revenus","credit":"Revenus","total":"Total"},"title":{"general":"Catégorisation","total":"Solde de la période","debit":"Dépense nette","empty_text":"Pas de catégories à afficher."},"headers":{"categories":"Catégories","transactions":"Opérations","debit":"Débit","credit":"Crédit","total":"Total"}},"Data":{"categories":{"activities":"Activités","dailyLife":"Vie quotidienne","education":"Education, formation","excludeFromBudgetCat":"Hors budget","goingOutAndTravel":"Sorties/voyages","health":"Santé","homeAndRealEstate":"Logement, immobilier","incomeCat":"Revenus","kids":"Enfants","services":"Services","tax":"Impôts, taxes","transportation":"Transports, véhicules","uncategorized":"À catégoriser"},"subcategories":{"taxi":"Taxi","telecom":"Télecommunication","giftsOffered":"Cadeaux offerts","eduBooksAndSupplies":"Livres et fournitures scolaire","homeImprovement":"Amélioration de l'habitat","parkingAndToll":"Parking et péage","goingOutAndTravel":"Sortir et voyager","retirement":"Retraite","vehiculeInsurance":"Assurance véhicule","childCare":"Garde d'enfants","dressing":"Vêtements","incomeTheme":"Revenu","activities":"Activités","internalTransfer":"Transfert interne","bankFees":"Frais bancaires","incomeCat":"Revenu","rentalIncome":"Revenus locatifs","tobaccoPress":"Bureau tabac","loanCredit":"Crédit de prêt","activityEquipments":"Équipements d'activités","professionalExpenses":"Frais professionnels","wealthTax":"Impôt sur le patrimoine","activityFees":"Frais d'activité","allocations":"Allocations","schoolRestaurant":"Restaurant scolaire","schoolInsurance":"Assurance scolaire","vehiculeRental":"Location de véhicules","toysAndGifts":"Jouets et cadeaux","activityLessons":"Cours d'activité","vehiculePurchase":"Achat de véhicules","financialAdvisor":"Conseiller financier","goingOutEntertainment":"Sorties/divertissements","homeAssistance":"Assistance à domicile","socialTax":"Taxes sociales","health":"Santé","pets":"Animaux domestiques","excludeFromBudgetCat":"Exclus du budget","investmentBuySell":"Investissements","pensionPaid":"Pensions","booksMoviesMusic":"Livres, musiques, films","restaurantsAndBars":"Restaurants et bars","transportation":"Transport","power":"Energie","dailyLife":"Vie quotidienne","dividends":"Dividendes","supermarket":"Supermarché","tuition":"Cours","water":"Eau","homeHardware":"Quincaillerie","consumerLoan":"Prêt a la consommation","publicTransportation":"Transports publics","donationsReceived":"Dons reçus","post":"Service après-vente","electronicsAndMultimedia":"Électronique et multimédia","studentLoan":"Prêt étudiant","kids":"Enfants","expenseTheme":"Thème des dépenses","eduLessons":"Cours","atm":"Distributeur de billets","privateParking":"Parking privé","vehiculeGas":"Gaz de véhicules","realEstateTax":"Taxe foncière","homeAndRealEstate":"Maison et immobilier","homeCharges":"Frais à la maison","personalCare":"Soins personnels","healthInsurance":"Assurance santé","activityIncome":"Revenu d'activité","kidsActivities":"Activités pour enfants","legalCounsel":"Conseils juridiques","interests":"Intérêts","vehiculeMaintenance":"Entretien des véhicules","kidsAllowance":"Allocation pour enfants","charity":"Charité","replacementIncome":"Revenu de remplacement","incomeTax":"Impôt sur le revenu","creditCardPayment":"Paiement par carte de crédit","vehiculeLoan":"Prêt véhicule","tax":"Impôts","excludeFromBudgetTheme":"Exclus du budget","rent":"Location","goingOutCulture":"Sortir de la culture","check":"Vérifier","shoppingECommerce":"Shopping et commerce électronique","travel":"Voyages","hobbyAndPassion":"Loisirs et passion","snaksAndworkMeals":"Snacks et repas au travail","uncategorized":"Non catégorisé","friendBorrowing":"Prêt à un ami","potentialTransfer":"Transfert potentiel","healthExpenses":"Frais de santé","additionalIncome":"Revenu supplémentaire","journey":"Voyages","services":"Prestations de service","educationAndTraining":"Éducation et formation","savings":"Des économies","realEstateLoan":"Prêt immobilier","homeInsurance":"Assurance habitation"}},"Groups":{"groups":"Groupes","label":"Libellé","accounts":"Comptes","create":"Créer un groupe","edit":"éditer","delete":"supprimer","edit_group":"Editer le groupe","no-groups":"Avec les groupes, vous pouvez facilement rassembler plusieurs comptes, n'hésitez pas à en créer un !","back-to-groups":"Revenir aux groupes","rename":"Renommer","save":"Sauver","included":"Inclus","account-number":"Numéro du compte"},"SelectDates":{"last_12_months":"Les 12 derniers mois"},"Notifications":{"title":"Notifications","if_balance_lower":{"title":"Seuil de solde","description":"Vous recevrez un email, si votre solde est inférieur à","notification":{"one":{"title":"Alerte solde : le compte '%{label}' est à %{balance}%{currency}","debitContent":"Dépense de %{amount}%{currency} : '%{label}'.","creditContent":"Versement de %{amount}%{currency} : '%{label}'."},"several":{"title":"%{accountsLength} comptes sont en dessous de votre seuil de %{lowerBalance}%{currency}","content":"Solde de %{balance}%{currency} sur le compte '%{label}'."}}},"if_transaction_greater":{"title":"Montant de mouvement","description":"Vous recevrez une notification, si un mouvement est supérieur à","notification":{"debit":{"title":"Dépense de %{amount}%{currency}","content":"%{label}"},"credit":{"title":"Versement de %{amount}%{currency}","content":"%{label}"},"others":{"title":"%{transactionsLength} mouvements de plus de %{maxAmount}€","debitContent":"Dépense de %{amount}%{currency} avec le libellé '%{label}'.","creditContent":"Versement de %{amount}%{currency} avec le libellé '%{label}'."}}},"no_revenue":{"title":"Retard de salaire","description":"Vous serez prévenu si vous n’avez pas reçu votre salaire au %{input} de chaque mois."},"when_month_revenue":{"title":"Versement de salaire","description":"Vous recevrez un email à la réception de votre salaire chaque mois."},"weekly_summary":{"title":"Synthèse hebdomadaire","description":"Vous recevrez un récapitulatif de vos dépenses et de vos revenus tous les lundis de chaque semaine."},"monthly_summary":{"title":"Synthèse mensuelle","description":"Vous recevrez un récapitulatif de vos dépenses et de vos revenus tous les premiers de chaque mois."}},"ComingSoon":{"title":"À venir","description":"Ces fonctionnalités seront bientôt disponibles."},"Settings":{"title":"Paramètres","accounts":"Comptes","groups":"Groupes","notifications":"Notifications"},"Onboarding":{"title":"Se connecter à son espace bancaire","connect-bank-account":"Connecter vos comptes bancaires","manage-budget":{"title":"Maîtrisez votre budget","description":"La situation de tous vos comptes en 1 coup d'œil"},"save-time":{"title":"Gagnez du temps","description":"Vos factures à portée de main directement depuis vos relevés"},"cozy-assistant":{"title":"Cozy travaille pour vous","description":"Les décomptes de santé de toute votre famille à jour automatiquement"}}}
 
 /***/ }),
 /* 424 */
@@ -69351,7 +69341,7 @@ var getAccountsOfTransactions = function () {
         switch (_context2.prev = _context2.next) {
           case 0:
             accountsIds = Array.from(new Set(transactions.map(function (x) {
-              return x.accountId;
+              return x.account;
             })));
             _context2.next = 3;
             return _cozyKonnectorLibs.cozyClient.fetchJSON('POST', '/data/io.cozy.bank.accounts/_all_docs?include_docs=true', { keys: accountsIds });
@@ -70648,7 +70638,7 @@ function error(err) {
 
 	'use strict';
 	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* global fetch */
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* global fetch URL */
 	
 	
 	__webpack_require__(3);
@@ -70986,7 +70976,8 @@ function error(err) {
 	  getInstance: settings.getInstance,
 	  updateInstance: settings.updateInstance,
 	  getClients: settings.getClients,
-	  deleteClientById: settings.deleteClientById
+	  deleteClientById: settings.deleteClientById,
+	  updateLastSync: settings.updateLastSync
 	};
 	
 	var Client = function () {
@@ -71086,6 +71077,11 @@ function error(err) {
 	          throw new Error('OAuth is not supported on the V2 stack');
 	        }
 	        if (_this._oauth) {
+	          if (forceTokenRefresh && _this._clientParams.redirectURI) {
+	            var url = new URL(_this._clientParams.redirectURI);
+	            if (!url.searchParams.has('reconnect')) url.searchParams.append('reconnect', 1);
+	            _this._clientParams.redirectURI = url.toString();
+	          }
 	          return auth.oauthFlow(_this, _this._storage, _this._clientParams, _this._onRegistered, forceTokenRefresh);
 	        }
 	        // we expect to be on a client side application running in a browser
@@ -71741,7 +71737,6 @@ function error(err) {
 	    }, function (err) {
 	      return cb(err, null);
 	    });
-	    return;
 	  };
 	}
 	
@@ -73230,14 +73225,19 @@ function error(err) {
 	  });
 	}
 	
-	// defineIndexV2 is equivalent to defineIndex but only works for V2.
-	// It transforms the index fields into a map reduce view.
 	function defineIndexV3(cozy, doctype, fields) {
 	  var path = (0, _utils.createPath)(cozy, false, doctype, '_index');
 	  var indexDefinition = { 'index': { fields: fields } };
 	  return (0, _fetch.cozyFetchJSON)(cozy, 'POST', path, indexDefinition).then(function (response) {
 	    var indexResult = { doctype: doctype, type: 'mango', name: response.id, fields: fields };
-	    var opts = getV3Options(indexResult, { 'selector': { _id: { '$gt': null } } });
+	
+	    if (response.result === 'exists') return indexResult;
+	
+	    // indexes might not be usable right after being created; so we delay the resolving until they are
+	    var selector = {};
+	    selector[fields[0]] = { '$gt': null };
+	
+	    var opts = getV3Options(indexResult, { 'selector': selector });
 	    var path = (0, _utils.createPath)(cozy, false, indexResult.doctype, '_find');
 	    return (0, _fetch.cozyFetchJSON)(cozy, 'POST', path, opts).then(function () {
 	      return indexResult;
@@ -74522,6 +74522,7 @@ function error(err) {
 	exports.updateInstance = updateInstance;
 	exports.getClients = getClients;
 	exports.deleteClientById = deleteClientById;
+	exports.updateLastSync = updateLastSync;
 	
 	var _fetch = __webpack_require__(94);
 	
@@ -74550,6 +74551,10 @@ function error(err) {
 	
 	function deleteClientById(cozy, id) {
 	  return (0, _fetch.cozyFetchJSON)(cozy, 'DELETE', '/settings/clients/' + id);
+	}
+	
+	function updateLastSync(cozy) {
+	  return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/settings/synchronized');
 	}
 
 /***/ },
@@ -78181,7 +78186,7 @@ var validate = __webpack_require__(59);
 var MAP = 'Map';
 
 // 23.1 Map Objects
-module.exports = __webpack_require__(82)(MAP, function (get) {
+module.exports = __webpack_require__(83)(MAP, function (get) {
   return function Map() { return get(this, arguments.length > 0 ? arguments[0] : undefined); };
 }, {
   // 23.1.3.6 Map.prototype.get(key)
@@ -78222,7 +78227,7 @@ var validate = __webpack_require__(59);
 var SET = 'Set';
 
 // 23.2 Set Objects
-module.exports = __webpack_require__(82)(SET, function (get) {
+module.exports = __webpack_require__(83)(SET, function (get) {
   return function Set() { return get(this, arguments.length > 0 ? arguments[0] : undefined); };
 }, {
   // 23.2.3.1 Set.prototype.add(value)
@@ -78275,7 +78280,7 @@ var methods = {
 };
 
 // 23.3 WeakMap Objects
-var $WeakMap = module.exports = __webpack_require__(82)(WEAK_MAP, wrapper, methods, weak, true, true);
+var $WeakMap = module.exports = __webpack_require__(83)(WEAK_MAP, wrapper, methods, weak, true, true);
 
 // IE11 WeakMap frozen keys fix
 if (fails(function () { return new $WeakMap().set((Object.freeze || Object)(tmp), 7).get(tmp) != 7; })) {
@@ -78309,7 +78314,7 @@ var validate = __webpack_require__(59);
 var WEAK_SET = 'WeakSet';
 
 // 23.4 WeakSet Objects
-__webpack_require__(82)(WEAK_SET, function (get) {
+__webpack_require__(83)(WEAK_SET, function (get) {
   return function WeakSet() { return get(this, arguments.length > 0 ? arguments[0] : undefined); };
 }, {
   // 23.4.3.1 WeakSet.prototype.add(value)
@@ -78666,7 +78671,7 @@ var $export = __webpack_require__(1);
 var isObject = __webpack_require__(9);
 var aFunction = __webpack_require__(41);
 var anInstance = __webpack_require__(53);
-var forOf = __webpack_require__(81);
+var forOf = __webpack_require__(82);
 var speciesConstructor = __webpack_require__(154);
 var task = __webpack_require__(119).set;
 var microtask = __webpack_require__(491)();
@@ -78893,7 +78898,7 @@ $export($export.S + $export.F * (LIBRARY || !USE_NATIVE), PROMISE, {
     return promiseResolve(LIBRARY && this === Wrapper ? $Promise : this, x);
   }
 });
-$export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(80)(function (iter) {
+$export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(81)(function (iter) {
   $Promise.all(iter)['catch'](empty);
 })), PROMISE, {
   // 25.4.4.1 Promise.all(iterable)
@@ -79199,7 +79204,7 @@ if (!USE_NATIVE) {
   $DP.f = $defineProperty;
   __webpack_require__(67).f = gOPNExt.f = $getOwnPropertyNames;
   __webpack_require__(72).f = $propertyIsEnumerable;
-  __webpack_require__(83).f = $getOwnPropertySymbols;
+  __webpack_require__(84).f = $getOwnPropertySymbols;
 
   if (DESCRIPTORS && !__webpack_require__(51)) {
     redefine(ObjectProto, 'propertyIsEnumerable', $propertyIsEnumerable, true);
@@ -79306,7 +79311,7 @@ module.exports = function (name) {
 
 // all enumerable object keys, includes symbols
 var getKeys = __webpack_require__(57);
-var gOPS = __webpack_require__(83);
+var gOPS = __webpack_require__(84);
 var pIE = __webpack_require__(72);
 module.exports = function (it) {
   var result = getKeys(it);
@@ -79618,7 +79623,7 @@ module.exports = function () {
 /***/ (function(module, exports, __webpack_require__) {
 
 // @@match logic
-__webpack_require__(84)('match', 1, function (defined, MATCH, $match) {
+__webpack_require__(85)('match', 1, function (defined, MATCH, $match) {
   // 21.1.3.11 String.prototype.match(regexp)
   return [function match(regexp) {
     'use strict';
@@ -79634,7 +79639,7 @@ __webpack_require__(84)('match', 1, function (defined, MATCH, $match) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // @@replace logic
-__webpack_require__(84)('replace', 2, function (defined, REPLACE, $replace) {
+__webpack_require__(85)('replace', 2, function (defined, REPLACE, $replace) {
   // 21.1.3.14 String.prototype.replace(searchValue, replaceValue)
   return [function replace(searchValue, replaceValue) {
     'use strict';
@@ -79652,7 +79657,7 @@ __webpack_require__(84)('replace', 2, function (defined, REPLACE, $replace) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // @@split logic
-__webpack_require__(84)('split', 2, function (defined, SPLIT, $split) {
+__webpack_require__(85)('split', 2, function (defined, SPLIT, $split) {
   'use strict';
   var isRegExp = __webpack_require__(167);
   var _split = $split;
@@ -79729,7 +79734,7 @@ __webpack_require__(84)('split', 2, function (defined, SPLIT, $split) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // @@search logic
-__webpack_require__(84)('search', 1, function (defined, SEARCH, $search) {
+__webpack_require__(85)('search', 1, function (defined, SEARCH, $search) {
   // 21.1.3.15 String.prototype.search(regexp)
   return [function search(regexp) {
     'use strict';
@@ -79755,7 +79760,7 @@ var toLength = __webpack_require__(19);
 var createProperty = __webpack_require__(122);
 var getIterFn = __webpack_require__(115);
 
-$export($export.S + $export.F * !__webpack_require__(80)(function (iter) { Array.from(iter); }), 'Array', {
+$export($export.S + $export.F * !__webpack_require__(81)(function (iter) { Array.from(iter); }), 'Array', {
   // 22.1.2.1 Array.from(arrayLike, mapfn = undefined, thisArg = undefined)
   from: function from(arrayLike /* , mapfn = undefined, thisArg = undefined */) {
     var O = toObject(arrayLike);
@@ -81789,7 +81794,7 @@ function createWritableStdioStream (fd) {
 
     case 'PIPE':
     case 'TCP':
-      var net = __webpack_require__(85);
+      var net = __webpack_require__(86);
       stream = new net.Socket({
         fd: fd,
         readable: false,
@@ -81858,10 +81863,10 @@ module.exports = require("tty");
 /***/ (function(module, exports, __webpack_require__) {
 
 const fs = __webpack_require__(74)
-const path = __webpack_require__(86)
+const path = __webpack_require__(87)
 const uuid = __webpack_require__(564)
 const sha1 = __webpack_require__(566)
-const bytesToUuid = __webpack_require__(87)
+const bytesToUuid = __webpack_require__(88)
 
 const log = __webpack_require__(27)('cozy-client-js-stub')
 
@@ -81982,7 +81987,7 @@ module.exports = {
 /***/ (function(module, exports, __webpack_require__) {
 
 var sha1 = __webpack_require__(565);
-var bytesToUuid = __webpack_require__(87);
+var bytesToUuid = __webpack_require__(88);
 
 function uuidToBytes(uuid) {
   // Note: We assume we're being passed a valid uuid string
@@ -82645,7 +82650,7 @@ Object.defineProperty(request, 'debug', {
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-var net = __webpack_require__(85);
+var net = __webpack_require__(86);
 var urlParse = __webpack_require__(17).parse;
 var pubsuffix = __webpack_require__(295);
 var Store = __webpack_require__(297).Store;
@@ -85746,13 +85751,13 @@ module.exports = Request
 
 // Export sub-modules
 
-exports.error = exports.Error = __webpack_require__(88);
+exports.error = exports.Error = __webpack_require__(89);
 exports.sntp = __webpack_require__(300);
 
 exports.server = __webpack_require__(581);
 exports.client = __webpack_require__(583);
 exports.crypto = __webpack_require__(128);
-exports.utils = __webpack_require__(90);
+exports.utils = __webpack_require__(91);
 
 exports.uri = {
     authenticate: exports.server.authenticateBewit,
@@ -85907,7 +85912,7 @@ internals.safeCharCodes = (function () {
 
 var Dgram = __webpack_require__(579);
 var Dns = __webpack_require__(580);
-var Hoek = __webpack_require__(89);
+var Hoek = __webpack_require__(90);
 
 
 // Declare internals
@@ -86335,11 +86340,11 @@ module.exports = require("dns");
 
 // Load modules
 
-var Boom = __webpack_require__(88);
-var Hoek = __webpack_require__(89);
+var Boom = __webpack_require__(89);
+var Hoek = __webpack_require__(90);
 var Cryptiles = __webpack_require__(301);
 var Crypto = __webpack_require__(128);
-var Utils = __webpack_require__(90);
+var Utils = __webpack_require__(91);
 
 
 // Declare internals
@@ -86896,10 +86901,10 @@ module.exports = {"name":"hawk","description":"HTTP Hawk Authentication Scheme",
 // Load modules
 
 var Url = __webpack_require__(17);
-var Hoek = __webpack_require__(89);
+var Hoek = __webpack_require__(90);
 var Cryptiles = __webpack_require__(301);
 var Crypto = __webpack_require__(128);
-var Utils = __webpack_require__(90);
+var Utils = __webpack_require__(91);
 
 
 // Declare internals
@@ -87488,7 +87493,7 @@ module.exports.canonicalizeResource = canonicalizeResource
 
 var aws4 = exports,
     url = __webpack_require__(17),
-    querystring = __webpack_require__(91),
+    querystring = __webpack_require__(92),
     crypto = __webpack_require__(3),
     lru = __webpack_require__(586),
     credentialsCache = lru(1000)
@@ -87931,7 +87936,7 @@ function DoublyLinkedNode(key, val) {
 var parser = __webpack_require__(588);
 var signer = __webpack_require__(595);
 var verify = __webpack_require__(600);
-var utils = __webpack_require__(93);
+var utils = __webpack_require__(94);
 
 
 
@@ -87963,9 +87968,9 @@ module.exports = {
 
 // Copyright 2012 Joyent, Inc.  All rights reserved.
 
-var assert = __webpack_require__(92);
+var assert = __webpack_require__(93);
 var util = __webpack_require__(5);
-var utils = __webpack_require__(93);
+var utils = __webpack_require__(94);
 
 
 
@@ -88289,7 +88294,7 @@ module.exports = {
 
 // Requires ec.js, jsbn.js, and jsbn2.js
 var BigInteger = __webpack_require__(45).BigInteger
-var ECCurveFp = __webpack_require__(94).ECCurveFp
+var ECCurveFp = __webpack_require__(95).ECCurveFp
 
 
 // ----------------
@@ -89098,7 +89103,7 @@ module.exports = {
 };
 
 var assert = __webpack_require__(6);
-var SSHBuffer = __webpack_require__(96);
+var SSHBuffer = __webpack_require__(97);
 var crypto = __webpack_require__(3);
 var algs = __webpack_require__(15);
 var Key = __webpack_require__(14);
@@ -89496,13 +89501,13 @@ function write(cert, options) {
 
 // Copyright 2012 Joyent, Inc.  All rights reserved.
 
-var assert = __webpack_require__(92);
+var assert = __webpack_require__(93);
 var crypto = __webpack_require__(3);
 var http = __webpack_require__(32);
 var util = __webpack_require__(5);
 var sshpk = __webpack_require__(129);
 var jsprim = __webpack_require__(596);
-var utils = __webpack_require__(93);
+var utils = __webpack_require__(94);
 
 var sprintf = __webpack_require__(5).format;
 
@@ -91492,10 +91497,10 @@ return exports;
 
 // Copyright 2015 Joyent, Inc.
 
-var assert = __webpack_require__(92);
+var assert = __webpack_require__(93);
 var crypto = __webpack_require__(3);
 var sshpk = __webpack_require__(129);
-var utils = __webpack_require__(93);
+var utils = __webpack_require__(94);
 
 var HASH_ALGOS = utils.HASH_ALGOS;
 var PK_ALGOS = utils.PK_ALGOS;
@@ -91720,7 +91725,7 @@ ForeverAgent.SSL = ForeverAgentSSL
 
 var util = __webpack_require__(5)
   , Agent = __webpack_require__(32).Agent
-  , net = __webpack_require__(85)
+  , net = __webpack_require__(86)
   , tls = __webpack_require__(311)
   , AgentSSL = __webpack_require__(64).Agent
   
@@ -91861,7 +91866,7 @@ function createConnectionSSL (port, host, options) {
 
 var CombinedStream = __webpack_require__(312);
 var util = __webpack_require__(5);
-var path = __webpack_require__(86);
+var path = __webpack_require__(87);
 var http = __webpack_require__(32);
 var https = __webpack_require__(64);
 var parseUrl = __webpack_require__(17).parse;
@@ -92691,7 +92696,7 @@ module.exports = getProxyFromURI
 
 
 var qs = __webpack_require__(320)
-  , querystring = __webpack_require__(91)
+  , querystring = __webpack_require__(92)
 
 
 function Querystring (request) {
@@ -93137,7 +93142,7 @@ module.exports = function (str, opts) {
 
 
 var fs = __webpack_require__(74)
-var qs = __webpack_require__(91)
+var qs = __webpack_require__(92)
 var validate = __webpack_require__(618)
 var extend = __webpack_require__(126)
 
@@ -98192,7 +98197,7 @@ exports.Auth = Auth
 /***/ (function(module, exports, __webpack_require__) {
 
 var rng = __webpack_require__(335);
-var bytesToUuid = __webpack_require__(87);
+var bytesToUuid = __webpack_require__(88);
 
 // **`v1()` - Generate time-based UUID**
 //
@@ -98298,7 +98303,7 @@ module.exports = v1;
 /***/ (function(module, exports, __webpack_require__) {
 
 var rng = __webpack_require__(335);
-var bytesToUuid = __webpack_require__(87);
+var bytesToUuid = __webpack_require__(88);
 
 function v4(options, buf, offset) {
   var i = buf && offset || 0;
@@ -98488,7 +98493,7 @@ exports.OAuth = OAuth
 /***/ (function(module, exports, __webpack_require__) {
 
 var crypto = __webpack_require__(3)
-  , qs = __webpack_require__(91)
+  , qs = __webpack_require__(92)
   ;
 
 function sha1 (key, body) {
@@ -99099,7 +99104,7 @@ exports.Tunnel = Tunnel
 "use strict";
 
 
-var net = __webpack_require__(85)
+var net = __webpack_require__(86)
   , tls = __webpack_require__(311)
   , http = __webpack_require__(32)
   , https = __webpack_require__(64)
@@ -105722,7 +105727,7 @@ module.exports = __webpack_require__(736);
 
 
 
-var _assign = __webpack_require__(97);
+var _assign = __webpack_require__(80);
 
 var ReactBaseClasses = __webpack_require__(347);
 var ReactChildren = __webpack_require__(737);
@@ -106748,12 +106753,10 @@ module.exports = factory(isValidElement);
 
 "use strict";
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 
@@ -106776,12 +106779,10 @@ module.exports = function(isValidElement) {
 
 "use strict";
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 
@@ -106789,6 +106790,7 @@ module.exports = function(isValidElement) {
 var emptyFunction = __webpack_require__(137);
 var invariant = __webpack_require__(31);
 var warning = __webpack_require__(30);
+var assign = __webpack_require__(80);
 
 var ReactPropTypesSecret = __webpack_require__(353);
 var checkPropTypes = __webpack_require__(748);
@@ -106887,7 +106889,8 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
     objectOf: createObjectOfTypeChecker,
     oneOf: createEnumTypeChecker,
     oneOfType: createUnionTypeChecker,
-    shape: createShapeTypeChecker
+    shape: createShapeTypeChecker,
+    exact: createStrictShapeTypeChecker,
   };
 
   /**
@@ -107102,7 +107105,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
       if (typeof checker !== 'function') {
         warning(
           false,
-          'Invalid argument supplid to oneOfType. Expected an array of check functions, but ' +
+          'Invalid argument supplied to oneOfType. Expected an array of check functions, but ' +
           'received %s at index %s.',
           getPostfixForTypeWarning(checker),
           i
@@ -107153,6 +107156,36 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
       }
       return null;
     }
+    return createChainableTypeChecker(validate);
+  }
+
+  function createStrictShapeTypeChecker(shapeTypes) {
+    function validate(props, propName, componentName, location, propFullName) {
+      var propValue = props[propName];
+      var propType = getPropType(propValue);
+      if (propType !== 'object') {
+        return new PropTypeError('Invalid ' + location + ' `' + propFullName + '` of type `' + propType + '` ' + ('supplied to `' + componentName + '`, expected `object`.'));
+      }
+      // We need to check all keys in case some are required but missing from
+      // props.
+      var allKeys = assign({}, props[propName], shapeTypes);
+      for (var key in allKeys) {
+        var checker = shapeTypes[key];
+        if (!checker) {
+          return new PropTypeError(
+            'Invalid ' + location + ' `' + propFullName + '` key `' + key + '` supplied to `' + componentName + '`.' +
+            '\nBad object: ' + JSON.stringify(props[propName], null, '  ') +
+            '\nValid keys: ' +  JSON.stringify(Object.keys(shapeTypes), null, '  ')
+          );
+        }
+        var error = checker(propValue, key, componentName, location, propFullName + '.' + key, ReactPropTypesSecret);
+        if (error) {
+          return error;
+        }
+      }
+      return null;
+    }
+
     return createChainableTypeChecker(validate);
   }
 
@@ -107295,12 +107328,10 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 
 "use strict";
 /**
- * Copyright 2013-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 
@@ -107334,7 +107365,7 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
         try {
           // This is intentionally an invariant that gets caught. It's the same
           // behavior as without this statement except with a better message.
-          invariant(typeof typeSpecs[typeSpecName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'React.PropTypes.', componentName || 'React class', location, typeSpecName);
+          invariant(typeof typeSpecs[typeSpecName] === 'function', '%s: %s type `%s` is invalid; it must be a function, usually from ' + 'the `prop-types` package, but received `%s`.', componentName || 'React class', location, typeSpecName, typeof typeSpecs[typeSpecName]);
           error = typeSpecs[typeSpecName](values, typeSpecName, componentName, location, null, ReactPropTypesSecret);
         } catch (ex) {
           error = ex;
@@ -107421,7 +107452,7 @@ module.exports = factory(Component, isValidElement, ReactNoopUpdateQueue);
 
 
 
-var _assign = __webpack_require__(97);
+var _assign = __webpack_require__(80);
 
 var emptyObject = __webpack_require__(349);
 var _invariant = __webpack_require__(31);
