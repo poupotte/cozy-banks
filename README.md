@@ -1,4 +1,4 @@
-# Cozy Bank
+# Cozy Banks
 
 ## How to start developing
 
@@ -18,7 +18,7 @@ You can add fixtures by using [ACH](https://gitlab.cozycloud.cc/labs/ACH) and da
 
 ## Skins
 
-The Bank application can be "skinned" to MesInfos style.
+The Banks application can be "skinned" to MesInfos style.
 
 Use `env SKIN='mesinfos' yarn build` for example to build with the MesInfos icon and slug. To deploy to a branch different from build you can use `env DEPLOY_BRANCH='build-maif' yarn deploy`.
 
@@ -33,3 +33,7 @@ The application is built automatically by Jenkins.
 * `prod` -> `latest`
 
 The skins are also built into `build-$skin` or `latest-$skin`.
+
+## Get a working Android environment
+
+To be able to start the mobile app on an emulator or a real device, you can follow [this guide](https://gist.github.com/drazik/11dfe2014a6b967821df93b9e10353f4).

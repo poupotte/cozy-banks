@@ -1,10 +1,10 @@
 {
-  "name": "Bank",
-  "slug": "Bank",
+  "name": "Banks",
+  "slug": "banks",
   "icon": "icon-bank.svg",
-  "description": "Bank application",
+  "description": "The banking application for Cozy",
   "category": "cozy",
-  "version": "1.0.0",
+  "version": "0.0.5",
   "licence": "AGPL-3.0",
   "source": "https://gitlab.cozycloud.cc/labs/cozy-bank.git@build",
   "developer": {
@@ -12,7 +12,44 @@
     "url": "https://cozy.io"
   },
   "default_locale": "en",
-  "locales": {},
+  "locales": {
+    "en": {
+      "name": "Banks",
+      "short_description": "The banking application for Cozy.",
+      "long_description": "Banks allows you to monitor your banking transactions in your cozy.",
+      "changes": ""
+    },
+    "fr": {
+      "name": "Banks",
+      "short_description": "L'application bancaire pour Cozy.",
+      "long_description": "Banks vous permet de visualiser très facilement vos opérations bancaires directement dans votre Cozy.",
+      "changes": ""
+    }
+  },
+  "langs": [
+    "en",
+    "fr"
+  ],
+  "platforms": [
+    {
+      "type": "ios",
+      "url": "#"
+    },
+    {
+      "type": "android",
+      "url": "#"
+    }
+  ],
+  "editor": "Cozy",
+  "screenshots": [
+    "screenshot1.png"
+  ],
+  "tags": [
+    "bank",
+    "banks",
+    "money",
+    "account"
+  ],
   "routes": {
     "/": {
       "folder": "/",
