@@ -4,7 +4,7 @@
   "icon": "icon-banks.svg",
   "description": "The banking application for Cozy",
   "category": "cozy",
-  "version": "0.0.5",
+  "version": "0.2.0",
   "licence": "AGPL-3.0",
   "source": "https://gitlab.cozycloud.cc/labs/cozy-bank.git@build",
   "developer": {
@@ -66,27 +66,14 @@
     }
   },
   "permissions": {
-    "apps": {
-      "description": "Required by the cozy-bar to display the icons of the apps",
-      "type": "io.cozy.apps",
-      "verbs": [
-        "GET"
-      ]
-    },
-    "notifications": {
-      "description": "Used to send notifications",
-      "type": "io.cozy.notifications",
-      "verbs": [
-        "POST"
-      ]
-    },
-    "bank.settings": {
-      "description": "Used to manage your bank settings",
-      "type": "io.cozy.bank.settings",
+    "bank.groups": {
+      "description": "Manage groups of bank accounts",
+      "type": "io.cozy.bank.groups",
       "verbs": [
         "GET",
         "POST",
-        "PUT"
+        "PUT",
+        "DELETE"
       ]
     },
     "bank.accounts": {
@@ -108,16 +95,6 @@
         "PUT"
       ]
     },
-    "bank.groups": {
-      "description": "Manage groups of bank accounts",
-      "type": "io.cozy.bank.groups",
-      "verbs": [
-        "GET",
-        "POST",
-        "PUT",
-        "DELETE"
-      ]
-    },
     "bills": {
       "description": "Manage bills",
       "type": "io.cozy.bills",
@@ -128,18 +105,27 @@
         "DELETE"
       ]
     },
-    "sharings": {
-      "description": "Handle shared bank accounts",
-      "type": "io.cozy.mocks.sharings",
+    "notifications": {
+      "description": "Used to send notifications",
+      "type": "io.cozy.notifications",
+      "verbs": [
+        "POST"
+      ]
+    },
+    "apps": {
+      "description": "Required by the cozy-bar to display the icons of the apps",
+      "type": "io.cozy.apps",
       "verbs": [
         "GET"
       ]
     },
-    "recipients": {
-      "description": "Get recipients for shared accounts",
-      "type": "io.cozy.mocks.recipients",
+    "bank.settings": {
+      "description": "Used to manage your bank settings",
+      "type": "io.cozy.bank.settings",
       "verbs": [
-        "GET"
+        "GET",
+        "POST",
+        "PUT"
       ]
     },
     "settings": {
