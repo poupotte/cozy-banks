@@ -99372,8 +99372,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.categorize = exports.createClassifier = exports.tokenizer = exports.format = undefined;
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
 var _classificator = __webpack_require__(1823);
 
 var _classificator2 = _interopRequireDefault(_classificator);
@@ -99422,7 +99420,9 @@ var tokenizer = exports.tokenizer = function tokenizer(text) {
   return tokens;
 };
 
-var createClassifier = exports.createClassifier = function createClassifier(data, options) {
+var createClassifier = exports.createClassifier = function createClassifier(data) {
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
   // Use for automated tests only while we don't have a clean parameters JSON file
   // We can remove this when we have it, and update the tests to use it
   if (!data) {
@@ -99460,23 +99460,9 @@ var createClassifier = exports.createClassifier = function createClassifier(data
     return _classifier;
   }
 
-  // The options property is required by the classificator library
-  // But it is useless because we have to JSON.stringify the data
-  // so we can't set a function. So we set it to an empty object
-  if (!data.options) {
-    data.options = {};
-  }
+  data.options = Object.assign({}, data.options, options);
 
-  var classifier = _classificator2.default.fromJson(JSON.stringify(data));
-
-  // Then we apply the options by hand after the classifier is instantiated
-  Object.entries(options).forEach(function (_ref2) {
-    var _ref3 = _slicedToArray(_ref2, 2),
-        key = _ref3[0],
-        value = _ref3[1];
-
-    classifier[key] = value;
-  });
+  var classifier = _classificator2.default.fromJson(data);
 
   // Display classifier to compare with python file
   // console.log('classifier', classifier.toJson())
@@ -99525,30 +99511,41 @@ const STATE_KEYS = (module.exports.STATE_KEYS = [
  * Initializes a NaiveBayes instance from a JSON state representation.
  * Use this with classifier.toJson().
  *
- * @param  {String} jsonStr   state representation obtained by classifier.toJson()
- * @return {NaiveBayes}       Classifier
+ * @param  {String|Object} jsonStrOrObject   state representation obtained by classifier.toJson()
+ * @return {NaiveBayes}                      Classifier
  */
-module.exports.fromJson = jsonStr => {
-  let parsed;
+module.exports.fromJson = jsonStrOrObject => {
+  let parameters;
 
   try {
-    parsed = JSON.parse(jsonStr);
+    switch (typeof jsonStrOrObject) {
+      case 'string':
+        parameters = JSON.parse(jsonStrOrObject);
+        break;
+
+      case 'object':
+        parameters = jsonStrOrObject;
+        break;
+
+      default:
+        throw new Error('');
+    }
   } catch (e) {
-    console.error(e);
-    throw new Error('Naivebayes.fromJson expects a valid JSON string.');
+    console.log(e);
+    throw new Error('Naivebays.fromJson expects a valid JSON string or an object.')
   }
 
   // init a new classifier
-  let classifier = new Naivebayes(parsed.options);
+  let classifier = new Naivebayes(parameters.options);
 
   // override the classifier's state
   STATE_KEYS.forEach(k => {
-    if (!parsed[k]) {
+    if (!parameters[k]) {
       throw new Error(
         `Naivebayes.fromJson: JSON string is missing an expected property: [${k}].`
       );
     }
-    classifier[k] = parsed[k];
+    classifier[k] = parameters[k];
   });
 
   return classifier;
