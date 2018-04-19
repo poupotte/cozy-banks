@@ -6544,25 +6544,57 @@ module.exports = isObjectLike;
 /* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
 
-const { env2formats } = __webpack_require__(574)
-const { filterLevel, filterSecrets } = __webpack_require__(585)
 
-const { DEBUG, NODE_ENV, LOG_LEVEL } = process.env
-const env = (env2formats[NODE_ENV] && NODE_ENV) || 'production'
+var _require = __webpack_require__(574),
+    env2formats = _require.env2formats;
 
-let level = LOG_LEVEL || (DEBUG && DEBUG.length ? 'debug' : 'info')
-const format = env2formats[env]
-const filters = [filterLevel, filterSecrets]
+var _require2 = __webpack_require__(585),
+    filterLevel = _require2.filterLevel,
+    filterSecrets = _require2.filterSecrets;
 
-const filterOut = function (level, type, message, label, namespace) {
-  for (const filter of filters) {
-    if (filter.apply(null, arguments) === false) {
-      return true
+var _process$env = process.env,
+    DEBUG = _process$env.DEBUG,
+    NODE_ENV = _process$env.NODE_ENV,
+    LOG_LEVEL = _process$env.LOG_LEVEL;
+
+var env = env2formats[NODE_ENV] && NODE_ENV || 'production';
+
+var level = LOG_LEVEL || (DEBUG && DEBUG.length ? 'debug' : 'info');
+var format = env2formats[env];
+var filters = [filterLevel, filterSecrets];
+
+var filterOut = function filterOut(level, type, message, label, namespace) {
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
+
+  try {
+    for (var _iterator = filters[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var filter = _step.value;
+
+      if (filter.apply(null, arguments) === false) {
+        return true;
+      }
+    }
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator.return) {
+        _iterator.return();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
     }
   }
-  return false
-}
+
+  return false;
+};
 
 /**
  * Use it to log messages in your konnector. Typical types are
@@ -6590,40 +6622,43 @@ const filterOut = function (level, type, message, label, namespace) {
  * @param  {string} label
  * @param  {string} namespace
  */
-function log (type, message, label, namespace) {
+function log(type, message, label, namespace) {
   if (filterOut(level, type, message, label, namespace)) {
-    return
+    return;
   }
-  console.log(format(type, message, label, namespace))
+  console.log(format(type, message, label, namespace));
 
   // Try to stop the connector after current running io before the stack
-  if (type === 'critical') setImmediate(() => process.exit(1))
+  if (type === 'critical') setImmediate(function () {
+    return process.exit(1);
+  });
 }
 
 log.addFilter = function (filter) {
-  return filters.push(filter)
-}
+  return filters.push(filter);
+};
 
 log.setLevel = function (lvl) {
-  level = lvl
-}
+  level = lvl;
+};
 
 // Short-hands
-const methods = ['debug', 'info', 'warn', 'error', 'ok', 'critical']
-methods.forEach(level => {
+var methods = ['debug', 'info', 'warn', 'error', 'ok', 'critical'];
+methods.forEach(function (level) {
   log[level] = function (message, label, namespace) {
-    return log(level, message, label, namespace)
-  }
-})
+    return log(level, message, label, namespace);
+  };
+});
 
-module.exports = log
+module.exports = log;
 
 log.namespace = function (namespace) {
-  return function (type, message, label, ns = namespace) {
-    log(type, message, label, ns)
-  }
-}
+  return function (type, message, label) {
+    var ns = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : namespace;
 
+    log(type, message, label, ns);
+  };
+};
 
 /***/ }),
 /* 38 */
@@ -8537,68 +8572,74 @@ module.exports = {
 /* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 /**
  * This is a [cozy-client-js](https://cozy.github.io/cozy-client-js/) instance already initialized and ready to use
  * @module  cozy-client
  */
 
-const {Client, MemoryStorage} = __webpack_require__(587)
+var _require = __webpack_require__(587),
+    Client = _require.Client,
+    MemoryStorage = _require.MemoryStorage;
 
-const getCredentials = function (environment) {
+var getCredentials = function getCredentials(environment) {
   try {
     if (environment === 'development') {
-      const credentials = JSON.parse(process.env.COZY_CREDENTIALS)
+      var credentials = JSON.parse(process.env.COZY_CREDENTIALS);
       credentials.token.toAuthHeader = function () {
-        return 'Bearer ' + credentials.client.registrationAccessToken
-      }
-      return credentials
+        return 'Bearer ' + credentials.client.registrationAccessToken;
+      };
+      return credentials;
     } else {
-      return process.env.COZY_CREDENTIALS.trim()
+      return process.env.COZY_CREDENTIALS.trim();
     }
   } catch (err) {
-    console.error(`Please provide proper COZY_CREDENTIALS environment variable. ${process.env.COZY_CREDENTIALS} is not OK`)
-    throw err
+    console.error('Please provide proper COZY_CREDENTIALS environment variable. ' + process.env.COZY_CREDENTIALS + ' is not OK');
+    throw err;
   }
-}
+};
 
-const getCozyUrl = function () {
+var getCozyUrl = function getCozyUrl() {
   if (process.env.COZY_URL === undefined) {
-    console.error(`Please provide COZY_URL environment variable.`)
-    throw new Error('COZY_URL environment variable is absent/not valid')
+    console.error('Please provide COZY_URL environment variable.');
+    throw new Error('COZY_URL environment variable is absent/not valid');
   } else {
-    return process.env.COZY_URL
+    return process.env.COZY_URL;
   }
-}
+};
 
-const getCozyClient = function (environment = 'production') {
+var getCozyClient = function getCozyClient() {
+  var environment = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'production';
+
   if (environment === 'standalone' || environment === 'test') {
-    return __webpack_require__(715)
+    return __webpack_require__(715);
   }
 
-  const credentials = getCredentials(environment)
-  const cozyURL = getCozyUrl()
+  var credentials = getCredentials(environment);
+  var cozyURL = getCozyUrl();
 
-  const options = {
+  var options = {
     cozyURL: cozyURL
-  }
+  };
 
   if (environment === 'development') {
-    options.oauth = {storage: new MemoryStorage()}
+    options.oauth = { storage: new MemoryStorage() };
   } else if (environment === 'production') {
-    options.token = credentials
+    options.token = credentials;
   }
 
-  const cozyClient = new Client(options)
+  var cozyClient = new Client(options);
 
   if (environment === 'development') {
-    cozyClient.saveCredentials(credentials.client, credentials.token)
+    cozyClient.saveCredentials(credentials.client, credentials.token);
   }
 
-  return cozyClient
-}
+  return cozyClient;
+};
 
-module.exports = getCozyClient(process.env.NODE_ENV)
-
+module.exports = getCozyClient(process.env.NODE_ENV);
 
 /***/ }),
 /* 62 */
@@ -12748,6 +12789,11 @@ module.exports = copyObject;
 /* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 /*
 
 The MIT License (MIT)
@@ -12792,26 +12838,25 @@ if (typeof colors.enabled === "undefined") {
   colors.enabled = colors.supportsColor;
 }
 
-colors.stripColors = colors.strip = function(str){
+colors.stripColors = colors.strip = function (str) {
   return ("" + str).replace(/\x1B\[\d+m/g, '');
 };
 
-
-var stylize = colors.stylize = function stylize (str, style) {
+var stylize = colors.stylize = function stylize(str, style) {
   if (!colors.enabled) {
-    return str+'';
+    return str + '';
   }
 
   return ansiStyles[style].open + str + ansiStyles[style].close;
-}
+};
 
 var matchOperatorsRe = /[|\\{}()[\]^$+*?.]/g;
-var escapeStringRegexp = function (str) {
+var escapeStringRegexp = function escapeStringRegexp(str) {
   if (typeof str !== 'string') {
     throw new TypeError('Expected a string');
   }
-  return str.replace(matchOperatorsRe,  '\\$&');
-}
+  return str.replace(matchOperatorsRe, '\\$&');
+};
 
 function build(_styles) {
   var builder = function builder() {
@@ -12824,19 +12869,19 @@ function build(_styles) {
   return builder;
 }
 
-var styles = (function () {
+var styles = function () {
   var ret = {};
   ansiStyles.grey = ansiStyles.gray;
   Object.keys(ansiStyles).forEach(function (key) {
     ansiStyles[key].closeRe = new RegExp(escapeStringRegexp(ansiStyles[key].close), 'g');
     ret[key] = {
-      get: function () {
+      get: function get() {
         return build(this._styles.concat(key));
       }
     };
   });
   return ret;
-})();
+}();
 
 var proto = defineProps(function colors() {}, styles);
 
@@ -12865,20 +12910,20 @@ function applyStyle() {
   return str;
 }
 
-function applyTheme (theme) {
+function applyTheme(theme) {
   for (var style in theme) {
-    (function(style){
-      colors[style] = function(str){
-        if (typeof theme[style] === 'object'){
+    (function (style) {
+      colors[style] = function (str) {
+        if (_typeof(theme[style]) === 'object') {
           var out = str;
-          for (var i in theme[style]){
+          for (var i in theme[style]) {
             out = colors[theme[style][i]](out);
           }
           return out;
         }
         return colors[theme[style]](str);
       };
-    })(style)
+    })(style);
   }
 }
 
@@ -12901,7 +12946,7 @@ function init() {
   var ret = {};
   Object.keys(styles).forEach(function (name) {
     ret[name] = {
-      get: function () {
+      get: function get() {
         return build([name]);
       }
     };
@@ -12909,8 +12954,9 @@ function init() {
   return ret;
 }
 
-var sequencer = function sequencer (map, str) {
-  var exploded = str.split(""), i = 0;
+var sequencer = function sequencer(map, str) {
+  var exploded = str.split(""),
+      i = 0;
   exploded = exploded.map(map);
   return exploded.join("");
 };
@@ -12924,14 +12970,14 @@ colors.maps = {};
 colors.maps.america = __webpack_require__(580);
 colors.maps.zebra = __webpack_require__(581);
 colors.maps.rainbow = __webpack_require__(582);
-colors.maps.random = __webpack_require__(583)
+colors.maps.random = __webpack_require__(583);
 
 for (var map in colors.maps) {
-  (function(map){
+  (function (map) {
     colors[map] = function (str) {
       return sequencer(colors.maps[map], str);
-    }
-  })(map)
+    };
+  })(map);
 }
 
 defineProps(colors, init());
@@ -18835,6 +18881,9 @@ module.exports = isIndex;
 /* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 var parse = __webpack_require__(145),
     render = __webpack_require__(116),
     assign = __webpack_require__(239);
@@ -18851,7 +18900,7 @@ var tags = { tag: true, script: true, style: true };
  * isTag(type) includes <script> and <style> tags
  */
 
-exports.isTag = function(type) {
+exports.isTag = function (type) {
   if (type.type) type = type.type;
   return tags[type] || false;
 };
@@ -18862,8 +18911,8 @@ exports.isTag = function(type) {
  * @return {String}     String in camel case notation.
  */
 
-exports.camelCase = function(str) {
-  return str.replace(/[_.-](\w|$)/g, function(_, x) {
+exports.camelCase = function (str) {
+  return str.replace(/[_.-](\w|$)/g, function (_, x) {
     return x.toUpperCase();
   });
 };
@@ -18874,7 +18923,7 @@ exports.camelCase = function(str) {
  * @param  {String} str String to be converted.
  * @return {string}     String in "CSS case".
  */
-exports.cssCase = function(str) {
+exports.cssCase = function (str) {
   return str.replace(/[A-Z]/g, '-$&').toLowerCase();
 };
 
@@ -18885,10 +18934,12 @@ exports.cssCase = function(str) {
  * by _make.
  */
 
-exports.domEach = function(cheerio, fn) {
-  var i = 0, len = cheerio.length;
-  while (i < len && fn.call(cheerio, i, cheerio[i]) !== false) ++i;
-  return cheerio;
+exports.domEach = function (cheerio, fn) {
+  var i = 0,
+      len = cheerio.length;
+  while (i < len && fn.call(cheerio, i, cheerio[i]) !== false) {
+    ++i;
+  }return cheerio;
 };
 
 /**
@@ -18898,7 +18949,7 @@ exports.domEach = function(cheerio, fn) {
  * @argument {Object} dom - The htmlparser2-compliant DOM structure
  * @argument {Object} options - The parsing/rendering options
  */
-exports.cloneDom = function(dom, options) {
+exports.cloneDom = function (dom, options) {
   options = assign({}, options, { _useHtmlParser2: true });
 
   return parse(render(dom, options), options, false).children;
@@ -18913,7 +18964,7 @@ var quickExpr = /^(?:[^#<]*(<[\w\W]+>)[^>]*$|#([\w\-]*)$)/;
 /*
  * Check if string is HTML
  */
-exports.isHtml = function(str) {
+exports.isHtml = function (str) {
   // Faster than running regex, if str starts with `<` and ends with `>`, assume it's HTML
   if (str.charAt(0) === '<' && str.charAt(str.length - 1) === '>' && str.length >= 3) return true;
 
@@ -18921,7 +18972,6 @@ exports.isHtml = function(str) {
   var match = quickExpr.exec(str);
   return !!(match && match[1]);
 };
-
 
 /***/ }),
 /* 120 */
@@ -20958,6 +21008,9 @@ SSHBuffer.prototype.write = function (buf) {
 /* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 /*
   Module Dependencies
 */
@@ -20967,10 +21020,11 @@ var htmlparser = __webpack_require__(59),
 /*
   Parser
 */
-exports = module.exports = function(content, options, isDocument) {
+exports = module.exports = function (content, options, isDocument) {
   var dom = exports.evaluate(content, options, isDocument),
-      // Generic root element
-      root = exports.evaluate('<root></root>', options, false)[0];
+
+  // Generic root element
+  root = exports.evaluate('<root></root>', options, false)[0];
 
   root.type = 'root';
   root.parent = null;
@@ -20981,20 +21035,19 @@ exports = module.exports = function(content, options, isDocument) {
   return root;
 };
 
-function parseWithParse5 (content, isDocument) {
+function parseWithParse5(content, isDocument) {
   var parse = isDocument ? parse5.parse : parse5.parseFragment,
       root = parse(content, { treeAdapter: parse5.treeAdapters.htmlparser2 });
 
   return root.children;
 }
 
-exports.evaluate = function(content, options, isDocument) {
+exports.evaluate = function (content, options, isDocument) {
   // options = options || $.fn.options;
 
   var dom;
 
-  if (Buffer.isBuffer(content))
-    content = content.toString();
+  if (Buffer.isBuffer(content)) content = content.toString();
 
   if (typeof content === 'string') {
     var useHtmlParser2 = options.xmlMode || options._useHtmlParser2;
@@ -21010,7 +21063,7 @@ exports.evaluate = function(content, options, isDocument) {
 /*
   Update the dom structure, for one changed layer
 */
-exports.update = function(arr, parent) {
+exports.update = function (arr, parent) {
   // normalize
   if (!Array.isArray(arr)) arr = [arr];
 
@@ -21058,7 +21111,6 @@ exports.update = function(arr, parent) {
 };
 
 // module.exports = $.extend(exports);
-
 
 /***/ }),
 /* 146 */
@@ -21139,6 +21191,9 @@ Mixin.prototype._getOverriddenMethods = function () {
 /* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 var assign = __webpack_require__(239);
 
 /*
@@ -21152,8 +21207,8 @@ exports.default = {
   decodeEntities: true
 };
 
-exports.flatten = function(options) {
-  return options && options.xml ? assign({xmlMode: true}, options.xml) : options;
+exports.flatten = function (options) {
+  return options && options.xml ? assign({ xmlMode: true }, options.xml) : options;
 };
 
 /***/ }),
@@ -24840,6 +24895,11 @@ module.exports = toInteger;
 /* 220 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 /**
  * Module dependencies
  */
@@ -24850,25 +24910,24 @@ var serialize = __webpack_require__(116),
     select = __webpack_require__(221),
     parse = __webpack_require__(145),
     _ = {
-      merge: __webpack_require__(223),
-      defaults: __webpack_require__(244)
-    };
+  merge: __webpack_require__(223),
+  defaults: __webpack_require__(244)
+};
 
 /**
  * $.load(str)
  */
 
-exports.load = function(content, options, isDocument) {
+exports.load = function (content, options, isDocument) {
   var Cheerio = __webpack_require__(331);
 
   options = _.defaults(flattenOptions(options || {}), defaultOptions);
 
-  if (isDocument === void 0)
-    isDocument = true;
+  if (isDocument === void 0) isDocument = true;
 
   var root = parse(content, options, isDocument);
 
-  var initialize = function(selector, context, r, opts) {
+  var initialize = function initialize(selector, context, r, opts) {
     if (!(this instanceof initialize)) {
       return new initialize(selector, context, r, opts);
     }
@@ -24921,13 +24980,12 @@ function render(that, dom, options) {
  * $.html([selector | dom], [options])
  */
 
-exports.html = function(dom, options) {
+exports.html = function (dom, options) {
   // be flexible about parameters, sometimes we call html(),
   // with options as only parameter
   // check dom argument for dom element specific properties
   // assume there is no 'length' or 'type' properties in the options object
-  if (Object.prototype.toString.call(dom) === '[object Object]' && !options && !('length' in dom) && !('type' in dom))
-  {
+  if (Object.prototype.toString.call(dom) === '[object Object]' && !options && !('length' in dom) && !('type' in dom)) {
     options = dom;
     dom = undefined;
   }
@@ -24943,8 +25001,8 @@ exports.html = function(dom, options) {
  * $.xml([selector | dom])
  */
 
-exports.xml = function(dom) {
-  var options = _.defaults({xml: true}, this._options);
+exports.xml = function (dom) {
+  var options = _.defaults({ xml: true }, this._options);
 
   return render(this, dom, options);
 };
@@ -24953,7 +25011,7 @@ exports.xml = function(dom) {
  * $.text(dom)
  */
 
-exports.text = function(elems) {
+exports.text = function (elems) {
   if (!elems) {
     elems = this.root();
   }
@@ -24964,8 +25022,7 @@ exports.text = function(elems) {
 
   for (var i = 0; i < len; i++) {
     elem = elems[i];
-    if (elem.type === 'text') ret += elem.data;
-    else if (elem.children && elem.type !== 'comment' && elem.tagName !== 'script' && elem.tagName !== 'style') {
+    if (elem.type === 'text') ret += elem.data;else if (elem.children && elem.type !== 'comment' && elem.tagName !== 'script' && elem.tagName !== 'style') {
       ret += exports.text(elem.children);
     }
   }
@@ -24978,7 +25035,7 @@ exports.text = function(elems) {
  * Parses a string into an array of DOM nodes. The `context` argument has no
  * meaning for Cheerio, but it is maintained for API compatibility with jQuery.
  */
-exports.parseHTML = function(data, context, keepScripts) {
+exports.parseHTML = function (data, context, keepScripts) {
   var parsed;
 
   if (!data || typeof data !== 'string') {
@@ -25005,14 +25062,14 @@ exports.parseHTML = function(data, context, keepScripts) {
 /**
  * $.root()
  */
-exports.root = function() {
+exports.root = function () {
   return this(this._root);
 };
 
 /**
  * $.contains()
  */
-exports.contains = function(container, contained) {
+exports.contains = function (container, contained) {
 
   // According to the jQuery API, an element does not "contain" itself
   if (contained === container) {
@@ -25035,13 +25092,13 @@ exports.contains = function(container, contained) {
  * $.merge()
  */
 
-exports.merge = function(arr1, arr2) {
-  if(!(isArrayLike(arr1) && isArrayLike(arr2))){
+exports.merge = function (arr1, arr2) {
+  if (!(isArrayLike(arr1) && isArrayLike(arr2))) {
     return;
   }
   var newLength = arr1.length + arr2.length;
   var i = 0;
-  while(i < arr2.length){
+  while (i < arr2.length) {
     arr1[i + arr1.length] = arr2[i];
     i++;
   }
@@ -25049,32 +25106,31 @@ exports.merge = function(arr1, arr2) {
   return arr1;
 };
 
-function isArrayLike(item){
-  if(Array.isArray(item)){
+function isArrayLike(item) {
+  if (Array.isArray(item)) {
     return true;
   }
-  if(typeof item !== 'object'){
+  if ((typeof item === 'undefined' ? 'undefined' : _typeof(item)) !== 'object') {
     return false;
   }
-  if(!item.hasOwnProperty('length')){
+  if (!item.hasOwnProperty('length')) {
     return false;
   }
-  if(typeof item.length !== 'number') {
+  if (typeof item.length !== 'number') {
     return false;
   }
-  if(item.length < 0){
+  if (item.length < 0) {
     return false;
   }
   var i = 0;
-  while(i < item.length){
-    if(!(i in item)){
+  while (i < item.length) {
+    if (!(i in item)) {
       return false;
     }
     i++;
   }
   return true;
 }
-
 
 /***/ }),
 /* 221 */
@@ -26169,7 +26225,10 @@ module.exports = toString;
 /* 255 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(573)
+"use strict";
+
+
+__webpack_require__(573);
 
 module.exports = {
   BaseKonnector: __webpack_require__(586),
@@ -26184,8 +26243,7 @@ module.exports = {
   updateOrCreate: __webpack_require__(1018),
   request: __webpack_require__(291),
   retry: __webpack_require__(1019)
-}
-
+};
 
 /***/ }),
 /* 256 */
@@ -26201,19 +26259,21 @@ webpackEmptyContext.id = 256;
 
 /***/ }),
 /* 257 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-const Secret = function (data) {
-  Object.assign(this, data)
-  return this
-}
+"use strict";
+
+
+var Secret = function Secret(data) {
+  Object.assign(this, data);
+  return this;
+};
 
 Secret.prototype.toString = function () {
-  throw new Error('Cannot convert Secret to string')
-}
+  throw new Error('Cannot convert Secret to string');
+};
 
-module.exports = Secret
-
+module.exports = Secret;
 
 /***/ }),
 /* 258 */
@@ -27246,62 +27306,68 @@ webpackEmptyContext.id = 286;
 "use strict";
 
 
-const log = __webpack_require__(37)
+var log = __webpack_require__(37);
 
-const MSG = {
+var MSG = {
   TWOFACTOR: '2FA token requested'
-}
+};
 
-function requireTwoFactor (extras = {}) {
-  const extrasStr = Buffer(JSON.stringify(extras), 'binary').toString('base64')
-  log('error', `${MSG.TWOFACTOR}||${extrasStr}`)
-  return extrasStr
+function requireTwoFactor() {
+  var extras = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+  var extrasStr = Buffer(JSON.stringify(extras), 'binary').toString('base64');
+  log('error', MSG.TWOFACTOR + '||' + extrasStr);
+  return extrasStr;
 }
 
 /**
  * The konnector could not login
  * @type {String}
  */
-const LOGIN_FAILED = 'LOGIN_FAILED'
+var LOGIN_FAILED = 'LOGIN_FAILED';
 
 /**
  * The folder specified as folder_to_save does not exist (checked by BaseKonnector)
  * @type {String}
  */
-const NOT_EXISTING_DIRECTORY = 'NOT_EXISTING_DIRECTORY'
+var NOT_EXISTING_DIRECTORY = 'NOT_EXISTING_DIRECTORY';
 
 /**
  * The vendor's website is down
  * @type {String}
  */
-const VENDOR_DOWN = 'VENDOR_DOWN'
+var VENDOR_DOWN = 'VENDOR_DOWN';
 
 /**
  * There was an unexpected error, please take a look at the logs to know what happened
  * @type {String}
  */
-const USER_ACTION_NEEDED = 'USER_ACTION_NEEDED'
+var USER_ACTION_NEEDED = 'USER_ACTION_NEEDED';
 
 /**
  * There was a problem while downloading a file
  * @type {String}
  */
-const FILE_DOWNLOAD_FAILED = 'FILE_DOWNLOAD_FAILED'
+var FILE_DOWNLOAD_FAILED = 'FILE_DOWNLOAD_FAILED';
 
 module.exports = {
   MSG: MSG,
-  LOGIN_FAILED,
-  NOT_EXISTING_DIRECTORY,
-  VENDOR_DOWN,
-  USER_ACTION_NEEDED,
-  FILE_DOWNLOAD_FAILED,
+  LOGIN_FAILED: LOGIN_FAILED,
+  NOT_EXISTING_DIRECTORY: NOT_EXISTING_DIRECTORY,
+  VENDOR_DOWN: VENDOR_DOWN,
+  USER_ACTION_NEEDED: USER_ACTION_NEEDED,
+  FILE_DOWNLOAD_FAILED: FILE_DOWNLOAD_FAILED,
   requireTwoFactor: requireTwoFactor
-}
-
+};
 
 /***/ }),
 /* 288 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 /**
  * The goal of this function is to save the given files in the given folder via the Cozy API.
@@ -27330,162 +27396,155 @@ module.exports = {
  *
  * @module saveFiles
  */
-const bluebird = __webpack_require__(68)
-const path = __webpack_require__(25)
-const request = __webpack_require__(291)
-const rq = request()
-const log = __webpack_require__(37).namespace('saveFiles')
-const cozy = __webpack_require__(61)
-const mimetypes = __webpack_require__(138)
-const errors = __webpack_require__(287)
+var bluebird = __webpack_require__(68);
+var path = __webpack_require__(25);
+var request = __webpack_require__(291);
+var rq = request();
+var log = __webpack_require__(37).namespace('saveFiles');
+var cozy = __webpack_require__(61);
+var mimetypes = __webpack_require__(138);
+var errors = __webpack_require__(287);
 
-const sanitizeEntry = function (entry) {
-  delete entry.requestOptions
-  return entry
-}
+var sanitizeEntry = function sanitizeEntry(entry) {
+  delete entry.requestOptions;
+  return entry;
+};
 
-const downloadEntry = function (entry, options) {
-  const reqOptions = Object.assign({
+var downloadEntry = function downloadEntry(entry, options) {
+  var reqOptions = Object.assign({
     uri: entry.fileurl,
     method: 'GET',
     jar: true
-  }, entry.requestOptions)
+  }, entry.requestOptions);
 
-  return cozy.files
-    .statByPath(options.folderPath)
-    .then(folder => {
-      let filePromise = rq(reqOptions)
-      const createFileOptions = {
-        name: getFileName(entry),
-        dirID: folder._id,
-        contentType: options.contentType
-      }
+  return cozy.files.statByPath(options.folderPath).then(function (folder) {
+    var filePromise = rq(reqOptions);
+    var createFileOptions = {
+      name: getFileName(entry),
+      dirID: folder._id,
+      contentType: options.contentType
 
       // we have to do this since the result of filePromise is not a stream and cannot be taken by
       // cozy.files.create
-      if (options.postProcessFile) {
-        return filePromise
-        .then(data => options.postProcessFile(data))
-        .then(data => cozy.files.create(data, createFileOptions))
-      }
+    };if (options.postProcessFile) {
+      return filePromise.then(function (data) {
+        return options.postProcessFile(data);
+      }).then(function (data) {
+        return cozy.files.create(data, createFileOptions);
+      });
+    }
 
-      return cozy.files.create(filePromise, createFileOptions)
-    })
-    .then(fileobject => {
-      // This allows us to have the warning message at the first run
-      checkMimeWithPath(fileobject.attributes.mime, fileobject.attributes.name)
-      checkFileSize(fileobject)
-      return fileobject
-    })
-    .then(fileobject => {
-      entry.fileobject = fileobject
-      return entry
-    })
-}
+    return cozy.files.create(filePromise, createFileOptions);
+  }).then(function (fileobject) {
+    // This allows us to have the warning message at the first run
+    checkMimeWithPath(fileobject.attributes.mime, fileobject.attributes.name);
+    checkFileSize(fileobject);
+    return fileobject;
+  }).then(function (fileobject) {
+    entry.fileobject = fileobject;
+    return entry;
+  });
+};
 
-const saveEntry = function (entry, options) {
-  if (!entry.fileurl && !entry.requestOptions) return entry
+var saveEntry = function saveEntry(entry, options) {
+  if (!entry.fileurl && !entry.requestOptions) return entry;
 
   if (options.timeout && Date.now() > options.timeout) {
-    const remainingTime = Math.floor((options.timeout - Date.now()) / 1000)
-    log('info', `${remainingTime}s timeout finished for ${options.folderPath}`)
-    throw new Error('TIMEOUT')
+    var remainingTime = Math.floor((options.timeout - Date.now()) / 1000);
+    log('info', remainingTime + 's timeout finished for ' + options.folderPath);
+    throw new Error('TIMEOUT');
   }
 
-  const filepath = path.join(options.folderPath, getFileName(entry))
-  return cozy.files
-    .statByPath(filepath)
-    .then(file => {
-      // check that the extension and mime type of the existing file in cozy match
-      // if this is not the case, we redownload it
-      const mime = file.attributes.mime
-      if (!checkMimeWithPath(mime, filepath) || !checkFileSize(file)) {
-        return cozy.files.trashById(file._id)
-        .then(() => Promise.reject(new Error('BAD_DOWNLOADED_FILE')))
-      }
-    })
-    .then(() => true, () => false)
-    .then(fileExists => {
-      if (fileExists) {
-        return entry
-      } else {
-        log('debug', entry)
-        log('debug', `File ${filepath} does not exist yet or is not valid`)
-        return downloadEntry(entry, options)
-      }
-    })
-    .then(sanitizeEntry)
-    .then(entry => {
-      return options.postProcess ? options.postProcess(entry) : entry
-    })
-    .catch(err => {
-      log('warn', errors.FILE_DOWNLOAD_FAILED)
-      log('warn', err.message, `Error caught while trying to save the file ${entry.fileurl}`)
-      return entry
-    })
-}
+  var filepath = path.join(options.folderPath, getFileName(entry));
+  return cozy.files.statByPath(filepath).then(function (file) {
+    // check that the extension and mime type of the existing file in cozy match
+    // if this is not the case, we redownload it
+    var mime = file.attributes.mime;
+    if (!checkMimeWithPath(mime, filepath) || !checkFileSize(file)) {
+      return cozy.files.trashById(file._id).then(function () {
+        return Promise.reject(new Error('BAD_DOWNLOADED_FILE'));
+      });
+    }
+  }).then(function () {
+    return true;
+  }, function () {
+    return false;
+  }).then(function (fileExists) {
+    if (fileExists) {
+      return entry;
+    } else {
+      log('debug', entry);
+      log('debug', 'File ' + filepath + ' does not exist yet or is not valid');
+      return downloadEntry(entry, options);
+    }
+  }).then(sanitizeEntry).then(function (entry) {
+    return options.postProcess ? options.postProcess(entry) : entry;
+  }).catch(function (err) {
+    log('warn', errors.FILE_DOWNLOAD_FAILED);
+    log('warn', err.message, 'Error caught while trying to save the file ' + entry.fileurl);
+    return entry;
+  });
+};
 
 // Saves the files given in the fileurl attribute of each entries
-module.exports = (entries, fields, options = {}) => {
-  if (typeof fields !== 'object') {
-    log(
-      'debug',
-      'Deprecation warning, saveFiles 2nd argument should not be a string'
-    )
+module.exports = function (entries, fields) {
+  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+  if ((typeof fields === 'undefined' ? 'undefined' : _typeof(fields)) !== 'object') {
+    log('debug', 'Deprecation warning, saveFiles 2nd argument should not be a string');
     fields = {
       folderPath: fields
-    }
+    };
   }
-  const saveOptions = {
+  var saveOptions = {
     folderPath: fields.folderPath,
     timeout: options.timeout,
     postProcess: options.postProcess,
     postProcessFile: options.postProcessFile,
     contentType: options.contentType
-  }
-  return bluebird
-    .mapSeries(entries, entry => saveEntry(entry, saveOptions))
-    .catch(err => {
-      // do not count TIMEOUT error as an error outside
-      if (err.message !== 'TIMEOUT') throw err
-    })
-}
+  };
+  return bluebird.mapSeries(entries, function (entry) {
+    return saveEntry(entry, saveOptions);
+  }).catch(function (err) {
+    // do not count TIMEOUT error as an error outside
+    if (err.message !== 'TIMEOUT') throw err;
+  });
+};
 
-function getFileName (entry) {
-  let filename
+function getFileName(entry) {
+  var filename = void 0;
   if (entry.filename) {
-    filename = entry.filename
+    filename = entry.filename;
   } else {
     // try to get the file name from the url
-    const parsed = __webpack_require__(13).parse(entry.fileurl)
-    filename = path.basename(parsed.pathname)
+    var parsed = __webpack_require__(13).parse(entry.fileurl);
+    filename = path.basename(parsed.pathname);
   }
-  return sanitizeFileName(filename)
+  return sanitizeFileName(filename);
 }
 
-function sanitizeFileName (filename) {
-  return filename.replace(/^\.+$/, '').replace(/[/?<>\\:*|":]/g, '')
+function sanitizeFileName(filename) {
+  return filename.replace(/^\.+$/, '').replace(/[/?<>\\:*|":]/g, '');
 }
 
-function checkFileSize (fileobject) {
+function checkFileSize(fileobject) {
   if (fileobject.attributes.size === 0) {
-    log('warn', `${fileobject.attributes.name} is empty`)
-    log('warn', 'BAD_FILE_SIZE')
-    return false
+    log('warn', fileobject.attributes.name + ' is empty');
+    log('warn', 'BAD_FILE_SIZE');
+    return false;
   }
-  return true
+  return true;
 }
 
-function checkMimeWithPath (mime, filepath) {
-  const extension = path.extname(filepath).substr(1)
+function checkMimeWithPath(mime, filepath) {
+  var extension = path.extname(filepath).substr(1);
   if (extension && mime && mimetypes.lookup(extension) !== mime) {
-    log('warn', `${filepath} and ${mime} do not correspond`)
-    log('warn', 'BAD_MIME_TYPE')
-    return false
+    log('warn', filepath + ' and ' + mime + ' do not correspond');
+    log('warn', 'BAD_MIME_TYPE');
+    return false;
   }
-  return true
+  return true;
 }
-
 
 /***/ }),
 /* 289 */
@@ -27598,6 +27657,9 @@ module.exports = nodebackForPromise;
 /* 291 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 /**
  * This is a function which returns an instance of
  * [request-promise](https://www.npmjs.com/package/request-promise) initialized with
@@ -27627,73 +27689,73 @@ module.exports = nodebackForPromise;
  * @module request
  */
 
-let request = __webpack_require__(752)
-const requestdebug = __webpack_require__(868)
+var request = __webpack_require__(752);
+var requestdebug = __webpack_require__(868);
 
-let singleton = null
-let requestClass = null
+var singleton = null;
+var requestClass = null;
 
-module.exports = function (options = {}) {
-  if (singleton) return singleton
+module.exports = function () {
+  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-  if (request.Request) requestClass = request.Request
+  if (singleton) return singleton;
 
-  const defaultOptions = {
+  if (request.Request) requestClass = request.Request;
+
+  var defaultOptions = {
     debug: false,
     json: true,
     cheerio: false,
     strictSSL: false,
     headers: {},
     followAllRedirects: true
-  }
+  };
 
-  options = Object.assign(defaultOptions, options)
+  options = Object.assign(defaultOptions, options);
 
   if (options.debug) {
     // This avoids an error message comming from request-debug
     // see https://github.com/request/request-debug/blob/0.2.0/index.js#L15
-    if (!request.Request) request.Request = requestClass
-    requestdebug(request)
+    if (!request.Request) request.Request = requestClass;
+    requestdebug(request);
   }
 
-  const requestOptions = {}
+  var requestOptions = {};
 
-  requestOptions.json = options.json
-  requestOptions.jar = options.jar
-  requestOptions.headers = options.headers
-  requestOptions.followAllRedirects = options.followAllRedirects
-  requestOptions.strictSSL = options.strictSSL
+  requestOptions.json = options.json;
+  requestOptions.jar = options.jar;
+  requestOptions.headers = options.headers;
+  requestOptions.followAllRedirects = options.followAllRedirects;
+  requestOptions.strictSSL = options.strictSSL;
 
   if (options.cheerio) {
     // a lot of web service do not want to be called by robots and then check the user agent to
     // be sure they are called by a browser. This user agent works most of the time.
-    requestOptions.headers['User-Agent'] = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:36.0) ' +
-                                           'Gecko/20100101 Firefox/36.0'
+    requestOptions.headers['User-Agent'] = 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:36.0) ' + 'Gecko/20100101 Firefox/36.0';
     requestOptions.transform = function (body, response, resolveWithFullResponse) {
-      let result = __webpack_require__(870).load(body)
+      var result = __webpack_require__(870).load(body);
 
       if (resolveWithFullResponse === true) {
-        response.body = result
-        result = response
+        response.body = result;
+        result = response;
       }
 
-      return result
-    }
+      return result;
+    };
   } else {
     requestOptions.transform = function (body, response, resolveWithFullResponse) {
-      let result = body
+      var result = body;
       if (resolveWithFullResponse === true) {
-        result = response
+        result = response;
       }
-      return result
-    }
+      return result;
+    };
   }
 
-  request = request.defaults(requestOptions)
+  request = request.defaults(requestOptions);
 
-  return request
-}
-
+  return request;
+};
 
 /***/ }),
 /* 292 */
@@ -34064,6 +34126,9 @@ module.exports = rng;
 /* 331 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 /*
   Module dependencies
 */
@@ -34073,29 +34138,23 @@ var parse = __webpack_require__(145),
     flattenOptions = __webpack_require__(148).flatten,
     isHtml = __webpack_require__(119).isHtml,
     _ = {
-      extend: __webpack_require__(356),
-      bind: __webpack_require__(215),
-      forEach: __webpack_require__(121),
-      defaults: __webpack_require__(244)
-    };
+  extend: __webpack_require__(356),
+  bind: __webpack_require__(215),
+  forEach: __webpack_require__(121),
+  defaults: __webpack_require__(244)
+};
 
 /*
  * The API
  */
 
-var api = [
-  __webpack_require__(942),
-  __webpack_require__(1002),
-  __webpack_require__(1007),
-  __webpack_require__(1009),
-  __webpack_require__(1014)
-];
+var api = [__webpack_require__(942), __webpack_require__(1002), __webpack_require__(1007), __webpack_require__(1009), __webpack_require__(1014)];
 
 /*
  * Instance of cheerio
  */
 
-var Cheerio = module.exports = function(selector, context, root, options) {
+var Cheerio = module.exports = function (selector, context, root, options) {
   if (!(this instanceof Cheerio)) return new Cheerio(selector, context, root, options);
 
   this.options = _.defaults(flattenOptions(options), this.options, defaultOptions);
@@ -34112,12 +34171,11 @@ var Cheerio = module.exports = function(selector, context, root, options) {
   if (selector.cheerio) return selector;
 
   // $(dom)
-  if (isNode(selector))
-    selector = [selector];
+  if (isNode(selector)) selector = [selector];
 
   // $([dom])
   if (Array.isArray(selector)) {
-    _.forEach(selector, _.bind(function(elem, idx) {
+    _.forEach(selector, _.bind(function (elem, idx) {
       this[idx] = elem;
     }, this));
     this.length = selector.length;
@@ -34142,7 +34200,7 @@ var Cheerio = module.exports = function(selector, context, root, options) {
       selector = [context, selector].join(' ');
       context = this._root;
     }
-  // $('li', node), $('li', [nodes])
+    // $('li', node), $('li', [nodes])
   } else if (!context.cheerio) {
     context = Cheerio.call(this, context);
   }
@@ -34179,7 +34237,7 @@ Cheerio.prototype.splice = Array.prototype.splice;
  * @api private
  */
 
-Cheerio.prototype._make = function(dom, context) {
+Cheerio.prototype._make = function (dom, context) {
   var cheerio = new this.constructor(dom, context, this._root, this.options);
   cheerio.prevObject = this;
   return cheerio;
@@ -34189,21 +34247,20 @@ Cheerio.prototype._make = function(dom, context) {
  * Turn a cheerio object into an array
  */
 
-Cheerio.prototype.toArray = function() {
+Cheerio.prototype.toArray = function () {
   return this.get();
 };
 
 /**
  * Plug in the API
  */
-api.forEach(function(mod) {
+api.forEach(function (mod) {
   _.extend(Cheerio.prototype, mod);
 });
 
-var isNode = function(obj) {
+var isNode = function isNode(obj) {
   return obj.name || obj.type === 'text' || obj.type === 'comment';
 };
-
 
 /***/ }),
 /* 332 */
@@ -42814,6 +42871,9 @@ module.exports = flatRest;
 /* 386 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 /**
  * Used not to duplicate data.
  *
@@ -42825,14 +42885,16 @@ module.exports = flatRest;
  * @module filterData
  */
 
-const bluebird = __webpack_require__(68)
-const log = __webpack_require__(37).namespace('filterData')
+var bluebird = __webpack_require__(68);
+var log = __webpack_require__(37).namespace('filterData');
 
-module.exports = (entries, doctype, options = {}) => {
-  const cozy = __webpack_require__(61)
+module.exports = function (entries, doctype) {
+  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
-  log('debug', String(entries.length), 'Number of items before filterData')
-  if (!doctype) return Promise.reject(new Error(`Doctype is mandatory to filter the connector data.`))
+  var cozy = __webpack_require__(61);
+
+  log('debug', String(entries.length), 'Number of items before filterData');
+  if (!doctype) return Promise.reject(new Error('Doctype is mandatory to filter the connector data.'));
 
   // expected options:
   //  - index : this is return value which returned by cozy.data.defineIndex, the default will
@@ -42840,69 +42902,78 @@ module.exports = (entries, doctype, options = {}) => {
   //  - selector : this the mango request : default one will be {selector: {_id: {"$gt": null}}} to
   //  get all the records
   //  - keys : this is the list of keys used to check that two items are the same
-  const keys = options.keys ? options.keys : ['_id']
-  log('debug', keys, 'keys')
-  const index = options.index ? options.index : cozy.data.defineIndex(doctype, keys)
-  return index
-  .then(i => {
-    const selector = options.selector ? options.selector : keys.reduce((memo, key) => {
-      memo[key] = {'$gt': null}
-      return memo
-    }, {})
-    log('debug', selector, 'selector')
-    return cozy.data.query(i, {selector})
-  })
-  .then(dbitems => {
+  var keys = options.keys ? options.keys : ['_id'];
+  log('debug', keys, 'keys');
+  var index = options.index ? options.index : cozy.data.defineIndex(doctype, keys);
+  return index.then(function (i) {
+    var selector = options.selector ? options.selector : keys.reduce(function (memo, key) {
+      memo[key] = { '$gt': null };
+      return memo;
+    }, {});
+    log('debug', selector, 'selector');
+    return cozy.data.query(i, { selector: selector });
+  }).then(function (dbitems) {
     // create a hash for each db item
-    const hashTable = dbitems.reduce((memo, dbitem) => {
-      const hash = createHash(dbitem)
-      memo[hash] = dbitem
-      return memo
-    }, {})
+    var hashTable = dbitems.reduce(function (memo, dbitem) {
+      var hash = createHash(dbitem);
+      memo[hash] = dbitem;
+      return memo;
+    }, {});
 
     // filter out existing items
-    return bluebird.filter(entries, entry => !hashTable[createHash(entry)])
-  })
-  .then(entries => {
-    log('debug', String(entries.length), 'Number of items after filterData')
+    return bluebird.filter(entries, function (entry) {
+      return !hashTable[createHash(entry)];
+    });
+  }).then(function (entries) {
+    log('debug', String(entries.length), 'Number of items after filterData');
     // filter out wrong entries
-    return entries.filter(entry => entry)
-  })
+    return entries.filter(function (entry) {
+      return entry;
+    });
+  });
 
-  function createHash (item) {
-    return keys.map(key => {
-      let result = item[key]
-      if (key === 'date') result = new Date(result)
-      return result
-    }).join('####')
+  function createHash(item) {
+    return keys.map(function (key) {
+      var result = item[key];
+      if (key === 'date') result = new Date(result);
+      return result;
+    }).join('####');
   }
-}
-
+};
 
 /***/ }),
 /* 387 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 /**
  * Creates the records in the given doctype.
  *
  * @module addData
  */
-const bluebird = __webpack_require__(68)
-const log = __webpack_require__(37).namespace('addData')
+var bluebird = __webpack_require__(68);
+var log = __webpack_require__(37).namespace('addData');
 
-module.exports = (entries, doctype) => {
-  const cozy = __webpack_require__(61)
-  return bluebird.mapSeries(entries, entry => {
-    log('debug', entry, 'Adding this entry')
-    return cozy.data.create(doctype, entry)
-  })
-}
-
+module.exports = function (entries, doctype) {
+  var cozy = __webpack_require__(61);
+  return bluebird.mapSeries(entries, function (entry) {
+    log('debug', entry, 'Adding this entry');
+    return cozy.data.create(doctype, entry);
+  });
+};
 
 /***/ }),
 /* 388 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
  * ### linkBankOperations ( entries, doctype, fields, options = {} )
@@ -42913,236 +42984,337 @@ module.exports = (entries, doctype) => {
  * @module linkBankOperations
  */
 
-const moment = __webpack_require__(0)
-const bluebird = __webpack_require__(68)
-const DOCTYPE = 'io.cozy.bank.operations'
+var moment = __webpack_require__(0);
+var bluebird = __webpack_require__(68);
+var DOCTYPE = 'io.cozy.bank.operations';
 
-const reimbursedTypes = ['health_costs']
+var reimbursedTypes = ['health_costs'];
 
-const coerceToDate = function (d) {
+var coerceToDate = function coerceToDate(d) {
   if (!d) {
-    return d
+    return d;
   } else if (typeof d === 'string') {
-    return new Date(d)
+    return new Date(d);
   } else if (d.toDate) {
-    return d.toDate()
-  } else if (d.getYear) { return d } else {
-    throw new Error('Invalid date')
+    return d.toDate();
+  } else if (d.getYear) {
+    return d;
+  } else {
+    throw new Error('Invalid date');
   }
-}
-const equalDates = function (d1, d2) {
-  d1 = coerceToDate(d1)
-  d2 = coerceToDate(d2)
+};
+var equalDates = function equalDates(d1, d2) {
+  d1 = coerceToDate(d1);
+  d2 = coerceToDate(d2);
   try {
-    return d1 && d2 &&
-    d1.getYear() === d2.getYear() &&
-    d1.getMonth() === d2.getMonth() &&
-    d1.getDate() === d2.getDate()
+    return d1 && d2 && d1.getYear() === d2.getYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
   } catch (e) {
-    return false
+    return false;
   }
-}
+};
 
-const getTotalReimbursements = operation => {
-  if (!operation.reimbursements) { return 0 }
-  return operation.reimbursements.reduce((s, r) => s + r.amount, 0)
-}
+var getTotalReimbursements = function getTotalReimbursements(operation) {
+  if (!operation.reimbursements) {
+    return 0;
+  }
+  return operation.reimbursements.reduce(function (s, r) {
+    return s + r.amount;
+  }, 0);
+};
 
 // DOES NOT NEED COZY CLIENT
-const findMatchingOperation = (bill, operations, options) => {
-  const identifiers = options.identifiers || []
-  let amount = Math.abs(bill.amount)
+var findMatchingOperation = function findMatchingOperation(bill, operations, options) {
+  var identifiers = options.identifiers || [];
+  var amount = Math.abs(bill.amount);
 
   // By default, a bill is an expense. If it is not, it should be
   // declared as a refund: isRefund=true.
-  if (bill.isRefund === true) amount *= -1
+  if (bill.isRefund === true) amount *= -1;
 
-  for (let operation of operations) {
-    let opAmount = Math.abs(operation.amount)
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
 
-    // By default, an bill is an expense. If it is not, it should be
-    // declared as a refund: isRefund=true.
-    if (bill.isRefund === true) opAmount *= -1
+  try {
+    for (var _iterator = operations[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var operation = _step.value;
 
-    let amountDelta = Math.abs(opAmount - amount)
+      var opAmount = Math.abs(operation.amount);
 
-    // Select the operation to link based on the minimal amount
-    // difference to the expected one and if the label matches one
-    // of the possible labels (identifier)
-    for (let identifier of identifiers) {
-      const hasIdentifier =
-        operation.label.toLowerCase().indexOf(identifier) >= 0
-      const similarAmount = amountDelta <= options.amountDelta
-      if (hasIdentifier && similarAmount) {
-        return operation
+      // By default, an bill is an expense. If it is not, it should be
+      // declared as a refund: isRefund=true.
+      if (bill.isRefund === true) opAmount *= -1;
+
+      var amountDelta = Math.abs(opAmount - amount);
+
+      // Select the operation to link based on the minimal amount
+      // difference to the expected one and if the label matches one
+      // of the possible labels (identifier)
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = identifiers[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var identifier = _step2.value;
+
+          var hasIdentifier = operation.label.toLowerCase().indexOf(identifier) >= 0;
+          var similarAmount = amountDelta <= options.amountDelta;
+          if (hasIdentifier && similarAmount) {
+            return operation;
+          }
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+            _iterator2.return();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+    }
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator.return) {
+        _iterator.return();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
       }
     }
   }
-  return null
-}
+
+  return null;
+};
 
 // DOES NOT NEED COZY CLIENT
-const findReimbursedOperation = (bill, operations, options) => {
-  if (!bill.isRefund) { return null }
+var findReimbursedOperation = function findReimbursedOperation(bill, operations, options) {
+  if (!bill.isRefund) {
+    return null;
+  }
 
   // By default, an bill is an expense. If it is not, it should be
   // declared as a refund: isRefund=true.
-  let billAmount = Math.abs(bill.originalAmount)
+  var billAmount = Math.abs(bill.originalAmount);
 
-  const canBeReimbursed = reimbursedTypes.indexOf(bill.type) > -1
+  var canBeReimbursed = reimbursedTypes.indexOf(bill.type) > -1;
   if (!canBeReimbursed) {
-    return null
+    return null;
   }
 
-  for (let operation of operations) {
-    const opAmount = operation.amount
-    const sameAmount = -billAmount === opAmount
-    const sameDate = equalDates(bill.originalDate, operation.date)
-    const totalReimbursements = getTotalReimbursements(operation)
-    const fitIntoReimbursements = totalReimbursements + -billAmount <= -opAmount
-    if (sameAmount && sameDate && fitIntoReimbursements) {
-      return operation
+  var _iteratorNormalCompletion3 = true;
+  var _didIteratorError3 = false;
+  var _iteratorError3 = undefined;
+
+  try {
+    for (var _iterator3 = operations[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+      var operation = _step3.value;
+
+      var opAmount = operation.amount;
+      var sameAmount = -billAmount === opAmount;
+      var sameDate = equalDates(bill.originalDate, operation.date);
+      var totalReimbursements = getTotalReimbursements(operation);
+      var fitIntoReimbursements = totalReimbursements + -billAmount <= -opAmount;
+      if (sameAmount && sameDate && fitIntoReimbursements) {
+        return operation;
+      }
+    }
+  } catch (err) {
+    _didIteratorError3 = true;
+    _iteratorError3 = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion3 && _iterator3.return) {
+        _iterator3.return();
+      }
+    } finally {
+      if (_didIteratorError3) {
+        throw _iteratorError3;
+      }
     }
   }
-  return null
-}
 
-class Linker {
-  constructor (cozy) {
-    this.cozy = cozy
+  return null;
+};
+
+var Linker = function () {
+  function Linker(cozy) {
+    _classCallCheck(this, Linker);
+
+    this.cozy = cozy;
   }
 
-  fetchNeighboringOperations (bill, options) {
-    if (typeof options.minDateDelta === 'undefined' || typeof options.maxDateDelta === 'undefined') {
-      return Promise.reject(new Error('Must have options.{min,max}DateDelta'))
-    }
-    let date = new Date(bill.originalDate || bill.date)
-    let startDate = moment(date).subtract(options.minDateDelta, 'days')
-    let endDate = moment(date).add(options.maxDateDelta, 'days')
+  _createClass(Linker, [{
+    key: 'fetchNeighboringOperations',
+    value: function fetchNeighboringOperations(bill, options) {
+      var _this = this;
 
-    // Get the operations corresponding to the date interval around the date of the bill
-    let startkey = `${startDate.format('YYYY-MM-DDT00:00:00.000')}Z`
-    let endkey = `${endDate.format('YYYY-MM-DDT00:00:00.000')}Z`
-    return this.cozy.data.defineIndex(DOCTYPE, ['date']).then(index =>
-      this.cozy.data.query(index, {
-        selector: {
-          date: {
-            $gt: startkey,
-            $lt: endkey
+      if (typeof options.minDateDelta === 'undefined' || typeof options.maxDateDelta === 'undefined') {
+        return Promise.reject(new Error('Must have options.{min,max}DateDelta'));
+      }
+      var date = new Date(bill.originalDate || bill.date);
+      var startDate = moment(date).subtract(options.minDateDelta, 'days');
+      var endDate = moment(date).add(options.maxDateDelta, 'days');
+
+      // Get the operations corresponding to the date interval around the date of the bill
+      var startkey = startDate.format('YYYY-MM-DDT00:00:00.000') + 'Z';
+      var endkey = endDate.format('YYYY-MM-DDT00:00:00.000') + 'Z';
+      return this.cozy.data.defineIndex(DOCTYPE, ['date']).then(function (index) {
+        return _this.cozy.data.query(index, {
+          selector: {
+            date: {
+              $gt: startkey,
+              $lt: endkey
+            }
           }
+        });
+      });
+    }
+  }, {
+    key: 'addBillToOperation',
+    value: function addBillToOperation(bill, operation) {
+      if (operation.bills && operation.bills.indexOf(bill._id) > -1) {
+        return Promise.resolve();
+      }
+
+      var billIds = operation.billIds || [];
+      billIds.push('io.cozy.bills:' + bill._id);
+
+      return this.cozy.data.updateAttributes(DOCTYPE, operation._id, {
+        bills: billIds
+      });
+    }
+  }, {
+    key: 'addReimbursementToOperation',
+    value: function addReimbursementToOperation(bill, operation, matchingOperation, cozy) {
+      if (operation.reimbursements && operation.reimbursements.map(function (b) {
+        return b._id;
+      }).indexOf(bill._id) > -1) {
+        return Promise.resolve();
+      }
+
+      var reimbursements = operation.reimbursements || [];
+      reimbursements.push({
+        billId: 'io.cozy.bills:' + bill._id,
+        amount: bill.amount,
+        operationId: matchingOperation && matchingOperation._id
+      });
+
+      return this.cozy.data.updateAttributes(DOCTYPE, operation._id, {
+        reimbursements: reimbursements
+      });
+    }
+  }, {
+    key: 'linkMatchingOperation',
+    value: function linkMatchingOperation(bill, operations, options) {
+      var matchingOp = findMatchingOperation(bill, operations, options);
+      if (matchingOp) {
+        if (!matchingOp) {
+          return;
         }
-      })
-    )
-  }
-
-  addBillToOperation (bill, operation) {
-    if (operation.bills && operation.bills.indexOf(bill._id) > -1) {
-      return Promise.resolve()
+        return this.addBillToOperation(bill, matchingOp).then(function () {
+          return matchingOp;
+        });
+      }
+    }
+  }, {
+    key: 'linkReimbursedOperation',
+    value: function linkReimbursedOperation(bill, operations, options, matchingOp) {
+      var reimbursedOp = findReimbursedOperation(bill, operations, options);
+      if (!reimbursedOp) {
+        return Promise.resolve();
+      }
+      return this.addReimbursementToOperation(bill, reimbursedOp, matchingOp).then(function () {
+        return reimbursedOp;
+      });
     }
 
-    const billIds = operation.billIds || []
-    billIds.push(`io.cozy.bills:${bill._id}`)
+    /**
+     * Link bills to
+     *   - their matching banking operation (debit)
+     *   - to their reimbursement (credit)
+     */
 
-    return this.cozy.data.updateAttributes(DOCTYPE, operation._id, {
-      bills: billIds
-    })
-  }
+  }, {
+    key: 'linkBillsToOperations',
+    value: function linkBillsToOperations(bills, options) {
+      var _this2 = this;
 
-  addReimbursementToOperation (bill, operation, matchingOperation, cozy) {
-    if (operation.reimbursements && operation.reimbursements.map(b => b._id).indexOf(bill._id) > -1) {
-      return Promise.resolve()
+      var result = {};
+
+      bills = bills.filter(function (bill) {
+        return !bill.isThirdPartyPayer === true;
+      });
+
+      return bluebird.each(bills, function (bill) {
+        var res = result[bill._id] = { matching: [], reimbursed: []
+          // Get all operations whose date is close to out bill
+        };var operations = void 0;
+        return _this2.fetchNeighboringOperations(bill, options).then(function (ops) {
+          operations = ops;
+          return _this2.linkMatchingOperation(bill, operations, options);
+        }).then(function (matchingOp) {
+          if (matchingOp) {
+            res.matching.push(matchingOp);
+          }
+          return _this2.linkReimbursedOperation(bill, operations, options, matchingOp).then(function (reimbursedOp) {
+            if (reimbursedOp) {
+              res.reimbursed.push(reimbursedOp);
+            }
+          });
+        });
+      }).then(function () {
+        return result;
+      });
     }
+  }]);
 
-    const reimbursements = operation.reimbursements || []
-    reimbursements.push({
-      billId: `io.cozy.bills:${bill._id}`,
-      amount: bill.amount,
-      operationId: matchingOperation && matchingOperation._id
-    })
+  return Linker;
+}();
 
-    return this.cozy.data.updateAttributes(DOCTYPE, operation._id, {
-      reimbursements: reimbursements
-    })
-  }
+module.exports = function (bills, doctype, fields) {
+  var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
-  linkMatchingOperation (bill, operations, options) {
-    const matchingOp = findMatchingOperation(bill, operations, options)
-    if (matchingOp) {
-      if (!matchingOp) { return }
-      return this.addBillToOperation(bill, matchingOp).then(() => matchingOp)
-    }
-  }
-
-  linkReimbursedOperation (bill, operations, options, matchingOp) {
-    const reimbursedOp = findReimbursedOperation(bill, operations, options)
-    if (!reimbursedOp) { return Promise.resolve() }
-    return this.addReimbursementToOperation(bill, reimbursedOp, matchingOp)
-      .then(() => reimbursedOp)
-  }
-
-  /**
-   * Link bills to
-   *   - their matching banking operation (debit)
-   *   - to their reimbursement (credit)
-   */
-  linkBillsToOperations (bills, options) {
-    const result = {}
-
-    bills = bills.filter(bill => !bill.isThirdPartyPayer === true)
-
-    return bluebird.each(bills, bill => {
-      const res = result[bill._id] = {matching: [], reimbursed: []}
-      // Get all operations whose date is close to out bill
-      let operations
-      return this.fetchNeighboringOperations(bill, options)
-        .then(ops => {
-          operations = ops
-          return this.linkMatchingOperation(bill, operations, options)
-        }).then(matchingOp => {
-          if (matchingOp) { res.matching.push(matchingOp) }
-          return this.linkReimbursedOperation(bill, operations, options, matchingOp)
-            .then(reimbursedOp => {
-              if (reimbursedOp) { res.reimbursed.push(reimbursedOp) }
-            })
-        })
-    }).then(() => {
-      return result
-    })
-  }
-}
-
-module.exports = (bills, doctype, fields, options = {}) => {
   // Use the custom bank identifier from user if any
   if (fields.bank_identifier && fields.bank_identifier.length) {
-    options.identifiers = [fields.bank_identifier]
+    options.identifiers = [fields.bank_identifier];
   }
 
   if (typeof options.identifiers === 'string') {
-    options.identifiers = [options.identifiers.toLowerCase()]
+    options.identifiers = [options.identifiers.toLowerCase()];
   } else if (Array.isArray(options.identifiers)) {
-    options.identifiers = options.identifiers.map(id => id.toLowerCase())
+    options.identifiers = options.identifiers.map(function (id) {
+      return id.toLowerCase();
+    });
   } else {
-    throw new Error(
-      'linkBankOperations cannot be called without "identifiers" option'
-    )
+    throw new Error('linkBankOperations cannot be called without "identifiers" option');
   }
 
-  options.amountDelta = options.amountDelta || 0.001
-  options.dateDelta = options.dateDelta || 15
-  options.minDateDelta = options.minDateDelta || options.dateDelta
-  options.maxDateDelta = options.maxDateDelta || options.dateDelta
+  options.amountDelta = options.amountDelta || 0.001;
+  options.dateDelta = options.dateDelta || 15;
+  options.minDateDelta = options.minDateDelta || options.dateDelta;
+  options.maxDateDelta = options.maxDateDelta || options.dateDelta;
 
-  const cozyClient = __webpack_require__(61)
-  const linker = new Linker(cozyClient)
-  return linker.linkBillsToOperations(bills, options)
-}
+  var cozyClient = __webpack_require__(61);
+  var linker = new Linker(cozyClient);
+  return linker.linkBillsToOperations(bills, options);
+};
 
 Object.assign(module.exports, {
-  findMatchingOperation,
-  findReimbursedOperation,
-  Linker
-})
-
+  findMatchingOperation: findMatchingOperation,
+  findReimbursedOperation: findReimbursedOperation,
+  Linker: Linker
+});
 
 /***/ }),
 /* 389 */
@@ -56324,32 +56496,37 @@ module.exports = baseMap;
 /* 573 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const log = __webpack_require__(37).namespace('Error Interception')
+"use strict";
+
+
+var log = __webpack_require__(37).namespace('Error Interception');
 
 // This will catch exception which would be uncaught by the connector script itself
-process.on('uncaughtException', err => {
-  console.error(err, 'uncaught exception')
-  log('critical', err.message, 'uncaught exception')
-})
-process.on('SIGTERM', () => {
-  log('critical', 'The konnector got a SIGTERM')
-})
-process.on('SIGINT', () => {
-  log('critical', 'The konnector got a SIGINT')
-})
-
+process.on('uncaughtException', function (err) {
+  console.error(err, 'uncaught exception');
+  log('critical', err.message, 'uncaught exception');
+});
+process.on('SIGTERM', function () {
+  log('critical', 'The konnector got a SIGTERM');
+});
+process.on('SIGINT', function () {
+  log('critical', 'The konnector got a SIGINT');
+});
 
 /***/ }),
 /* 574 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const colors = __webpack_require__(575)
-const util = __webpack_require__(3)
-util.inspect.defaultOptions.maxArrayLength = null
-util.inspect.defaultOptions.depth = null
-util.inspect.defaultOptions.colors = true
+"use strict";
 
-const type2color = {
+
+var colors = __webpack_require__(575);
+var util = __webpack_require__(3);
+util.inspect.defaultOptions.maxArrayLength = null;
+util.inspect.defaultOptions.depth = null;
+util.inspect.defaultOptions.colors = true;
+
+var type2color = {
   debug: 'cyan',
   warn: 'yellow',
   info: 'blue',
@@ -56357,45 +56534,47 @@ const type2color = {
   ok: 'green',
   secret: 'red',
   critical: 'red'
-}
+};
 
-function prodFormat (type, message, label, namespace) {
+function prodFormat(type, message, label, namespace) {
   // properly display error messages
-  if (message.stack) message = message.stack
-  if (message.toString) message = message.toString()
+  if (message.stack) message = message.stack;
+  if (message.toString) message = message.toString();
 
-  return JSON.stringify({ time: new Date(), type, message, label, namespace })
+  return JSON.stringify({ time: new Date(), type: type, message: message, label: label, namespace: namespace });
 }
 
-function devFormat (type, message, label, namespace) {
-  let formatmessage = message
+function devFormat(type, message, label, namespace) {
+  var formatmessage = message;
 
   if (typeof formatmessage !== 'string') {
-    formatmessage = util.inspect(formatmessage)
+    formatmessage = util.inspect(formatmessage);
   }
 
-  let formatlabel = label ? ` : "${label}" ` : ''
-  let formatnamespace = namespace ? colors.magenta(`${namespace}: `) : ''
+  var formatlabel = label ? ' : "' + label + '" ' : '';
+  var formatnamespace = namespace ? colors.magenta(namespace + ': ') : '';
 
-  let color = type2color[type]
-  let formattype = color ? colors[color](type) : type
+  var color = type2color[type];
+  var formattype = color ? colors[color](type) : type;
 
-  return `${formatnamespace}${formattype}${formatlabel} : ${formatmessage}`
+  return '' + formatnamespace + formattype + formatlabel + ' : ' + formatmessage;
 }
 
-const env2formats = {
+var env2formats = {
   production: prodFormat,
   development: devFormat,
   standalone: devFormat,
   test: devFormat
-}
+};
 
-module.exports = { prodFormat, devFormat, env2formats }
-
+module.exports = { prodFormat: prodFormat, devFormat: devFormat, env2formats: env2formats };
 
 /***/ }),
 /* 575 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 var colors = __webpack_require__(78);
 module['exports'] = colors;
@@ -56412,7 +56591,10 @@ __webpack_require__(584)();
 
 /***/ }),
 /* 576 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 /*
 The MIT License (MIT)
@@ -56488,13 +56670,16 @@ var codes = {
 Object.keys(codes).forEach(function (key) {
   var val = codes[key];
   var style = styles[key] = [];
-  style.open = '\u001b[' + val[0] + 'm';
-  style.close = '\u001b[' + val[1] + 'm';
+  style.open = '\x1B[' + val[0] + 'm';
+  style.close = '\x1B[' + val[1] + 'm';
 });
 
 /***/ }),
 /* 577 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 /*
 The MIT License (MIT)
@@ -56523,15 +56708,12 @@ THE SOFTWARE.
 
 var argv = process.argv;
 
-module.exports = (function () {
-  if (argv.indexOf('--no-color') !== -1 ||
-    argv.indexOf('--color=false') !== -1) {
+module.exports = function () {
+  if (argv.indexOf('--no-color') !== -1 || argv.indexOf('--color=false') !== -1) {
     return false;
   }
 
-  if (argv.indexOf('--color') !== -1 ||
-    argv.indexOf('--color=true') !== -1 ||
-    argv.indexOf('--color=always') !== -1) {
+  if (argv.indexOf('--color') !== -1 || argv.indexOf('--color=true') !== -1 || argv.indexOf('--color=always') !== -1) {
     return true;
   }
 
@@ -56556,45 +56738,48 @@ module.exports = (function () {
   }
 
   return false;
-})();
+}();
 
 /***/ }),
 /* 578 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module['exports'] = function runTheTrap (text, options) {
+"use strict";
+
+
+module['exports'] = function runTheTrap(text, options) {
   var result = "";
   text = text || "Run the trap, drop the bass";
   text = text.split('');
   var trap = {
-    a: ["\u0040", "\u0104", "\u023a", "\u0245", "\u0394", "\u039b", "\u0414"],
-    b: ["\u00df", "\u0181", "\u0243", "\u026e", "\u03b2", "\u0e3f"],
-    c: ["\u00a9", "\u023b", "\u03fe"],
-    d: ["\u00d0", "\u018a", "\u0500" , "\u0501" ,"\u0502", "\u0503"],
-    e: ["\u00cb", "\u0115", "\u018e", "\u0258", "\u03a3", "\u03be", "\u04bc", "\u0a6c"],
-    f: ["\u04fa"],
+    a: ["@", "\u0104", "\u023A", "\u0245", "\u0394", "\u039B", "\u0414"],
+    b: ["\xDF", "\u0181", "\u0243", "\u026E", "\u03B2", "\u0E3F"],
+    c: ["\xA9", "\u023B", "\u03FE"],
+    d: ["\xD0", "\u018A", "\u0500", "\u0501", "\u0502", "\u0503"],
+    e: ["\xCB", "\u0115", "\u018E", "\u0258", "\u03A3", "\u03BE", "\u04BC", "\u0A6C"],
+    f: ["\u04FA"],
     g: ["\u0262"],
-    h: ["\u0126", "\u0195", "\u04a2", "\u04ba", "\u04c7", "\u050a"],
-    i: ["\u0f0f"],
+    h: ["\u0126", "\u0195", "\u04A2", "\u04BA", "\u04C7", "\u050A"],
+    i: ["\u0F0F"],
     j: ["\u0134"],
-    k: ["\u0138", "\u04a0", "\u04c3", "\u051e"],
+    k: ["\u0138", "\u04A0", "\u04C3", "\u051E"],
     l: ["\u0139"],
-    m: ["\u028d", "\u04cd", "\u04ce", "\u0520", "\u0521", "\u0d69"],
-    n: ["\u00d1", "\u014b", "\u019d", "\u0376", "\u03a0", "\u048a"],
-    o: ["\u00d8", "\u00f5", "\u00f8", "\u01fe", "\u0298", "\u047a", "\u05dd", "\u06dd", "\u0e4f"],
-    p: ["\u01f7", "\u048e"],
-    q: ["\u09cd"],
-    r: ["\u00ae", "\u01a6", "\u0210", "\u024c", "\u0280", "\u042f"],
-    s: ["\u00a7", "\u03de", "\u03df", "\u03e8"],
+    m: ["\u028D", "\u04CD", "\u04CE", "\u0520", "\u0521", "\u0D69"],
+    n: ["\xD1", "\u014B", "\u019D", "\u0376", "\u03A0", "\u048A"],
+    o: ["\xD8", "\xF5", "\xF8", "\u01FE", "\u0298", "\u047A", "\u05DD", "\u06DD", "\u0E4F"],
+    p: ["\u01F7", "\u048E"],
+    q: ["\u09CD"],
+    r: ["\xAE", "\u01A6", "\u0210", "\u024C", "\u0280", "\u042F"],
+    s: ["\xA7", "\u03DE", "\u03DF", "\u03E8"],
     t: ["\u0141", "\u0166", "\u0373"],
-    u: ["\u01b1", "\u054d"],
-    v: ["\u05d8"],
-    w: ["\u0428", "\u0460", "\u047c", "\u0d70"],
-    x: ["\u04b2", "\u04fe", "\u04fc", "\u04fd"],
-    y: ["\u00a5", "\u04b0", "\u04cb"],
-    z: ["\u01b5", "\u0240"]
-  }
-  text.forEach(function(c){
+    u: ["\u01B1", "\u054D"],
+    v: ["\u05D8"],
+    w: ["\u0428", "\u0460", "\u047C", "\u0D70"],
+    x: ["\u04B2", "\u04FE", "\u04FC", "\u04FD"],
+    y: ["\xA5", "\u04B0", "\u04CB"],
+    z: ["\u01B5", "\u0240"]
+  };
+  text.forEach(function (c) {
     c = c.toLowerCase();
     var chars = trap[c] || [" "];
     var rand = Math.floor(Math.random() * chars.length);
@@ -56605,56 +56790,25 @@ module['exports'] = function runTheTrap (text, options) {
     }
   });
   return result;
-
-}
-
+};
 
 /***/ }),
 /* 579 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 // please no
 module['exports'] = function zalgo(text, options) {
   text = text || "   he is here   ";
   var soul = {
-    "up" : [
-      '̍', '̎', '̄', '̅',
-      '̿', '̑', '̆', '̐',
-      '͒', '͗', '͑', '̇',
-      '̈', '̊', '͂', '̓',
-      '̈', '͊', '͋', '͌',
-      '̃', '̂', '̌', '͐',
-      '̀', '́', '̋', '̏',
-      '̒', '̓', '̔', '̽',
-      '̉', 'ͣ', 'ͤ', 'ͥ',
-      'ͦ', 'ͧ', 'ͨ', 'ͩ',
-      'ͪ', 'ͫ', 'ͬ', 'ͭ',
-      'ͮ', 'ͯ', '̾', '͛',
-      '͆', '̚'
-    ],
-    "down" : [
-      '̖', '̗', '̘', '̙',
-      '̜', '̝', '̞', '̟',
-      '̠', '̤', '̥', '̦',
-      '̩', '̪', '̫', '̬',
-      '̭', '̮', '̯', '̰',
-      '̱', '̲', '̳', '̹',
-      '̺', '̻', '̼', 'ͅ',
-      '͇', '͈', '͉', '͍',
-      '͎', '͓', '͔', '͕',
-      '͖', '͙', '͚', '̣'
-    ],
-    "mid" : [
-      '̕', '̛', '̀', '́',
-      '͘', '̡', '̢', '̧',
-      '̨', '̴', '̵', '̶',
-      '͜', '͝', '͞',
-      '͟', '͠', '͢', '̸',
-      '̷', '͡', ' ҉'
-    ]
+    "up": ['̍', '̎', '̄', '̅', '̿', '̑', '̆', '̐', '͒', '͗', '͑', '̇', '̈', '̊', '͂', '̓', '̈', '͊', '͋', '͌', '̃', '̂', '̌', '͐', '̀', '́', '̋', '̏', '̒', '̓', '̔', '̽', '̉', 'ͣ', 'ͤ', 'ͥ', 'ͦ', 'ͧ', 'ͨ', 'ͩ', 'ͪ', 'ͫ', 'ͬ', 'ͭ', 'ͮ', 'ͯ', '̾', '͛', '͆', '̚'],
+    "down": ['̖', '̗', '̘', '̙', '̜', '̝', '̞', '̟', '̠', '̤', '̥', '̦', '̩', '̪', '̫', '̬', '̭', '̮', '̯', '̰', '̱', '̲', '̳', '̹', '̺', '̻', '̼', 'ͅ', '͇', '͈', '͉', '͍', '͎', '͓', '͔', '͕', '͖', '͙', '͚', '̣'],
+    "mid": ['̕', '̛', '̀', '́', '͘', '̡', '̢', '̧', '̨', '̴', '̵', '̶', '͜', '͝', '͞', '͟', '͠', '͢', '̸', '̷', '͡', ' ҉']
   },
-  all = [].concat(soul.up, soul.down, soul.mid),
-  zalgo = {};
+      all = [].concat(soul.up, soul.down, soul.mid),
+      zalgo = {};
 
   function randomNumber(range) {
     var r = Math.floor(Math.random() * range);
@@ -56664,17 +56818,18 @@ module['exports'] = function zalgo(text, options) {
   function is_char(character) {
     var bool = false;
     all.filter(function (i) {
-      bool = (i === character);
+      bool = i === character;
     });
     return bool;
   }
-  
 
   function heComes(text, options) {
-    var result = '', counts, l;
+    var result = '',
+        counts,
+        l;
     options = options || {};
-    options["up"] =   typeof options["up"]   !== 'undefined' ? options["up"]   : true;
-    options["mid"] =  typeof options["mid"]  !== 'undefined' ? options["mid"]  : true;
+    options["up"] = typeof options["up"] !== 'undefined' ? options["up"] : true;
+    options["mid"] = typeof options["mid"] !== 'undefined' ? options["mid"] : true;
     options["down"] = typeof options["down"] !== 'undefined' ? options["down"] : true;
     options["size"] = typeof options["size"] !== 'undefined' ? options["size"] : "maxi";
     text = text.split('');
@@ -56683,29 +56838,29 @@ module['exports'] = function zalgo(text, options) {
         continue;
       }
       result = result + text[l];
-      counts = {"up" : 0, "down" : 0, "mid" : 0};
+      counts = { "up": 0, "down": 0, "mid": 0 };
       switch (options.size) {
-      case 'mini':
-        counts.up = randomNumber(8);
-        counts.mid = randomNumber(2);
-        counts.down = randomNumber(8);
-        break;
-      case 'maxi':
-        counts.up = randomNumber(16) + 3;
-        counts.mid = randomNumber(4) + 1;
-        counts.down = randomNumber(64) + 3;
-        break;
-      default:
-        counts.up = randomNumber(8) + 1;
-        counts.mid = randomNumber(6) / 2;
-        counts.down = randomNumber(8) + 1;
-        break;
+        case 'mini':
+          counts.up = randomNumber(8);
+          counts.mid = randomNumber(2);
+          counts.down = randomNumber(8);
+          break;
+        case 'maxi':
+          counts.up = randomNumber(16) + 3;
+          counts.mid = randomNumber(4) + 1;
+          counts.down = randomNumber(64) + 3;
+          break;
+        default:
+          counts.up = randomNumber(8) + 1;
+          counts.mid = randomNumber(6) / 2;
+          counts.down = randomNumber(8) + 1;
+          break;
       }
 
       var arr = ["up", "mid", "down"];
       for (var d in arr) {
         var index = arr[d];
-        for (var i = 0 ; i <= counts[index]; i++) {
+        for (var i = 0; i <= counts[index]; i++) {
           if (options[index]) {
             result = result + soul[index][randomNumber(soul[index].length)];
           }
@@ -56716,29 +56871,37 @@ module['exports'] = function zalgo(text, options) {
   }
   // don't summon him
   return heComes(text, options);
-}
-
+};
 
 /***/ }),
 /* 580 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 var colors = __webpack_require__(78);
 
-module['exports'] = (function() {
+module['exports'] = function () {
   return function (letter, i, exploded) {
-    if(letter === " ") return letter;
-    switch(i%3) {
-      case 0: return colors.red(letter);
-      case 1: return colors.white(letter)
-      case 2: return colors.blue(letter)
+    if (letter === " ") return letter;
+    switch (i % 3) {
+      case 0:
+        return colors.red(letter);
+      case 1:
+        return colors.white(letter);
+      case 2:
+        return colors.blue(letter);
     }
-  }
-})();
+  };
+}();
 
 /***/ }),
 /* 581 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 var colors = __webpack_require__(78);
 
@@ -56750,9 +56913,12 @@ module['exports'] = function (letter, i, exploded) {
 /* 582 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 var colors = __webpack_require__(78);
 
-module['exports'] = (function () {
+module['exports'] = function () {
   var rainbowColors = ['red', 'yellow', 'green', 'blue', 'magenta']; //RoY G BiV
   return function (letter, i, exploded) {
     if (letter === " ") {
@@ -56761,26 +56927,30 @@ module['exports'] = (function () {
       return colors[rainbowColors[i++ % rainbowColors.length]](letter);
     }
   };
-})();
-
-
+}();
 
 /***/ }),
 /* 583 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 var colors = __webpack_require__(78);
 
-module['exports'] = (function () {
+module['exports'] = function () {
   var available = ['underline', 'inverse', 'grey', 'yellow', 'red', 'green', 'blue', 'white', 'cyan', 'magenta'];
-  return function(letter, i, exploded) {
+  return function (letter, i, exploded) {
     return letter === " " ? letter : colors[available[Math.round(Math.random() * (available.length - 1))]](letter);
   };
-})();
+}();
 
 /***/ }),
 /* 584 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 var colors = __webpack_require__(78);
 
@@ -56789,16 +56959,17 @@ module['exports'] = function () {
   //
   // Extends prototype of native string object to allow for "foo".red syntax
   //
-  var addProperty = function (color, func) {
+  var addProperty = function addProperty(color, func) {
     String.prototype.__defineGetter__(color, func);
   };
 
-  var sequencer = function sequencer (map, str) {
-      return function () {
-        var exploded = this.split(""), i = 0;
-        exploded = exploded.map(map);
-        return exploded.join("");
-      }
+  var sequencer = function sequencer(map, str) {
+    return function () {
+      var exploded = this.split(""),
+          i = 0;
+      exploded = exploded.map(map);
+      return exploded.join("");
+    };
   };
 
   addProperty('strip', function () {
@@ -56809,27 +56980,27 @@ module['exports'] = function () {
     return colors.strip(this);
   });
 
-  addProperty("trap", function(){
+  addProperty("trap", function () {
     return colors.trap(this);
   });
 
-  addProperty("zalgo", function(){
+  addProperty("zalgo", function () {
     return colors.zalgo(this);
   });
 
-  addProperty("zebra", function(){
+  addProperty("zebra", function () {
     return colors.zebra(this);
   });
 
-  addProperty("rainbow", function(){
+  addProperty("rainbow", function () {
     return colors.rainbow(this);
   });
 
-  addProperty("random", function(){
+  addProperty("random", function () {
     return colors.random(this);
   });
 
-  addProperty("america", function(){
+  addProperty("america", function () {
     return colors.america(this);
   });
 
@@ -56848,25 +57019,18 @@ module['exports'] = function () {
     // Remark: This is a list of methods that exist
     // on String that you should not overwrite.
     //
-    var stringPrototypeBlacklist = [
-      '__defineGetter__', '__defineSetter__', '__lookupGetter__', '__lookupSetter__', 'charAt', 'constructor',
-      'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'toLocaleString', 'toString', 'valueOf', 'charCodeAt',
-      'indexOf', 'lastIndexof', 'length', 'localeCompare', 'match', 'replace', 'search', 'slice', 'split', 'substring',
-      'toLocaleLowerCase', 'toLocaleUpperCase', 'toLowerCase', 'toUpperCase', 'trim', 'trimLeft', 'trimRight'
-    ];
+    var stringPrototypeBlacklist = ['__defineGetter__', '__defineSetter__', '__lookupGetter__', '__lookupSetter__', 'charAt', 'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'toLocaleString', 'toString', 'valueOf', 'charCodeAt', 'indexOf', 'lastIndexof', 'length', 'localeCompare', 'match', 'replace', 'search', 'slice', 'split', 'substring', 'toLocaleLowerCase', 'toLocaleUpperCase', 'toLowerCase', 'toUpperCase', 'trim', 'trimLeft', 'trimRight'];
 
     Object.keys(theme).forEach(function (prop) {
       if (stringPrototypeBlacklist.indexOf(prop) !== -1) {
         console.log('warn: '.red + ('String.prototype' + prop).magenta + ' is probably something you don\'t want to override. Ignoring style name');
-      }
-      else {
-        if (typeof(theme[prop]) === 'string') {
+      } else {
+        if (typeof theme[prop] === 'string') {
           colors[prop] = colors[theme[prop]];
           addProperty(prop, function () {
             return colors[theme[prop]](this);
           });
-        }
-        else {
+        } else {
           addProperty(prop, function () {
             var ret = this;
             for (var t = 0; t < theme[prop].length; t++) {
@@ -56893,14 +57057,16 @@ module['exports'] = function () {
       applyTheme(theme);
     }
   };
-
 };
 
 /***/ }),
 /* 585 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const levels = {
+"use strict";
+
+
+var levels = {
   debug: 0,
   secret: 0,
   info: 10,
@@ -56908,26 +57074,25 @@ const levels = {
   error: 30,
   ok: 40,
   critical: 40
-}
+};
 
-const Secret = __webpack_require__(257)
+var Secret = __webpack_require__(257);
 
-const filterSecrets = function (level, type, message, label, namespace) {
+var filterSecrets = function filterSecrets(level, type, message, label, namespace) {
   if (type !== 'secret' && message instanceof Secret) {
-    const err = new Error()
-    throw new Error('You should log a secret with log.secret')
+    var err = new Error();
+    throw new Error('You should log a secret with log.secret');
   }
-}
+};
 
-const filterLevel = function (level, type, message, label, namespace) {
-  return levels[type] >= levels[level]
-}
+var filterLevel = function filterLevel(level, type, message, label, namespace) {
+  return levels[type] >= levels[level];
+};
 
 module.exports = {
-  filterSecrets,
-  filterLevel
-}
-
+  filterSecrets: filterSecrets,
+  filterLevel: filterLevel
+};
 
 /***/ }),
 /* 586 */
@@ -56936,9 +57101,13 @@ module.exports = {
 "use strict";
 
 
-const cozy = __webpack_require__(61)
-const log = __webpack_require__(37).namespace('BaseKonnector')
-const Secret = __webpack_require__(257)
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var cozy = __webpack_require__(61);
+var log = __webpack_require__(37).namespace('BaseKonnector');
+var Secret = __webpack_require__(257);
 
 /**
  * @class
@@ -56966,7 +57135,8 @@ const Secret = __webpack_require__(257)
  * this.terminate('LOGIN_FAILED')
  * ```
  */
-class baseKonnector {
+
+var baseKonnector = function () {
   /**
    * Constructor
    *
@@ -56976,1269 +57146,1413 @@ class baseKonnector {
    * If not fetch function is given. The connector will have to handle itself it's own exection and
    * error handling
    */
-  constructor (fetch) {
+  function baseKonnector(fetch) {
+    _classCallCheck(this, baseKonnector);
+
     if (typeof fetch === 'function') {
-      this.fetch = fetch.bind(this)
-      return this.run()
+      this.fetch = fetch.bind(this);
+      return this.run();
     }
   }
 
-  run () {
-    return this.init()
-    .then(requiredFields => this.fetch(requiredFields))
-    .then(this.end)
-    .catch(this.fail.bind(this))
-  }
+  _createClass(baseKonnector, [{
+    key: 'run',
+    value: function run() {
+      var _this = this;
 
-  /**
-   * Hook called when the connector is ended
-   */
-  end () {
-    log('info', 'The connector has been run')
-  }
+      return this.init().then(function (requiredFields) {
+        return _this.fetch(requiredFields);
+      }).then(this.end).catch(this.fail.bind(this));
+    }
 
-  /**
-   * Hook called when the connector fails
-   */
-  fail (err) {
-    log('warn', 'Error caught by BaseKonnector')
-    this.terminate(err.message || err)
-  }
+    /**
+     * Hook called when the connector is ended
+     */
 
-  /**
-   * Initializes the current connector with data comming from the associated account
-   *
-   * @return {Promise} with the fields as an object
-   */
-  init () {
-    const cozyFields = JSON.parse(process.env.COZY_FIELDS)
-    log('debug', cozyFields, 'cozyFields in fetch')
+  }, {
+    key: 'end',
+    value: function end() {
+      log('info', 'The connector has been run');
+    }
 
-    // First get the account related to the specified account id
-    return cozy.data.find('io.cozy.accounts', cozyFields.account)
-    .catch(err => {
-      log('error', err)
-      log('error', `Account ${cozyFields.account} does not exist`)
-      this.terminate('CANNOT_FIND_ACCOUNT')
-    })
-    .then(account => {
-      this.accountId = cozyFields.account
-      this._account = account
+    /**
+     * Hook called when the connector fails
+     */
 
-      // folder ID will be stored in cozyFields.folder_to_save when first connection
-      const folderId = account.folderId || cozyFields.folder_to_save
-      if (!folderId) { // if no folder needed
-        log('debug', 'No folder needed')
-        return Promise.resolve(account)
-      }
-      return cozy.files.statById(folderId, false)
-      .then(folder => {
-        cozyFields.folder_to_save = folder.attributes.path
-        log('debug', folder, 'folder details')
-        return account
-      })
-      .catch(err => {
-        log('error', err)
-        log('error', `error while getting the folder path of ${folderId}`)
-        this.terminate('NOT_EXISTING_DIRECTORY')
-      })
-    })
-    .then(account => {
-      // log('debug', account, 'account content')
-      this.fields = Object.assign(cozyFields.folder_to_save ? {
-        folderPath: cozyFields.folder_to_save
-      } : {}, account.auth, account.oauth)
+  }, {
+    key: 'fail',
+    value: function fail(err) {
+      log('warn', 'Error caught by BaseKonnector');
+      this.terminate(err.message || err);
+    }
 
-      return this.fields
-    })
-  }
+    /**
+     * Initializes the current connector with data comming from the associated account
+     *
+     * @return {Promise} with the fields as an object
+     */
 
-  /**
-   * Saves data to the account that is passed to the konnector.
-   * Use it to persist data that needs to be passed to each
-   * konnector run.
-   *
-   * By default, the data is merged to the remote data, use
-   * `options.merge = false` to overwrite the data.
-   *
-   * The data is saved under the `.data` attribute of the cozy
-   * account.
-   *
-   * @param  {object} data    - Attributes to be merged
-   * @param  {object} options - { merge: true|false }
-   * @return {Promise}
-   */
-  saveAccountData (data, options) {
-    options = options || {}
-    options.merge = options.merge === undefined ? true : options.merge
-    const start = options.merge ? Object.assign({}, this.getAccountData()) : {}
-    const newData = Object.assign({}, start, data)
-    return cozy.data.updateAttributes('io.cozy.accounts', this.accountId, {data: newData})
-      .then(account => {
-        this._account = account
-        return account.data
-      })
-  }
+  }, {
+    key: 'init',
+    value: function init() {
+      var _this2 = this;
 
-  getAccountData () {
-    return new Secret(this._account.data || {})
-  }
+      var cozyFields = JSON.parse(process.env.COZY_FIELDS);
+      log('debug', cozyFields, 'cozyFields in fetch');
 
-  /**
-   * Send a special error code which is interpreted by the cozy stack to terminate the execution of the
-   * connector now
-   *
-   * @param  {string} message - The error code to be saved as connector result see [docs/ERROR_CODES.md]
-   */
-  terminate (message) {
-    // Encapsulating in a Promise allows to prevent then() calls before
-    // process.exit is actually called.
-    return new Promise(() => {
-      // The error log is also sent to be compatible with older versions of the cozy stack
-      // For version of the stack older than 18bcbd5865a46026de6f794f661d83d5d87a3dbf
-      log('error', message)
-      log('critical', message)
-      // Allow asynchronous calls to end, for example, previous log calls.
-      // To breack promise chaining and avoid then() calls to be made,
-      // The call is encapsulated in a promise, see above.
-      setImmediate(() => process.exit(1))
-    })
-  }
-}
+      // First get the account related to the specified account id
+      return cozy.data.find('io.cozy.accounts', cozyFields.account).catch(function (err) {
+        log('error', err);
+        log('error', 'Account ' + cozyFields.account + ' does not exist');
+        _this2.terminate('CANNOT_FIND_ACCOUNT');
+      }).then(function (account) {
+        _this2.accountId = cozyFields.account;
+        _this2._account = account;
 
-module.exports = baseKonnector
+        // folder ID will be stored in cozyFields.folder_to_save when first connection
+        var folderId = account.folderId || cozyFields.folder_to_save;
+        if (!folderId) {
+          // if no folder needed
+          log('debug', 'No folder needed');
+          return Promise.resolve(account);
+        }
+        return cozy.files.statById(folderId, false).then(function (folder) {
+          cozyFields.folder_to_save = folder.attributes.path;
+          log('debug', folder, 'folder details');
+          return account;
+        }).catch(function (err) {
+          log('error', err);
+          log('error', 'error while getting the folder path of ' + folderId);
+          _this2.terminate('NOT_EXISTING_DIRECTORY');
+        });
+      }).then(function (account) {
+        // log('debug', account, 'account content')
+        _this2.fields = Object.assign(cozyFields.folder_to_save ? {
+          folderPath: cozyFields.folder_to_save
+        } : {}, account.auth, account.oauth);
 
+        return _this2.fields;
+      });
+    }
+
+    /**
+     * Saves data to the account that is passed to the konnector.
+     * Use it to persist data that needs to be passed to each
+     * konnector run.
+     *
+     * By default, the data is merged to the remote data, use
+     * `options.merge = false` to overwrite the data.
+     *
+     * The data is saved under the `.data` attribute of the cozy
+     * account.
+     *
+     * @param  {object} data    - Attributes to be merged
+     * @param  {object} options - { merge: true|false }
+     * @return {Promise}
+     */
+
+  }, {
+    key: 'saveAccountData',
+    value: function saveAccountData(data, options) {
+      var _this3 = this;
+
+      options = options || {};
+      options.merge = options.merge === undefined ? true : options.merge;
+      var start = options.merge ? Object.assign({}, this.getAccountData()) : {};
+      var newData = Object.assign({}, start, data);
+      return cozy.data.updateAttributes('io.cozy.accounts', this.accountId, { data: newData }).then(function (account) {
+        _this3._account = account;
+        return account.data;
+      });
+    }
+  }, {
+    key: 'getAccountData',
+    value: function getAccountData() {
+      return new Secret(this._account.data || {});
+    }
+
+    /**
+     * Send a special error code which is interpreted by the cozy stack to terminate the execution of the
+     * connector now
+     *
+     * @param  {string} message - The error code to be saved as connector result see [docs/ERROR_CODES.md]
+     */
+
+  }, {
+    key: 'terminate',
+    value: function terminate(message) {
+      // Encapsulating in a Promise allows to prevent then() calls before
+      // process.exit is actually called.
+      return new Promise(function () {
+        // The error log is also sent to be compatible with older versions of the cozy stack
+        // For version of the stack older than 18bcbd5865a46026de6f794f661d83d5d87a3dbf
+        log('error', message);
+        log('critical', message);
+        // Allow asynchronous calls to end, for example, previous log calls.
+        // To breack promise chaining and avoid then() calls to be made,
+        // The call is encapsulated in a promise, see above.
+        setImmediate(function () {
+          return process.exit(1);
+        });
+      });
+    }
+  }]);
+
+  return baseKonnector;
+}();
+
+module.exports = baseKonnector;
 
 /***/ }),
 /* 587 */
 /***/ (function(module, exports, __webpack_require__) {
 
-(function(e, a) { for(var i in a) e[i] = a[i]; }(exports, /******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
-/******/ 			return installedModules[moduleId].exports;
-/******/
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			exports: {},
-/******/ 			id: moduleId,
-/******/ 			loaded: false
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.loaded = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(0);
-/******/ })
+"use strict";
+
+
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+(function (e, a) {
+	for (var i in a) {
+		e[i] = a[i];
+	}
+})(exports, /******/function (modules) {
+	// webpackBootstrap
+	/******/ // The module cache
+	/******/var installedModules = {};
+	/******/
+	/******/ // The require function
+	/******/function __webpack_require__(moduleId) {
+		/******/
+		/******/ // Check if module is in cache
+		/******/if (installedModules[moduleId])
+			/******/return installedModules[moduleId].exports;
+		/******/
+		/******/ // Create a new module (and put it into the cache)
+		/******/var module = installedModules[moduleId] = {
+			/******/exports: {},
+			/******/id: moduleId,
+			/******/loaded: false
+			/******/ };
+		/******/
+		/******/ // Execute the module function
+		/******/modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+		/******/
+		/******/ // Flag the module as loaded
+		/******/module.loaded = true;
+		/******/
+		/******/ // Return the exports of the module
+		/******/return module.exports;
+		/******/
+	}
+	/******/
+	/******/
+	/******/ // expose the modules object (__webpack_modules__)
+	/******/__webpack_require__.m = modules;
+	/******/
+	/******/ // expose the module cache
+	/******/__webpack_require__.c = installedModules;
+	/******/
+	/******/ // __webpack_public_path__
+	/******/__webpack_require__.p = "";
+	/******/
+	/******/ // Load entry module and return exports
+	/******/return __webpack_require__(0);
+	/******/
+}(
 /************************************************************************/
-/******/ ([
+/******/[
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/function (module, exports, __webpack_require__) {
 
 	__webpack_require__(1);
 	module.exports = __webpack_require__(2);
 
-
-/***/ },
+	/***/
+},
 /* 1 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(588);
 
-/***/ },
+	/***/
+},
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/function (module, exports, __webpack_require__) {
 
 	'use strict';
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* global fetch URL */
-	
-	
+
+	var _createClass = function () {
+		function defineProperties(target, props) {
+			for (var i = 0; i < props.length; i++) {
+				var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+			}
+		}return function (Constructor, protoProps, staticProps) {
+			if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+		};
+	}(); /* global fetch URL */
+
 	__webpack_require__(3);
-	
+
 	__webpack_require__(4);
-	
+
 	__webpack_require__(5);
-	
+
 	__webpack_require__(6);
-	
+
 	__webpack_require__(7);
-	
+
 	__webpack_require__(8);
-	
+
 	__webpack_require__(9);
-	
+
 	__webpack_require__(10);
-	
+
 	__webpack_require__(11);
-	
+
 	__webpack_require__(12);
-	
+
 	__webpack_require__(13);
-	
+
 	__webpack_require__(14);
-	
+
 	__webpack_require__(15);
-	
+
 	__webpack_require__(16);
-	
+
 	__webpack_require__(17);
-	
+
 	__webpack_require__(18);
-	
+
 	__webpack_require__(19);
-	
+
 	__webpack_require__(20);
-	
+
 	__webpack_require__(21);
-	
+
 	__webpack_require__(22);
-	
+
 	__webpack_require__(23);
-	
+
 	__webpack_require__(24);
-	
+
 	__webpack_require__(25);
-	
+
 	__webpack_require__(26);
-	
+
 	__webpack_require__(27);
-	
+
 	__webpack_require__(28);
-	
+
 	__webpack_require__(29);
-	
+
 	__webpack_require__(30);
-	
+
 	__webpack_require__(31);
-	
+
 	__webpack_require__(32);
-	
+
 	__webpack_require__(33);
-	
+
 	__webpack_require__(34);
-	
+
 	__webpack_require__(35);
-	
+
 	__webpack_require__(36);
-	
+
 	__webpack_require__(37);
-	
+
 	__webpack_require__(38);
-	
+
 	__webpack_require__(39);
-	
+
 	__webpack_require__(40);
-	
+
 	__webpack_require__(41);
-	
+
 	__webpack_require__(42);
-	
+
 	__webpack_require__(43);
-	
+
 	__webpack_require__(44);
-	
+
 	__webpack_require__(45);
-	
+
 	__webpack_require__(46);
-	
+
 	__webpack_require__(47);
-	
+
 	__webpack_require__(48);
-	
+
 	__webpack_require__(49);
-	
+
 	__webpack_require__(50);
-	
+
 	__webpack_require__(51);
-	
+
 	__webpack_require__(52);
-	
+
 	__webpack_require__(53);
-	
+
 	__webpack_require__(54);
-	
+
 	__webpack_require__(55);
-	
+
 	__webpack_require__(56);
-	
+
 	__webpack_require__(57);
-	
+
 	__webpack_require__(58);
-	
+
 	__webpack_require__(59);
-	
+
 	__webpack_require__(60);
-	
+
 	__webpack_require__(61);
-	
+
 	__webpack_require__(62);
-	
+
 	__webpack_require__(63);
-	
+
 	__webpack_require__(64);
-	
+
 	__webpack_require__(65);
-	
+
 	__webpack_require__(66);
-	
+
 	__webpack_require__(67);
-	
+
 	__webpack_require__(68);
-	
+
 	__webpack_require__(69);
-	
+
 	__webpack_require__(70);
-	
+
 	__webpack_require__(71);
-	
+
 	__webpack_require__(72);
-	
+
 	__webpack_require__(73);
-	
+
 	__webpack_require__(74);
-	
+
 	__webpack_require__(75);
-	
+
 	__webpack_require__(76);
-	
+
 	__webpack_require__(77);
-	
+
 	__webpack_require__(78);
-	
+
 	__webpack_require__(79);
-	
+
 	__webpack_require__(80);
-	
+
 	__webpack_require__(81);
-	
+
 	__webpack_require__(82);
-	
+
 	__webpack_require__(83);
-	
+
 	__webpack_require__(84);
-	
+
 	__webpack_require__(85);
-	
+
 	__webpack_require__(86);
-	
+
 	__webpack_require__(87);
-	
+
 	__webpack_require__(88);
-	
+
 	var _utils = __webpack_require__(89);
-	
+
 	var _auth_storage = __webpack_require__(90);
-	
+
 	var _auth_v = __webpack_require__(91);
-	
+
 	var _auth_v2 = __webpack_require__(93);
-	
+
 	var auth = _interopRequireWildcard(_auth_v2);
-	
+
 	var _data = __webpack_require__(97);
-	
+
 	var data = _interopRequireWildcard(_data);
-	
+
 	var _fetch = __webpack_require__(94);
-	
+
 	var cozyFetch = _interopRequireWildcard(_fetch);
-	
+
 	var _mango = __webpack_require__(99);
-	
+
 	var mango = _interopRequireWildcard(_mango);
-	
+
 	var _files = __webpack_require__(100);
-	
+
 	var files = _interopRequireWildcard(_files);
-	
+
 	var _intents = __webpack_require__(101);
-	
+
 	var intents = _interopRequireWildcard(_intents);
-	
+
 	var _jobs = __webpack_require__(102);
-	
+
 	var jobs = _interopRequireWildcard(_jobs);
-	
+
 	var _offline = __webpack_require__(103);
-	
+
 	var offline = _interopRequireWildcard(_offline);
-	
+
 	var _settings = __webpack_require__(104);
-	
+
 	var settings = _interopRequireWildcard(_settings);
-	
+
 	var _relations = __webpack_require__(105);
-	
+
 	var relations = _interopRequireWildcard(_relations);
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
+
+	function _interopRequireWildcard(obj) {
+		if (obj && obj.__esModule) {
+			return obj;
+		} else {
+			var newObj = {};if (obj != null) {
+				for (var key in obj) {
+					if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+				}
+			}newObj.default = obj;return newObj;
+		}
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
 	var AppTokenV3 = auth.AppToken,
 	    AccessTokenV3 = auth.AccessToken,
 	    ClientV3 = auth.Client;
-	
-	
+
 	var AuthNone = 0;
 	var AuthRunning = 1;
 	var AuthError = 2;
 	var AuthOK = 3;
-	
+
 	var defaultClientParams = {
-	  softwareID: 'github.com/cozy/cozy-client-js'
+		softwareID: 'github.com/cozy/cozy-client-js'
 	};
-	
+
 	var dataProto = {
-	  create: data.create,
-	  find: data.find,
-	  findMany: data.findMany,
-	  findAll: data.findAll,
-	  update: data.update,
-	  delete: data._delete,
-	  updateAttributes: data.updateAttributes,
-	  changesFeed: data.changesFeed,
-	  defineIndex: mango.defineIndex,
-	  query: mango.query,
-	  addReferencedFiles: relations.addReferencedFiles,
-	  removeReferencedFiles: relations.removeReferencedFiles,
-	  listReferencedFiles: relations.listReferencedFiles,
-	  fetchReferencedFiles: relations.fetchReferencedFiles,
-	  destroy: function destroy() {
-	    (0, _utils.warn)('destroy is deprecated, use cozy.data.delete instead.');
-	    return data._delete.apply(data, arguments);
-	  }
+		create: data.create,
+		find: data.find,
+		findMany: data.findMany,
+		findAll: data.findAll,
+		update: data.update,
+		delete: data._delete,
+		updateAttributes: data.updateAttributes,
+		changesFeed: data.changesFeed,
+		defineIndex: mango.defineIndex,
+		query: mango.query,
+		addReferencedFiles: relations.addReferencedFiles,
+		removeReferencedFiles: relations.removeReferencedFiles,
+		listReferencedFiles: relations.listReferencedFiles,
+		fetchReferencedFiles: relations.fetchReferencedFiles,
+		destroy: function destroy() {
+			(0, _utils.warn)('destroy is deprecated, use cozy.data.delete instead.');
+			return data._delete.apply(data, arguments);
+		}
 	};
-	
+
 	var authProto = {
-	  client: auth.client,
-	  registerClient: auth.registerClient,
-	  updateClient: auth.updateClient,
-	  unregisterClient: auth.unregisterClient,
-	  getClient: auth.getClient,
-	  getAuthCodeURL: auth.getAuthCodeURL,
-	  getAccessToken: auth.getAccessToken,
-	  refreshToken: auth.refreshToken
+		client: auth.client,
+		registerClient: auth.registerClient,
+		updateClient: auth.updateClient,
+		unregisterClient: auth.unregisterClient,
+		getClient: auth.getClient,
+		getAuthCodeURL: auth.getAuthCodeURL,
+		getAccessToken: auth.getAccessToken,
+		refreshToken: auth.refreshToken
 	};
-	
+
 	var filesProto = {
-	  create: files.create,
-	  createDirectory: files.createDirectory,
-	  createDirectoryByPath: files.createDirectoryByPath,
-	  updateById: files.updateById,
-	  updateAttributesById: files.updateAttributesById,
-	  updateAttributesByPath: files.updateAttributesByPath,
-	  trashById: files.trashById,
-	  statById: files.statById,
-	  statByPath: files.statByPath,
-	  downloadById: files.downloadById,
-	  downloadByPath: files.downloadByPath,
-	  getDownloadLinkById: files.getDownloadLinkById,
-	  getDownloadLink: files.getDownloadLinkByPath, // DEPRECATED, should be removed very soon
-	  getDownloadLinkByPath: files.getDownloadLinkByPath,
-	  getArchiveLink: function getArchiveLink() {
-	    (0, _utils.warn)('getArchiveLink is deprecated, use cozy.files.getArchiveLinkByPaths instead.');
-	    return files.getArchiveLinkByPaths.apply(files, arguments);
-	  },
-	  getArchiveLinkByPaths: files.getArchiveLinkByPaths,
-	  getArchiveLinkByIds: files.getArchiveLinkByIds,
-	  getFilePath: files.getFilePath,
-	  getCollectionShareLink: files.getCollectionShareLink,
-	  query: mango.queryFiles,
-	  listTrash: files.listTrash,
-	  clearTrash: files.clearTrash,
-	  restoreById: files.restoreById,
-	  destroyById: files.destroyById
+		create: files.create,
+		createDirectory: files.createDirectory,
+		createDirectoryByPath: files.createDirectoryByPath,
+		updateById: files.updateById,
+		updateAttributesById: files.updateAttributesById,
+		updateAttributesByPath: files.updateAttributesByPath,
+		trashById: files.trashById,
+		statById: files.statById,
+		statByPath: files.statByPath,
+		downloadById: files.downloadById,
+		downloadByPath: files.downloadByPath,
+		getDownloadLinkById: files.getDownloadLinkById,
+		getDownloadLink: files.getDownloadLinkByPath, // DEPRECATED, should be removed very soon
+		getDownloadLinkByPath: files.getDownloadLinkByPath,
+		getArchiveLink: function getArchiveLink() {
+			(0, _utils.warn)('getArchiveLink is deprecated, use cozy.files.getArchiveLinkByPaths instead.');
+			return files.getArchiveLinkByPaths.apply(files, arguments);
+		},
+		getArchiveLinkByPaths: files.getArchiveLinkByPaths,
+		getArchiveLinkByIds: files.getArchiveLinkByIds,
+		getFilePath: files.getFilePath,
+		getCollectionShareLink: files.getCollectionShareLink,
+		query: mango.queryFiles,
+		listTrash: files.listTrash,
+		clearTrash: files.clearTrash,
+		restoreById: files.restoreById,
+		destroyById: files.destroyById
 	};
-	
+
 	var intentsProto = {
-	  create: intents.create,
-	  createService: intents.createService
+		create: intents.create,
+		createService: intents.createService
 	};
-	
+
 	var jobsProto = {
-	  create: jobs.create,
-	  count: jobs.count,
-	  queued: jobs.queued
+		create: jobs.create,
+		count: jobs.count,
+		queued: jobs.queued
 	};
-	
+
 	var offlineProto = {
-	  init: offline.init,
-	  getDoctypes: offline.getDoctypes,
-	  // database
-	  hasDatabase: offline.hasDatabase,
-	  getDatabase: offline.getDatabase,
-	  createDatabase: offline.createDatabase,
-	  destroyDatabase: offline.destroyDatabase,
-	  destroyAllDatabase: offline.destroyAllDatabase,
-	  // replication
-	  hasReplication: offline.hasReplication,
-	  replicateFromCozy: offline.replicateFromCozy,
-	  stopReplication: offline.stopReplication,
-	  stopAllReplication: offline.stopAllReplication,
-	  // repeated replication
-	  hasRepeatedReplication: offline.hasRepeatedReplication,
-	  startRepeatedReplication: offline.startRepeatedReplication,
-	  stopRepeatedReplication: offline.stopRepeatedReplication,
-	  stopAllRepeatedReplication: offline.stopAllRepeatedReplication
+		init: offline.init,
+		getDoctypes: offline.getDoctypes,
+		// database
+		hasDatabase: offline.hasDatabase,
+		getDatabase: offline.getDatabase,
+		createDatabase: offline.createDatabase,
+		destroyDatabase: offline.destroyDatabase,
+		destroyAllDatabase: offline.destroyAllDatabase,
+		// replication
+		hasReplication: offline.hasReplication,
+		replicateFromCozy: offline.replicateFromCozy,
+		stopReplication: offline.stopReplication,
+		stopAllReplication: offline.stopAllReplication,
+		// repeated replication
+		hasRepeatedReplication: offline.hasRepeatedReplication,
+		startRepeatedReplication: offline.startRepeatedReplication,
+		stopRepeatedReplication: offline.stopRepeatedReplication,
+		stopAllRepeatedReplication: offline.stopAllRepeatedReplication
 	};
-	
+
 	var settingsProto = {
-	  diskUsage: settings.diskUsage,
-	  changePassphrase: settings.changePassphrase,
-	  getInstance: settings.getInstance,
-	  updateInstance: settings.updateInstance,
-	  getClients: settings.getClients,
-	  deleteClientById: settings.deleteClientById,
-	  updateLastSync: settings.updateLastSync
+		diskUsage: settings.diskUsage,
+		changePassphrase: settings.changePassphrase,
+		getInstance: settings.getInstance,
+		updateInstance: settings.updateInstance,
+		getClients: settings.getClients,
+		deleteClientById: settings.deleteClientById,
+		updateLastSync: settings.updateLastSync
 	};
-	
+
 	var Client = function () {
-	  function Client(options) {
-	    _classCallCheck(this, Client);
-	
-	    this.data = {};
-	    this.files = {};
-	    this.intents = {};
-	    this.jobs = {};
-	    this.offline = {};
-	    this.settings = {};
-	    this.auth = {
-	      Client: ClientV3,
-	      AccessToken: AccessTokenV3,
-	      AppToken: AppTokenV3,
-	      AppTokenV2: _auth_v.AppToken,
-	      LocalStorage: _auth_storage.LocalStorage,
-	      MemoryStorage: _auth_storage.MemoryStorage
-	    };
-	    this._inited = false;
-	    if (options) {
-	      this.init(options);
-	    }
-	  }
-	
-	  _createClass(Client, [{
-	    key: 'init',
-	    value: function init() {
-	      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-	
-	      this._inited = true;
-	      this._oauth = false; // is oauth activated or not
-	      this._token = null; // application token
-	      this._authstate = AuthNone;
-	      this._authcreds = null;
-	      this._storage = null;
-	      this._version = options.version || null;
-	      this._offline = null;
-	
-	      var token = options.token;
-	      var oauth = options.oauth;
-	      if (token && oauth) {
-	        throw new Error('Cannot specify an application token with a oauth activated');
-	      }
-	
-	      if (token) {
-	        this._token = new AppTokenV3({ token: token });
-	      } else if (oauth) {
-	        this._oauth = true;
-	        this._storage = oauth.storage;
-	        this._clientParams = Object.assign({}, defaultClientParams, oauth.clientParams);
-	        this._onRegistered = oauth.onRegistered || nopOnRegistered;
-	      }
-	
-	      var url = options.cozyURL || '';
-	      while (url[url.length - 1] === '/') {
-	        url = url.slice(0, -1);
-	      }
-	
-	      this._url = url;
-	
-	      var disablePromises = !!options.disablePromises;
-	      addToProto(this, this.data, dataProto, disablePromises);
-	      addToProto(this, this.auth, authProto, disablePromises);
-	      addToProto(this, this.files, filesProto, disablePromises);
-	      addToProto(this, this.intents, intentsProto, disablePromises);
-	      addToProto(this, this.jobs, jobsProto, disablePromises);
-	      addToProto(this, this.offline, offlineProto, disablePromises);
-	      addToProto(this, this.settings, settingsProto, disablePromises);
-	
-	      if (options.offline) {
-	        this.offline.init(options.offline);
-	      }
-	
-	      // Exposing cozyFetchJSON to make some development easier. Should be temporary.
-	      this.fetchJSON = function _fetchJSON() {
-	        var args = [this].concat(Array.prototype.slice.call(arguments));
-	        return cozyFetch.cozyFetchJSON.apply(this, args);
-	      };
-	    }
-	  }, {
-	    key: 'authorize',
-	    value: function authorize() {
-	      var _this = this;
-	
-	      var forceTokenRefresh = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-	
-	      var state = this._authstate;
-	      if (state === AuthOK || state === AuthRunning) {
-	        return this._authcreds;
-	      }
-	
-	      this._authstate = AuthRunning;
-	      this._authcreds = this.isV2().then(function (isV2) {
-	        if (isV2 && _this._oauth) {
-	          throw new Error('OAuth is not supported on the V2 stack');
-	        }
-	        if (_this._oauth) {
-	          if (forceTokenRefresh && _this._clientParams.redirectURI) {
-	            var url = new URL(_this._clientParams.redirectURI);
-	            if (!url.searchParams.has('reconnect')) url.searchParams.append('reconnect', 1);
-	            _this._clientParams.redirectURI = url.toString();
-	          }
-	          return auth.oauthFlow(_this, _this._storage, _this._clientParams, _this._onRegistered, forceTokenRefresh);
-	        }
-	        // we expect to be on a client side application running in a browser
-	        // with cookie-based authentication.
-	        if (isV2) {
-	          return (0, _auth_v.getAppToken)();
-	        } else if (_this._token) {
-	          return Promise.resolve({ client: null, token: _this._token });
-	        } else {
-	          throw new Error('Missing application token');
-	        }
-	      });
-	
-	      this._authcreds.then(function () {
-	        _this._authstate = AuthOK;
-	      }, function () {
-	        _this._authstate = AuthError;
-	      });
-	
-	      return this._authcreds;
-	    }
-	  }, {
-	    key: 'saveCredentials',
-	    value: function saveCredentials(client, token) {
-	      var creds = { client: client, token: token };
-	      if (!this._storage || this._authstate === AuthRunning) {
-	        return Promise.resolve(creds);
-	      }
-	      this._storage.save(auth.CredsKey, creds);
-	      this._authcreds = Promise.resolve(creds);
-	      return this._authcreds;
-	    }
-	  }, {
-	    key: 'fullpath',
-	    value: function fullpath(path) {
-	      var _this2 = this;
-	
-	      return this.isV2().then(function (isV2) {
-	        var pathprefix = isV2 ? '/ds-api' : '';
-	        return _this2._url + pathprefix + path;
-	      });
-	    }
-	  }, {
-	    key: 'isV2',
-	    value: function isV2() {
-	      var _this3 = this;
-	
-	      if (!this._version) {
-	        return (0, _utils.retry)(function () {
-	          return fetch(_this3._url + '/status/');
-	        }, 3)().then(function (res) {
-	          if (!res.ok) {
-	            throw new Error('Could not fetch cozy status');
-	          } else {
-	            return res.json();
-	          }
-	        }).then(function (status) {
-	          _this3._version = status.datasystem !== undefined ? 2 : 3;
-	          return _this3.isV2();
-	        });
-	      }
-	      return Promise.resolve(this._version === 2);
-	    }
-	  }]);
-	
-	  return Client;
+		function Client(options) {
+			_classCallCheck(this, Client);
+
+			this.data = {};
+			this.files = {};
+			this.intents = {};
+			this.jobs = {};
+			this.offline = {};
+			this.settings = {};
+			this.auth = {
+				Client: ClientV3,
+				AccessToken: AccessTokenV3,
+				AppToken: AppTokenV3,
+				AppTokenV2: _auth_v.AppToken,
+				LocalStorage: _auth_storage.LocalStorage,
+				MemoryStorage: _auth_storage.MemoryStorage
+			};
+			this._inited = false;
+			if (options) {
+				this.init(options);
+			}
+		}
+
+		_createClass(Client, [{
+			key: 'init',
+			value: function init() {
+				var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+				this._inited = true;
+				this._oauth = false; // is oauth activated or not
+				this._token = null; // application token
+				this._authstate = AuthNone;
+				this._authcreds = null;
+				this._storage = null;
+				this._version = options.version || null;
+				this._offline = null;
+
+				var token = options.token;
+				var oauth = options.oauth;
+				if (token && oauth) {
+					throw new Error('Cannot specify an application token with a oauth activated');
+				}
+
+				if (token) {
+					this._token = new AppTokenV3({ token: token });
+				} else if (oauth) {
+					this._oauth = true;
+					this._storage = oauth.storage;
+					this._clientParams = Object.assign({}, defaultClientParams, oauth.clientParams);
+					this._onRegistered = oauth.onRegistered || nopOnRegistered;
+				}
+
+				var url = options.cozyURL || '';
+				while (url[url.length - 1] === '/') {
+					url = url.slice(0, -1);
+				}
+
+				this._url = url;
+
+				var disablePromises = !!options.disablePromises;
+				addToProto(this, this.data, dataProto, disablePromises);
+				addToProto(this, this.auth, authProto, disablePromises);
+				addToProto(this, this.files, filesProto, disablePromises);
+				addToProto(this, this.intents, intentsProto, disablePromises);
+				addToProto(this, this.jobs, jobsProto, disablePromises);
+				addToProto(this, this.offline, offlineProto, disablePromises);
+				addToProto(this, this.settings, settingsProto, disablePromises);
+
+				if (options.offline) {
+					this.offline.init(options.offline);
+				}
+
+				// Exposing cozyFetchJSON to make some development easier. Should be temporary.
+				this.fetchJSON = function _fetchJSON() {
+					var args = [this].concat(Array.prototype.slice.call(arguments));
+					return cozyFetch.cozyFetchJSON.apply(this, args);
+				};
+			}
+		}, {
+			key: 'authorize',
+			value: function authorize() {
+				var _this = this;
+
+				var forceTokenRefresh = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+				var state = this._authstate;
+				if (state === AuthOK || state === AuthRunning) {
+					return this._authcreds;
+				}
+
+				this._authstate = AuthRunning;
+				this._authcreds = this.isV2().then(function (isV2) {
+					if (isV2 && _this._oauth) {
+						throw new Error('OAuth is not supported on the V2 stack');
+					}
+					if (_this._oauth) {
+						if (forceTokenRefresh && _this._clientParams.redirectURI) {
+							var url = new URL(_this._clientParams.redirectURI);
+							if (!url.searchParams.has('reconnect')) url.searchParams.append('reconnect', 1);
+							_this._clientParams.redirectURI = url.toString();
+						}
+						return auth.oauthFlow(_this, _this._storage, _this._clientParams, _this._onRegistered, forceTokenRefresh);
+					}
+					// we expect to be on a client side application running in a browser
+					// with cookie-based authentication.
+					if (isV2) {
+						return (0, _auth_v.getAppToken)();
+					} else if (_this._token) {
+						return Promise.resolve({ client: null, token: _this._token });
+					} else {
+						throw new Error('Missing application token');
+					}
+				});
+
+				this._authcreds.then(function () {
+					_this._authstate = AuthOK;
+				}, function () {
+					_this._authstate = AuthError;
+				});
+
+				return this._authcreds;
+			}
+		}, {
+			key: 'saveCredentials',
+			value: function saveCredentials(client, token) {
+				var creds = { client: client, token: token };
+				if (!this._storage || this._authstate === AuthRunning) {
+					return Promise.resolve(creds);
+				}
+				this._storage.save(auth.CredsKey, creds);
+				this._authcreds = Promise.resolve(creds);
+				return this._authcreds;
+			}
+		}, {
+			key: 'fullpath',
+			value: function fullpath(path) {
+				var _this2 = this;
+
+				return this.isV2().then(function (isV2) {
+					var pathprefix = isV2 ? '/ds-api' : '';
+					return _this2._url + pathprefix + path;
+				});
+			}
+		}, {
+			key: 'isV2',
+			value: function isV2() {
+				var _this3 = this;
+
+				if (!this._version) {
+					return (0, _utils.retry)(function () {
+						return fetch(_this3._url + '/status/');
+					}, 3)().then(function (res) {
+						if (!res.ok) {
+							throw new Error('Could not fetch cozy status');
+						} else {
+							return res.json();
+						}
+					}).then(function (status) {
+						_this3._version = status.datasystem !== undefined ? 2 : 3;
+						return _this3.isV2();
+					});
+				}
+				return Promise.resolve(this._version === 2);
+			}
+		}]);
+
+		return Client;
 	}();
-	
+
 	function nopOnRegistered() {
-	  throw new Error('Missing onRegistered callback');
+		throw new Error('Missing onRegistered callback');
 	}
-	
+
 	function protoify(context, fn) {
-	  return function prototyped() {
-	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	      args[_key] = arguments[_key];
-	    }
-	
-	    return fn.apply(undefined, [context].concat(args));
-	  };
+		return function prototyped() {
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
+
+			return fn.apply(undefined, [context].concat(args));
+		};
 	}
-	
+
 	function addToProto(ctx, obj, proto, disablePromises) {
-	  for (var attr in proto) {
-	    var fn = protoify(ctx, proto[attr]);
-	    if (disablePromises) {
-	      fn = (0, _utils.unpromiser)(fn);
-	    }
-	    obj[attr] = fn;
-	  }
+		for (var attr in proto) {
+			var fn = protoify(ctx, proto[attr]);
+			if (disablePromises) {
+				fn = (0, _utils.unpromiser)(fn);
+			}
+			obj[attr] = fn;
+		}
 	}
-	
+
 	module.exports = new Client();
 	Object.assign(module.exports, { Client: Client, LocalStorage: _auth_storage.LocalStorage, MemoryStorage: _auth_storage.MemoryStorage });
 
-/***/ },
+	/***/
+},
 /* 3 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(614);
 
-/***/ },
+	/***/
+},
 /* 4 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(615);
 
-/***/ },
+	/***/
+},
 /* 5 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(620);
 
-/***/ },
+	/***/
+},
 /* 6 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(621);
 
-/***/ },
+	/***/
+},
 /* 7 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(622);
 
-/***/ },
+	/***/
+},
 /* 8 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(623);
 
-/***/ },
+	/***/
+},
 /* 9 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(624);
 
-/***/ },
+	/***/
+},
 /* 10 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(625);
 
-/***/ },
+	/***/
+},
 /* 11 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(626);
 
-/***/ },
+	/***/
+},
 /* 12 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(627);
 
-/***/ },
+	/***/
+},
 /* 13 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(628);
 
-/***/ },
+	/***/
+},
 /* 14 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(630);
 
-/***/ },
+	/***/
+},
 /* 15 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(631);
 
-/***/ },
+	/***/
+},
 /* 16 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(632);
 
-/***/ },
+	/***/
+},
 /* 17 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(633);
 
-/***/ },
+	/***/
+},
 /* 18 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(634);
 
-/***/ },
+	/***/
+},
 /* 19 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(636);
 
-/***/ },
+	/***/
+},
 /* 20 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(637);
 
-/***/ },
+	/***/
+},
 /* 21 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(638);
 
-/***/ },
+	/***/
+},
 /* 22 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(639);
 
-/***/ },
+	/***/
+},
 /* 23 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(640);
 
-/***/ },
+	/***/
+},
 /* 24 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(641);
 
-/***/ },
+	/***/
+},
 /* 25 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(642);
 
-/***/ },
+	/***/
+},
 /* 26 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(643);
 
-/***/ },
+	/***/
+},
 /* 27 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(644);
 
-/***/ },
+	/***/
+},
 /* 28 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(645);
 
-/***/ },
+	/***/
+},
 /* 29 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(646);
 
-/***/ },
+	/***/
+},
 /* 30 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(647);
 
-/***/ },
+	/***/
+},
 /* 31 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(651);
 
-/***/ },
+	/***/
+},
 /* 32 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(655);
 
-/***/ },
+	/***/
+},
 /* 33 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(656);
 
-/***/ },
+	/***/
+},
 /* 34 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(658);
 
-/***/ },
+	/***/
+},
 /* 35 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(659);
 
-/***/ },
+	/***/
+},
 /* 36 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(660);
 
-/***/ },
+	/***/
+},
 /* 37 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(661);
 
-/***/ },
+	/***/
+},
 /* 38 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(662);
 
-/***/ },
+	/***/
+},
 /* 39 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(664);
 
-/***/ },
+	/***/
+},
 /* 40 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(665);
 
-/***/ },
+	/***/
+},
 /* 41 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(666);
 
-/***/ },
+	/***/
+},
 /* 42 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(667);
 
-/***/ },
+	/***/
+},
 /* 43 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(668);
 
-/***/ },
+	/***/
+},
 /* 44 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(670);
 
-/***/ },
+	/***/
+},
 /* 45 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(671);
 
-/***/ },
+	/***/
+},
 /* 46 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(672);
 
-/***/ },
+	/***/
+},
 /* 47 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(673);
 
-/***/ },
+	/***/
+},
 /* 48 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(674);
 
-/***/ },
+	/***/
+},
 /* 49 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(675);
 
-/***/ },
+	/***/
+},
 /* 50 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(676);
 
-/***/ },
+	/***/
+},
 /* 51 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(677);
 
-/***/ },
+	/***/
+},
 /* 52 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(678);
 
-/***/ },
+	/***/
+},
 /* 53 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(679);
 
-/***/ },
+	/***/
+},
 /* 54 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(184);
 
-/***/ },
+	/***/
+},
 /* 55 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(680);
 
-/***/ },
+	/***/
+},
 /* 56 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(681);
 
-/***/ },
+	/***/
+},
 /* 57 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(682);
 
-/***/ },
+	/***/
+},
 /* 58 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(683);
 
-/***/ },
+	/***/
+},
 /* 59 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(684);
 
-/***/ },
+	/***/
+},
 /* 60 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(685);
 
-/***/ },
+	/***/
+},
 /* 61 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(686);
 
-/***/ },
+	/***/
+},
 /* 62 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(687);
 
-/***/ },
+	/***/
+},
 /* 63 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(688);
 
-/***/ },
+	/***/
+},
 /* 64 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(689);
 
-/***/ },
+	/***/
+},
 /* 65 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(690);
 
-/***/ },
+	/***/
+},
 /* 66 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(691);
 
-/***/ },
+	/***/
+},
 /* 67 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(692);
 
-/***/ },
+	/***/
+},
 /* 68 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(693);
 
-/***/ },
+	/***/
+},
 /* 69 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(694);
 
-/***/ },
+	/***/
+},
 /* 70 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(696);
 
-/***/ },
+	/***/
+},
 /* 71 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(697);
 
-/***/ },
+	/***/
+},
 /* 72 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(698);
 
-/***/ },
+	/***/
+},
 /* 73 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(699);
 
-/***/ },
+	/***/
+},
 /* 74 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(700);
 
-/***/ },
+	/***/
+},
 /* 75 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(701);
 
-/***/ },
+	/***/
+},
 /* 76 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(702);
 
-/***/ },
+	/***/
+},
 /* 77 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(703);
 
-/***/ },
+	/***/
+},
 /* 78 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(704);
 
-/***/ },
+	/***/
+},
 /* 79 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(705);
 
-/***/ },
+	/***/
+},
 /* 80 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(706);
 
-/***/ },
+	/***/
+},
 /* 81 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(707);
 
-/***/ },
+	/***/
+},
 /* 82 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(708);
 
-/***/ },
+	/***/
+},
 /* 83 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(709);
 
-/***/ },
+	/***/
+},
 /* 84 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(710);
 
-/***/ },
+	/***/
+},
 /* 85 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(711);
 
-/***/ },
+	/***/
+},
 /* 86 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(712);
 
-/***/ },
+	/***/
+},
 /* 87 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(713);
 
-/***/ },
+	/***/
+},
 /* 88 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(525);
 
-/***/ },
+	/***/
+},
 /* 89 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	'use strict';
-	
+
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+		value: true
 	});
 	exports.unpromiser = unpromiser;
 	exports.isPromise = isPromise;
@@ -58254,1103 +58568,1211 @@ module.exports = baseKonnector
 	exports.warn = warn;
 	/* global navigator */
 	var FuzzFactor = 0.3;
-	
+
 	function unpromiser(fn) {
-	  return function () {
-	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	      args[_key] = arguments[_key];
-	    }
-	
-	    var value = fn.apply(this, args);
-	    if (!isPromise(value)) {
-	      return value;
-	    }
-	    var l = args.length;
-	    if (l === 0 || typeof args[l - 1] !== 'function') {
-	      return;
-	    }
-	    var cb = args[l - 1];
-	    value.then(function (res) {
-	      return cb(null, res);
-	    }, function (err) {
-	      return cb(err, null);
-	    });
-	  };
+		return function () {
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
+
+			var value = fn.apply(this, args);
+			if (!isPromise(value)) {
+				return value;
+			}
+			var l = args.length;
+			if (l === 0 || typeof args[l - 1] !== 'function') {
+				return;
+			}
+			var cb = args[l - 1];
+			value.then(function (res) {
+				return cb(null, res);
+			}, function (err) {
+				return cb(err, null);
+			});
+		};
 	}
-	
+
 	function isPromise(value) {
-	  return !!value && typeof value.then === 'function';
+		return !!value && typeof value.then === 'function';
 	}
-	
+
 	function isOnline() {
-	  return typeof navigator !== 'undefined' ? navigator.onLine : true;
+		return typeof navigator !== 'undefined' ? navigator.onLine : true;
 	}
-	
+
 	function isOffline() {
-	  return !isOnline();
+		return !isOnline();
 	}
-	
+
 	function sleep(time, args) {
-	  return new Promise(function (resolve) {
-	    setTimeout(resolve, time, args);
-	  });
+		return new Promise(function (resolve) {
+			setTimeout(resolve, time, args);
+		});
 	}
-	
+
 	function retry(fn, count) {
-	  var delay = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 300;
-	
-	  return function doTry() {
-	    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-	      args[_key2] = arguments[_key2];
-	    }
-	
-	    return fn.apply(undefined, args).catch(function (err) {
-	      if (--count < 0) {
-	        throw err;
-	      }
-	      return sleep(getBackedoffDelay(delay, count)).then(function () {
-	        return doTry.apply(undefined, args);
-	      });
-	    });
-	  };
+		var delay = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 300;
+
+		return function doTry() {
+			for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+				args[_key2] = arguments[_key2];
+			}
+
+			return fn.apply(undefined, args).catch(function (err) {
+				if (--count < 0) {
+					throw err;
+				}
+				return sleep(getBackedoffDelay(delay, count)).then(function () {
+					return doTry.apply(undefined, args);
+				});
+			});
+		};
 	}
-	
+
 	function getFuzzedDelay(retryDelay) {
-	  var fuzzingFactor = (Math.random() * 2 - 1) * FuzzFactor;
-	  return retryDelay * (1.0 + fuzzingFactor);
+		var fuzzingFactor = (Math.random() * 2 - 1) * FuzzFactor;
+		return retryDelay * (1.0 + fuzzingFactor);
 	}
-	
+
 	function getBackedoffDelay(retryDelay) {
-	  var retryCount = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
-	
-	  return getFuzzedDelay(retryDelay * Math.pow(2, retryCount - 1));
+		var retryCount = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
+
+		return getFuzzedDelay(retryDelay * Math.pow(2, retryCount - 1));
 	}
-	
+
 	function createPath(cozy, isV2, doctype) {
-	  var id = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
-	  var query = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : null;
-	
-	  var route = '/data/';
-	  if (!isV2) {
-	    route += encodeURIComponent(doctype) + '/';
-	  }
-	  if (id !== '') {
-	    route += encodeURIComponent(id);
-	  }
-	  var q = encodeQuery(query);
-	  if (q !== '') {
-	    route += '?' + q;
-	  }
-	  return route;
+		var id = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+		var query = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : null;
+
+		var route = '/data/';
+		if (!isV2) {
+			route += encodeURIComponent(doctype) + '/';
+		}
+		if (id !== '') {
+			route += encodeURIComponent(id);
+		}
+		var q = encodeQuery(query);
+		if (q !== '') {
+			route += '?' + q;
+		}
+		return route;
 	}
-	
+
 	function encodeQuery(query) {
-	  if (!query) {
-	    return '';
-	  }
-	  var q = '';
-	  for (var qname in query) {
-	    if (q !== '') {
-	      q += '&';
-	    }
-	    q += encodeURIComponent(qname) + '=' + encodeURIComponent(query[qname]);
-	  }
-	  return q;
+		if (!query) {
+			return '';
+		}
+		var q = '';
+		for (var qname in query) {
+			if (q !== '') {
+				q += '&';
+			}
+			q += encodeURIComponent(qname) + '=' + encodeURIComponent(query[qname]);
+		}
+		return q;
 	}
-	
+
 	function decodeQuery(url) {
-	  var queryIndex = url.indexOf('?');
-	  if (queryIndex < 0) {
-	    queryIndex = url.length;
-	  }
-	  var queries = {};
-	  var fragIndex = url.indexOf('#');
-	  if (fragIndex < 0) {
-	    fragIndex = url.length;
-	  }
-	  if (fragIndex < queryIndex) {
-	    return queries;
-	  }
-	  var queryStr = url.slice(queryIndex + 1, fragIndex);
-	  if (queryStr === '') {
-	    return queries;
-	  }
-	  var parts = queryStr.split('&');
-	  for (var i = 0; i < parts.length; i++) {
-	    var pair = parts[i].split('=');
-	    if (pair.length === 0 || pair[0] === '') {
-	      continue;
-	    }
-	    var qname = decodeURIComponent(pair[0]);
-	    if (queries.hasOwnProperty(qname)) {
-	      continue;
-	    }
-	    if (pair.length === 1) {
-	      queries[qname] = true;
-	    } else if (pair.length === 2) {
-	      queries[qname] = decodeURIComponent(pair[1]);
-	    } else {
-	      throw new Error('Malformed URL');
-	    }
-	  }
-	  return queries;
+		var queryIndex = url.indexOf('?');
+		if (queryIndex < 0) {
+			queryIndex = url.length;
+		}
+		var queries = {};
+		var fragIndex = url.indexOf('#');
+		if (fragIndex < 0) {
+			fragIndex = url.length;
+		}
+		if (fragIndex < queryIndex) {
+			return queries;
+		}
+		var queryStr = url.slice(queryIndex + 1, fragIndex);
+		if (queryStr === '') {
+			return queries;
+		}
+		var parts = queryStr.split('&');
+		for (var i = 0; i < parts.length; i++) {
+			var pair = parts[i].split('=');
+			if (pair.length === 0 || pair[0] === '') {
+				continue;
+			}
+			var qname = decodeURIComponent(pair[0]);
+			if (queries.hasOwnProperty(qname)) {
+				continue;
+			}
+			if (pair.length === 1) {
+				queries[qname] = true;
+			} else if (pair.length === 2) {
+				queries[qname] = decodeURIComponent(pair[1]);
+			} else {
+				throw new Error('Malformed URL');
+			}
+		}
+		return queries;
 	}
-	
+
 	var warned = [];
 	function warn(text) {
-	  if (warned.indexOf(text) === -1) {
-	    warned.push(text);
-	    console.warn('cozy-client-js', text);
-	  }
+		if (warned.indexOf(text) === -1) {
+			warned.push(text);
+			console.warn('cozy-client-js', text);
+		}
 	}
 
-/***/ },
+	/***/
+},
 /* 90 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var LocalStorage = exports.LocalStorage = function () {
-	  function LocalStorage(storage, prefix) {
-	    _classCallCheck(this, LocalStorage);
-	
-	    if (!storage && typeof window !== 'undefined') {
-	      storage = window.localStorage;
-	    }
-	    this.storage = storage;
-	    this.prefix = prefix || 'cozy:oauth:';
-	  }
-	
-	  _createClass(LocalStorage, [{
-	    key: 'save',
-	    value: function save(key, value) {
-	      var _this = this;
-	
-	      return new Promise(function (resolve) {
-	        _this.storage.setItem(_this.prefix + key, JSON.stringify(value));
-	        resolve(value);
-	      });
-	    }
-	  }, {
-	    key: 'load',
-	    value: function load(key) {
-	      var _this2 = this;
-	
-	      return new Promise(function (resolve) {
-	        var item = _this2.storage.getItem(_this2.prefix + key);
-	        if (!item) {
-	          resolve();
-	        } else {
-	          resolve(JSON.parse(item));
-	        }
-	      });
-	    }
-	  }, {
-	    key: 'delete',
-	    value: function _delete(key) {
-	      var _this3 = this;
-	
-	      return new Promise(function (resolve) {
-	        return resolve(_this3.storage.removeItem(_this3.prefix + key));
-	      });
-	    }
-	  }, {
-	    key: 'clear',
-	    value: function clear() {
-	      var _this4 = this;
-	
-	      return new Promise(function (resolve) {
-	        var storage = _this4.storage;
-	        for (var i = 0; i < storage.length; i++) {
-	          var key = storage.key(i);
-	          if (key.indexOf(_this4.prefix) === 0) {
-	            storage.removeItem(key);
-	          }
-	        }
-	        resolve();
-	      });
-	    }
-	  }]);
-	
-	  return LocalStorage;
-	}();
-	
-	var MemoryStorage = exports.MemoryStorage = function () {
-	  function MemoryStorage() {
-	    _classCallCheck(this, MemoryStorage);
-	
-	    this.hash = Object.create(null);
-	  }
-	
-	  _createClass(MemoryStorage, [{
-	    key: 'save',
-	    value: function save(key, value) {
-	      this.hash[key] = value;
-	      return Promise.resolve(value);
-	    }
-	  }, {
-	    key: 'load',
-	    value: function load(key) {
-	      return Promise.resolve(this.hash[key]);
-	    }
-	  }, {
-	    key: 'delete',
-	    value: function _delete(key) {
-	      var deleted = delete this.hash[key];
-	      return Promise.resolve(deleted);
-	    }
-	  }, {
-	    key: 'clear',
-	    value: function clear() {
-	      this.hash = Object.create(null);
-	      return Promise.resolve();
-	    }
-	  }]);
 
-	  return MemoryStorage;
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _createClass = function () {
+		function defineProperties(target, props) {
+			for (var i = 0; i < props.length; i++) {
+				var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+			}
+		}return function (Constructor, protoProps, staticProps) {
+			if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+		};
 	}();
 
-/***/ },
-/* 91 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(btoa) {'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	exports.getAppToken = getAppToken;
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	/* global btoa */
-	var V2TOKEN_ABORT_TIMEOUT = 3000;
-	
-	function getAppToken() {
-	  return new Promise(function (resolve, reject) {
-	    if (typeof window === 'undefined') {
-	      return reject(new Error('getV2Token should be used in browser'));
-	    } else if (!window.parent) {
-	      return reject(new Error('getV2Token should be used in iframe'));
-	    } else if (!window.parent.postMessage) {
-	      return reject(new Error('getV2Token should be used in modern browser'));
-	    }
-	    var origin = window.location.origin;
-	    var intent = { action: 'getToken' };
-	    var timeout = null;
-	    var receiver = function receiver(event) {
-	      var token = void 0;
-	      try {
-	        token = new AppToken({
-	          appName: event.data.appName,
-	          token: event.data.token
-	        });
-	      } catch (e) {
-	        reject(e);
-	        return;
-	      }
-	      window.removeEventListener('message', receiver);
-	      clearTimeout(timeout);
-	      resolve({ client: null, token: token });
-	    };
-	    window.addEventListener('message', receiver, false);
-	    window.parent.postMessage(intent, origin);
-	    timeout = setTimeout(function () {
-	      reject(new Error('No response from parent iframe after 3s'));
-	    }, V2TOKEN_ABORT_TIMEOUT);
-	  });
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
 	}
-	
-	var AppToken = exports.AppToken = function () {
-	  function AppToken(opts) {
-	    _classCallCheck(this, AppToken);
-	
-	    this.appName = opts.appName || '';
-	    this.token = opts.token || '';
-	  }
-	
-	  _createClass(AppToken, [{
-	    key: 'toAuthHeader',
-	    value: function toAuthHeader() {
-	      return 'Basic ' + btoa(this.appName + ':' + this.token);
-	    }
-	  }]);
 
-	  return AppToken;
+	var LocalStorage = exports.LocalStorage = function () {
+		function LocalStorage(storage, prefix) {
+			_classCallCheck(this, LocalStorage);
+
+			if (!storage && typeof window !== 'undefined') {
+				storage = window.localStorage;
+			}
+			this.storage = storage;
+			this.prefix = prefix || 'cozy:oauth:';
+		}
+
+		_createClass(LocalStorage, [{
+			key: 'save',
+			value: function save(key, value) {
+				var _this = this;
+
+				return new Promise(function (resolve) {
+					_this.storage.setItem(_this.prefix + key, JSON.stringify(value));
+					resolve(value);
+				});
+			}
+		}, {
+			key: 'load',
+			value: function load(key) {
+				var _this2 = this;
+
+				return new Promise(function (resolve) {
+					var item = _this2.storage.getItem(_this2.prefix + key);
+					if (!item) {
+						resolve();
+					} else {
+						resolve(JSON.parse(item));
+					}
+				});
+			}
+		}, {
+			key: 'delete',
+			value: function _delete(key) {
+				var _this3 = this;
+
+				return new Promise(function (resolve) {
+					return resolve(_this3.storage.removeItem(_this3.prefix + key));
+				});
+			}
+		}, {
+			key: 'clear',
+			value: function clear() {
+				var _this4 = this;
+
+				return new Promise(function (resolve) {
+					var storage = _this4.storage;
+					for (var i = 0; i < storage.length; i++) {
+						var key = storage.key(i);
+						if (key.indexOf(_this4.prefix) === 0) {
+							storage.removeItem(key);
+						}
+					}
+					resolve();
+				});
+			}
+		}]);
+
+		return LocalStorage;
 	}();
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(92)))
 
-/***/ },
+	var MemoryStorage = exports.MemoryStorage = function () {
+		function MemoryStorage() {
+			_classCallCheck(this, MemoryStorage);
+
+			this.hash = Object.create(null);
+		}
+
+		_createClass(MemoryStorage, [{
+			key: 'save',
+			value: function save(key, value) {
+				this.hash[key] = value;
+				return Promise.resolve(value);
+			}
+		}, {
+			key: 'load',
+			value: function load(key) {
+				return Promise.resolve(this.hash[key]);
+			}
+		}, {
+			key: 'delete',
+			value: function _delete(key) {
+				var deleted = delete this.hash[key];
+				return Promise.resolve(deleted);
+			}
+		}, {
+			key: 'clear',
+			value: function clear() {
+				this.hash = Object.create(null);
+				return Promise.resolve();
+			}
+		}]);
+
+		return MemoryStorage;
+	}();
+
+	/***/
+},
+/* 91 */
+/***/function (module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function (btoa) {
+		'use strict';
+
+		Object.defineProperty(exports, "__esModule", {
+			value: true
+		});
+
+		var _createClass = function () {
+			function defineProperties(target, props) {
+				for (var i = 0; i < props.length; i++) {
+					var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+				}
+			}return function (Constructor, protoProps, staticProps) {
+				if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+			};
+		}();
+
+		exports.getAppToken = getAppToken;
+
+		function _classCallCheck(instance, Constructor) {
+			if (!(instance instanceof Constructor)) {
+				throw new TypeError("Cannot call a class as a function");
+			}
+		}
+
+		/* global btoa */
+		var V2TOKEN_ABORT_TIMEOUT = 3000;
+
+		function getAppToken() {
+			return new Promise(function (resolve, reject) {
+				if (typeof window === 'undefined') {
+					return reject(new Error('getV2Token should be used in browser'));
+				} else if (!window.parent) {
+					return reject(new Error('getV2Token should be used in iframe'));
+				} else if (!window.parent.postMessage) {
+					return reject(new Error('getV2Token should be used in modern browser'));
+				}
+				var origin = window.location.origin;
+				var intent = { action: 'getToken' };
+				var timeout = null;
+				var receiver = function receiver(event) {
+					var token = void 0;
+					try {
+						token = new AppToken({
+							appName: event.data.appName,
+							token: event.data.token
+						});
+					} catch (e) {
+						reject(e);
+						return;
+					}
+					window.removeEventListener('message', receiver);
+					clearTimeout(timeout);
+					resolve({ client: null, token: token });
+				};
+				window.addEventListener('message', receiver, false);
+				window.parent.postMessage(intent, origin);
+				timeout = setTimeout(function () {
+					reject(new Error('No response from parent iframe after 3s'));
+				}, V2TOKEN_ABORT_TIMEOUT);
+			});
+		}
+
+		var AppToken = exports.AppToken = function () {
+			function AppToken(opts) {
+				_classCallCheck(this, AppToken);
+
+				this.appName = opts.appName || '';
+				this.token = opts.token || '';
+			}
+
+			_createClass(AppToken, [{
+				key: 'toAuthHeader',
+				value: function toAuthHeader() {
+					return 'Basic ' + btoa(this.appName + ':' + this.token);
+				}
+			}]);
+
+			return AppToken;
+		}();
+		/* WEBPACK VAR INJECTION */
+	}).call(exports, __webpack_require__(92));
+
+	/***/
+},
 /* 92 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(714);
 
-/***/ },
+	/***/
+},
 /* 93 */
-/***/ function(module, exports, __webpack_require__) {
+/***/function (module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(btoa) {'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.AppToken = exports.AccessToken = exports.Client = exports.StateKey = exports.CredsKey = undefined;
-	
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* global btoa */
-	
-	
-	exports.client = client;
-	exports.registerClient = registerClient;
-	exports.updateClient = updateClient;
-	exports.unregisterClient = unregisterClient;
-	exports.getClient = getClient;
-	exports.getAuthCodeURL = getAuthCodeURL;
-	exports.getAccessToken = getAccessToken;
-	exports.refreshToken = refreshToken;
-	exports.oauthFlow = oauthFlow;
-	
-	var _utils = __webpack_require__(89);
-	
-	var _fetch = __webpack_require__(94);
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var StateSize = 16;
-	
-	var CredsKey = exports.CredsKey = 'creds';
-	var StateKey = exports.StateKey = 'state';
-	
-	var Client = exports.Client = function () {
-	  function Client(opts) {
-	    _classCallCheck(this, Client);
-	
-	    this.clientID = opts.clientID || opts.client_id || '';
-	    this.clientSecret = opts.clientSecret || opts.client_secret || '';
-	    this.registrationAccessToken = opts.registrationAccessToken || opts.registration_access_token || '';
-	
-	    if (opts.redirect_uris) {
-	      this.redirectURI = opts.redirect_uris[0] || '';
-	    } else {
-	      this.redirectURI = opts.redirectURI || '';
-	    }
-	
-	    this.softwareID = opts.softwareID || opts.software_id || '';
-	    this.softwareVersion = opts.softwareVersion || opts.software_version || '';
-	    this.clientName = opts.clientName || opts.client_name || '';
-	    this.clientKind = opts.clientKind || opts.client_kind || '';
-	    this.clientURI = opts.clientURI || opts.client_uri || '';
-	
-	    this.logoURI = opts.logoURI || opts.logo_uri || '';
-	    this.policyURI = opts.policyURI || opts.policy_uri || '';
-	
-	    if (!this.registrationAccessToken) {
-	      if (this.redirectURI === '') {
-	        throw new Error('Missing redirectURI field');
-	      }
-	      if (this.softwareID === '') {
-	        throw new Error('Missing softwareID field');
-	      }
-	      if (this.clientName === '') {
-	        throw new Error('Missing clientName field');
-	      }
-	    }
-	  }
-	
-	  _createClass(Client, [{
-	    key: 'isRegistered',
-	    value: function isRegistered() {
-	      return this.clientID !== '';
-	    }
-	  }, {
-	    key: 'toRegisterJSON',
-	    value: function toRegisterJSON() {
-	      return {
-	        redirect_uris: [this.redirectURI],
-	        software_id: this.softwareID,
-	        software_version: this.softwareVersion,
-	        client_name: this.clientName,
-	        client_kind: this.clientKind,
-	        client_uri: this.clientURI,
-	        logo_uri: this.logoURI,
-	        policy_uri: this.policyURI
-	      };
-	    }
-	  }, {
-	    key: 'toAuthHeader',
-	    value: function toAuthHeader() {
-	      return 'Bearer ' + this.registrationAccessToken;
-	    }
-	  }]);
-	
-	  return Client;
-	}();
-	
-	var AccessToken = exports.AccessToken = function () {
-	  function AccessToken(opts) {
-	    _classCallCheck(this, AccessToken);
-	
-	    this.tokenType = opts.tokenType || opts.token_type;
-	    this.accessToken = opts.accessToken || opts.access_token;
-	    this.refreshToken = opts.refreshToken || opts.refresh_token;
-	    this.scope = opts.scope;
-	  }
-	
-	  _createClass(AccessToken, [{
-	    key: 'toAuthHeader',
-	    value: function toAuthHeader() {
-	      return 'Bearer ' + this.accessToken;
-	    }
-	  }, {
-	    key: 'toBasicAuth',
-	    value: function toBasicAuth() {
-	      return 'user:' + this.accessToken + '@';
-	    }
-	  }]);
-	
-	  return AccessToken;
-	}();
-	
-	var AppToken = exports.AppToken = function () {
-	  function AppToken(opts) {
-	    _classCallCheck(this, AppToken);
-	
-	    this.token = opts.token || '';
-	  }
-	
-	  _createClass(AppToken, [{
-	    key: 'toAuthHeader',
-	    value: function toAuthHeader() {
-	      return 'Bearer ' + this.token;
-	    }
-	  }, {
-	    key: 'toBasicAuth',
-	    value: function toBasicAuth() {
-	      return 'user:' + this.token + '@';
-	    }
-	  }]);
-	
-	  return AppToken;
-	}();
-	
-	function client(cozy, clientParams) {
-	  if (!clientParams) {
-	    clientParams = cozy._clientParams;
-	  }
-	  if (clientParams instanceof Client) {
-	    return clientParams;
-	  }
-	  return new Client(clientParams);
-	}
-	
-	function registerClient(cozy, clientParams) {
-	  var cli = client(cozy, clientParams);
-	  if (cli.isRegistered()) {
-	    return Promise.reject(new Error('Client already registered'));
-	  }
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/auth/register', cli.toRegisterJSON(), {
-	    disableAuth: true
-	  }).then(function (data) {
-	    return new Client(data);
-	  });
-	}
-	
-	function updateClient(cozy, clientParams) {
-	  var resetSecret = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-	
-	  var cli = client(cozy, clientParams);
-	  if (!cli.isRegistered()) {
-	    return Promise.reject(new Error('Client not registered'));
-	  }
-	  var data = cli.toRegisterJSON();
-	  data.client_id = cli.clientID;
-	  if (resetSecret) data.client_secret = cli.clientSecret;
-	
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'PUT', '/auth/register/' + cli.clientID, data, {
-	    manualAuthCredentials: {
-	      token: cli
-	    }
-	  }).then(function (data) {
-	    return createClient(data, cli);
-	  });
-	}
-	
-	function unregisterClient(cozy, clientParams) {
-	  var cli = client(cozy, clientParams);
-	  if (!cli.isRegistered()) {
-	    return Promise.reject(new Error('Client not registered'));
-	  }
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'DELETE', '/auth/register/' + cli.clientID, null, {
-	    manualAuthCredentials: {
-	      token: cli
-	    }
-	  });
-	}
-	
-	// getClient will retrive the registered client informations from the server.
-	function getClient(cozy, clientParams) {
-	  var cli = client(cozy, clientParams);
-	  if (!cli.isRegistered()) {
-	    return Promise.reject(new Error('Client not registered'));
-	  }
-	  if ((0, _utils.isOffline)()) {
-	    return Promise.resolve(cli);
-	  }
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/auth/register/' + cli.clientID, null, {
-	    manualAuthCredentials: {
-	      token: cli
-	    }
-	  }).then(function (data) {
-	    return createClient(data, cli);
-	  }).catch(function (err) {
-	    // If we fall into an error while fetching the client (because of a
-	    // bad connectivity for instance), we do not bail the whole process
-	    // since the client should be able to continue with the persisted
-	    // client and token.
-	    //
-	    // If it is an explicit Unauthorized error though, we bail, clear th
-	    // cache and retry.
-	    if (_fetch.FetchError.isUnauthorized(err) || _fetch.FetchError.isNotFound(err)) {
-	      throw new Error('Client has been revoked');
-	    }
-	    throw err;
-	  });
-	}
-	
-	// createClient returns a new Client instance given on object containing the
-	// data of the client, from the API, and an old instance of the client.
-	function createClient(data, oldClient) {
-	  var newClient = new Client(data);
-	  // we need to keep track of the registrationAccessToken since it is send
-	  // only on registration. The GET /auth/register/:client-id endpoint does
-	  // not return this token.
-	  var shouldPassRegistration = !!oldClient && oldClient.registrationAccessToken !== '' && newClient.registrationAccessToken === '';
-	  if (shouldPassRegistration) {
-	    newClient.registrationAccessToken = oldClient.registrationAccessToken;
-	  }
-	  return newClient;
-	}
-	
-	// getAuthCodeURL returns a pair {authURL,state} given a registered client. The
-	// state should be stored in order to be checked against on the user validation
-	// phase.
-	function getAuthCodeURL(cozy, client) {
-	  var scopes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-	
-	  if (!(client instanceof Client)) {
-	    client = new Client(client);
-	  }
-	  if (!client.isRegistered()) {
-	    throw new Error('Client not registered');
-	  }
-	  var state = generateRandomState();
-	  var query = {
-	    'client_id': client.clientID,
-	    'redirect_uri': client.redirectURI,
-	    'state': state,
-	    'response_type': 'code',
-	    'scope': scopes.join(' ')
-	  };
-	  return {
-	    url: cozy._url + ('/auth/authorize?' + (0, _utils.encodeQuery)(query)),
-	    state: state
-	  };
-	}
-	
-	// getAccessToken perform a request on the access_token entrypoint with the
-	// authorization_code grant type in order to generate a new access token for a
-	// newly registered client.
-	//
-	// This method extracts the access code and state from the given URL. By
-	// default it uses window.location.href. Also, it checks the given state with
-	// the one specified in the URL query parameter to prevent CSRF attacks.
-	function getAccessToken(cozy, client, state) {
-	  var pageURL = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
-	
-	  if (!state) {
-	    return Promise.reject(new Error('Missing state value'));
-	  }
-	  var grantQueries = getGrantCodeFromPageURL(pageURL);
-	  if (grantQueries === null) {
-	    return Promise.reject(new Error('Missing states from current URL'));
-	  }
-	  if (state !== grantQueries.state) {
-	    return Promise.reject(new Error('Given state does not match url query state'));
-	  }
-	  return retrieveToken(cozy, client, null, {
-	    'grant_type': 'authorization_code',
-	    'code': grantQueries.code
-	  });
-	}
-	
-	// refreshToken perform a request on the access_token entrypoint with the
-	// refresh_token grant type in order to refresh the given token.
-	function refreshToken(cozy, client, token) {
-	  return retrieveToken(cozy, client, token, {
-	    'grant_type': 'refresh_token',
-	    'refresh_token': token.refreshToken
-	  });
-	}
-	
-	// oauthFlow performs the stateful registration and access granting of an OAuth
-	// client.
-	function oauthFlow(cozy, storage, clientParams, onRegistered) {
-	  var ignoreCachedCredentials = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
-	
-	  if (ignoreCachedCredentials) {
-	    return storage.clear().then(function () {
-	      return oauthFlow(cozy, storage, clientParams, onRegistered, false);
-	    });
-	  }
-	
-	  var tryCount = 0;
-	
-	  function clearAndRetry(err) {
-	    if (tryCount++ > 0) {
-	      throw err;
-	    }
-	    return storage.clear().then(function () {
-	      return oauthFlow(cozy, storage, clientParams, onRegistered);
-	    });
-	  }
-	
-	  function registerNewClient() {
-	    return storage.clear().then(function () {
-	      return registerClient(cozy, clientParams);
-	    }).then(function (client) {
-	      var _getAuthCodeURL = getAuthCodeURL(cozy, client, clientParams.scopes),
-	          url = _getAuthCodeURL.url,
-	          state = _getAuthCodeURL.state;
-	
-	      return storage.save(StateKey, { client: client, url: url, state: state });
-	    });
-	  }
-	
-	  return Promise.all([storage.load(CredsKey), storage.load(StateKey)]).then(function (_ref) {
-	    var _ref2 = _slicedToArray(_ref, 2),
-	        credentials = _ref2[0],
-	        storedState = _ref2[1];
-	
-	    // If credentials are cached we re-fetch the registered client with the
-	    // said token. Fetching the client, if the token is outdated we should try
-	    // the token is refreshed.
-	    if (credentials) {
-	      var oldClient = void 0,
-	          _token = void 0;
-	      try {
-	        oldClient = new Client(credentials.client);
-	        _token = new AccessToken(credentials.token);
-	      } catch (err) {
-	        // bad cache, we should clear and retry the process
-	        return clearAndRetry(err);
-	      }
-	      return getClient(cozy, oldClient).then(function (client) {
-	        return { client: client, token: _token };
-	      }).catch(function (err) {
-	        // If we fall into an error while fetching the client (because of a
-	        // bad connectivity for instance), we do not bail the whole process
-	        // since the client should be able to continue with the persisted
-	        // client and token.
-	        //
-	        // If it is an explicit Unauthorized error though, we bail, clear th
-	        // cache and retry.
-	        if (_fetch.FetchError.isUnauthorized(err) || _fetch.FetchError.isNotFound(err)) {
-	          throw new Error('Client has been revoked');
-	        }
-	        return { client: oldClient, token: _token };
-	      });
-	    }
-	
-	    // Otherwise register a new client if necessary (ie. no client is stored)
-	    // and call the onRegistered callback to wait for the user to grant the
-	    // access. Finally fetches to access token on success.
-	    var statePromise = void 0;
-	    if (!storedState) {
-	      statePromise = registerNewClient();
-	    } else {
-	      statePromise = Promise.resolve(storedState);
-	    }
-	
-	    var client = void 0,
-	        state = void 0,
-	        token = void 0;
-	    return statePromise.then(function (data) {
-	      client = data.client;
-	      state = data.state;
-	      return Promise.resolve(onRegistered(client, data.url));
-	    }).then(function (pageURL) {
-	      return getAccessToken(cozy, client, state, pageURL);
-	    }).then(function (t) {
-	      token = t;
-	    }).then(function () {
-	      return storage.delete(StateKey);
-	    }).then(function () {
-	      return { client: client, token: token };
-	    });
-	  }).then(function (creds) {
-	    return storage.save(CredsKey, creds);
-	  }, function (err) {
-	    if (_fetch.FetchError.isUnauthorized(err)) {
-	      return clearAndRetry(err);
-	    } else {
-	      throw err;
-	    }
-	  });
-	}
-	
-	// retrieveToken perform a request on the access_token entrypoint in order to
-	// fetch a token.
-	function retrieveToken(cozy, client, token, query) {
-	  if (!(client instanceof Client)) {
-	    client = new Client(client);
-	  }
-	  if (!client.isRegistered()) {
-	    return Promise.reject(new Error('Client not registered'));
-	  }
-	  var body = (0, _utils.encodeQuery)(Object.assign({}, query, {
-	    'client_id': client.clientID,
-	    'client_secret': client.clientSecret
-	  }));
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/auth/access_token', body, {
-	    disableAuth: token === null,
-	    dontRetry: true,
-	    manualAuthCredentials: { client: client, token: token },
-	    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-	  }).then(function (data) {
-	    data.refreshToken = data.refreshToken || query.refresh_token;
-	    return new AccessToken(data);
-	  });
-	}
-	
-	// getGrantCodeFromPageURL extract the state and access_code query parameters
-	// from the given url
-	function getGrantCodeFromPageURL() {
-	  var pageURL = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-	
-	  if (pageURL === '' && typeof window !== 'undefined') {
-	    pageURL = window.location.href;
-	  }
-	  var queries = (0, _utils.decodeQuery)(pageURL);
-	  if (!queries.hasOwnProperty('state')) {
-	    return null;
-	  }
-	  return {
-	    state: queries['state'],
-	    code: queries['access_code']
-	  };
-	}
-	
-	// generateRandomState will try to generate a 128bits random value from a secure
-	// pseudo random generator. It will fallback on Math.random if it cannot find
-	// such generator.
-	function generateRandomState() {
-	  var buffer = void 0;
-	  if (typeof window !== 'undefined' && typeof window.crypto !== 'undefined' && typeof window.crypto.getRandomValues === 'function') {
-	    buffer = new Uint8Array(StateSize);
-	    window.crypto.getRandomValues(buffer);
-	  } else {
-	    try {
-	      buffer = __webpack_require__(96).randomBytes(StateSize);
-	    } catch (e) {}
-	  }
-	  if (!buffer) {
-	    buffer = new Array(StateSize);
-	    for (var i = 0; i < buffer.length; i++) {
-	      buffer[i] = Math.floor(Math.random() * 255);
-	    }
-	  }
-	  return btoa(String.fromCharCode.apply(null, buffer)).replace(/=+$/, '').replace(/\//g, '_').replace(/\+/g, '-');
-	}
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(92)))
+	/* WEBPACK VAR INJECTION */(function (btoa) {
+		'use strict';
 
-/***/ },
+		Object.defineProperty(exports, "__esModule", {
+			value: true
+		});
+		exports.AppToken = exports.AccessToken = exports.Client = exports.StateKey = exports.CredsKey = undefined;
+
+		var _slicedToArray = function () {
+			function sliceIterator(arr, i) {
+				var _arr = [];var _n = true;var _d = false;var _e = undefined;try {
+					for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+						_arr.push(_s.value);if (i && _arr.length === i) break;
+					}
+				} catch (err) {
+					_d = true;_e = err;
+				} finally {
+					try {
+						if (!_n && _i["return"]) _i["return"]();
+					} finally {
+						if (_d) throw _e;
+					}
+				}return _arr;
+			}return function (arr, i) {
+				if (Array.isArray(arr)) {
+					return arr;
+				} else if (Symbol.iterator in Object(arr)) {
+					return sliceIterator(arr, i);
+				} else {
+					throw new TypeError("Invalid attempt to destructure non-iterable instance");
+				}
+			};
+		}();
+
+		var _createClass = function () {
+			function defineProperties(target, props) {
+				for (var i = 0; i < props.length; i++) {
+					var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+				}
+			}return function (Constructor, protoProps, staticProps) {
+				if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+			};
+		}(); /* global btoa */
+
+		exports.client = client;
+		exports.registerClient = registerClient;
+		exports.updateClient = updateClient;
+		exports.unregisterClient = unregisterClient;
+		exports.getClient = getClient;
+		exports.getAuthCodeURL = getAuthCodeURL;
+		exports.getAccessToken = getAccessToken;
+		exports.refreshToken = refreshToken;
+		exports.oauthFlow = oauthFlow;
+
+		var _utils = __webpack_require__(89);
+
+		var _fetch = __webpack_require__(94);
+
+		function _classCallCheck(instance, Constructor) {
+			if (!(instance instanceof Constructor)) {
+				throw new TypeError("Cannot call a class as a function");
+			}
+		}
+
+		var StateSize = 16;
+
+		var CredsKey = exports.CredsKey = 'creds';
+		var StateKey = exports.StateKey = 'state';
+
+		var Client = exports.Client = function () {
+			function Client(opts) {
+				_classCallCheck(this, Client);
+
+				this.clientID = opts.clientID || opts.client_id || '';
+				this.clientSecret = opts.clientSecret || opts.client_secret || '';
+				this.registrationAccessToken = opts.registrationAccessToken || opts.registration_access_token || '';
+
+				if (opts.redirect_uris) {
+					this.redirectURI = opts.redirect_uris[0] || '';
+				} else {
+					this.redirectURI = opts.redirectURI || '';
+				}
+
+				this.softwareID = opts.softwareID || opts.software_id || '';
+				this.softwareVersion = opts.softwareVersion || opts.software_version || '';
+				this.clientName = opts.clientName || opts.client_name || '';
+				this.clientKind = opts.clientKind || opts.client_kind || '';
+				this.clientURI = opts.clientURI || opts.client_uri || '';
+
+				this.logoURI = opts.logoURI || opts.logo_uri || '';
+				this.policyURI = opts.policyURI || opts.policy_uri || '';
+
+				if (!this.registrationAccessToken) {
+					if (this.redirectURI === '') {
+						throw new Error('Missing redirectURI field');
+					}
+					if (this.softwareID === '') {
+						throw new Error('Missing softwareID field');
+					}
+					if (this.clientName === '') {
+						throw new Error('Missing clientName field');
+					}
+				}
+			}
+
+			_createClass(Client, [{
+				key: 'isRegistered',
+				value: function isRegistered() {
+					return this.clientID !== '';
+				}
+			}, {
+				key: 'toRegisterJSON',
+				value: function toRegisterJSON() {
+					return {
+						redirect_uris: [this.redirectURI],
+						software_id: this.softwareID,
+						software_version: this.softwareVersion,
+						client_name: this.clientName,
+						client_kind: this.clientKind,
+						client_uri: this.clientURI,
+						logo_uri: this.logoURI,
+						policy_uri: this.policyURI
+					};
+				}
+			}, {
+				key: 'toAuthHeader',
+				value: function toAuthHeader() {
+					return 'Bearer ' + this.registrationAccessToken;
+				}
+			}]);
+
+			return Client;
+		}();
+
+		var AccessToken = exports.AccessToken = function () {
+			function AccessToken(opts) {
+				_classCallCheck(this, AccessToken);
+
+				this.tokenType = opts.tokenType || opts.token_type;
+				this.accessToken = opts.accessToken || opts.access_token;
+				this.refreshToken = opts.refreshToken || opts.refresh_token;
+				this.scope = opts.scope;
+			}
+
+			_createClass(AccessToken, [{
+				key: 'toAuthHeader',
+				value: function toAuthHeader() {
+					return 'Bearer ' + this.accessToken;
+				}
+			}, {
+				key: 'toBasicAuth',
+				value: function toBasicAuth() {
+					return 'user:' + this.accessToken + '@';
+				}
+			}]);
+
+			return AccessToken;
+		}();
+
+		var AppToken = exports.AppToken = function () {
+			function AppToken(opts) {
+				_classCallCheck(this, AppToken);
+
+				this.token = opts.token || '';
+			}
+
+			_createClass(AppToken, [{
+				key: 'toAuthHeader',
+				value: function toAuthHeader() {
+					return 'Bearer ' + this.token;
+				}
+			}, {
+				key: 'toBasicAuth',
+				value: function toBasicAuth() {
+					return 'user:' + this.token + '@';
+				}
+			}]);
+
+			return AppToken;
+		}();
+
+		function client(cozy, clientParams) {
+			if (!clientParams) {
+				clientParams = cozy._clientParams;
+			}
+			if (clientParams instanceof Client) {
+				return clientParams;
+			}
+			return new Client(clientParams);
+		}
+
+		function registerClient(cozy, clientParams) {
+			var cli = client(cozy, clientParams);
+			if (cli.isRegistered()) {
+				return Promise.reject(new Error('Client already registered'));
+			}
+			return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/auth/register', cli.toRegisterJSON(), {
+				disableAuth: true
+			}).then(function (data) {
+				return new Client(data);
+			});
+		}
+
+		function updateClient(cozy, clientParams) {
+			var resetSecret = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+			var cli = client(cozy, clientParams);
+			if (!cli.isRegistered()) {
+				return Promise.reject(new Error('Client not registered'));
+			}
+			var data = cli.toRegisterJSON();
+			data.client_id = cli.clientID;
+			if (resetSecret) data.client_secret = cli.clientSecret;
+
+			return (0, _fetch.cozyFetchJSON)(cozy, 'PUT', '/auth/register/' + cli.clientID, data, {
+				manualAuthCredentials: {
+					token: cli
+				}
+			}).then(function (data) {
+				return createClient(data, cli);
+			});
+		}
+
+		function unregisterClient(cozy, clientParams) {
+			var cli = client(cozy, clientParams);
+			if (!cli.isRegistered()) {
+				return Promise.reject(new Error('Client not registered'));
+			}
+			return (0, _fetch.cozyFetchJSON)(cozy, 'DELETE', '/auth/register/' + cli.clientID, null, {
+				manualAuthCredentials: {
+					token: cli
+				}
+			});
+		}
+
+		// getClient will retrive the registered client informations from the server.
+		function getClient(cozy, clientParams) {
+			var cli = client(cozy, clientParams);
+			if (!cli.isRegistered()) {
+				return Promise.reject(new Error('Client not registered'));
+			}
+			if ((0, _utils.isOffline)()) {
+				return Promise.resolve(cli);
+			}
+			return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/auth/register/' + cli.clientID, null, {
+				manualAuthCredentials: {
+					token: cli
+				}
+			}).then(function (data) {
+				return createClient(data, cli);
+			}).catch(function (err) {
+				// If we fall into an error while fetching the client (because of a
+				// bad connectivity for instance), we do not bail the whole process
+				// since the client should be able to continue with the persisted
+				// client and token.
+				//
+				// If it is an explicit Unauthorized error though, we bail, clear th
+				// cache and retry.
+				if (_fetch.FetchError.isUnauthorized(err) || _fetch.FetchError.isNotFound(err)) {
+					throw new Error('Client has been revoked');
+				}
+				throw err;
+			});
+		}
+
+		// createClient returns a new Client instance given on object containing the
+		// data of the client, from the API, and an old instance of the client.
+		function createClient(data, oldClient) {
+			var newClient = new Client(data);
+			// we need to keep track of the registrationAccessToken since it is send
+			// only on registration. The GET /auth/register/:client-id endpoint does
+			// not return this token.
+			var shouldPassRegistration = !!oldClient && oldClient.registrationAccessToken !== '' && newClient.registrationAccessToken === '';
+			if (shouldPassRegistration) {
+				newClient.registrationAccessToken = oldClient.registrationAccessToken;
+			}
+			return newClient;
+		}
+
+		// getAuthCodeURL returns a pair {authURL,state} given a registered client. The
+		// state should be stored in order to be checked against on the user validation
+		// phase.
+		function getAuthCodeURL(cozy, client) {
+			var scopes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+
+			if (!(client instanceof Client)) {
+				client = new Client(client);
+			}
+			if (!client.isRegistered()) {
+				throw new Error('Client not registered');
+			}
+			var state = generateRandomState();
+			var query = {
+				'client_id': client.clientID,
+				'redirect_uri': client.redirectURI,
+				'state': state,
+				'response_type': 'code',
+				'scope': scopes.join(' ')
+			};
+			return {
+				url: cozy._url + ('/auth/authorize?' + (0, _utils.encodeQuery)(query)),
+				state: state
+			};
+		}
+
+		// getAccessToken perform a request on the access_token entrypoint with the
+		// authorization_code grant type in order to generate a new access token for a
+		// newly registered client.
+		//
+		// This method extracts the access code and state from the given URL. By
+		// default it uses window.location.href. Also, it checks the given state with
+		// the one specified in the URL query parameter to prevent CSRF attacks.
+		function getAccessToken(cozy, client, state) {
+			var pageURL = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+
+			if (!state) {
+				return Promise.reject(new Error('Missing state value'));
+			}
+			var grantQueries = getGrantCodeFromPageURL(pageURL);
+			if (grantQueries === null) {
+				return Promise.reject(new Error('Missing states from current URL'));
+			}
+			if (state !== grantQueries.state) {
+				return Promise.reject(new Error('Given state does not match url query state'));
+			}
+			return retrieveToken(cozy, client, null, {
+				'grant_type': 'authorization_code',
+				'code': grantQueries.code
+			});
+		}
+
+		// refreshToken perform a request on the access_token entrypoint with the
+		// refresh_token grant type in order to refresh the given token.
+		function refreshToken(cozy, client, token) {
+			return retrieveToken(cozy, client, token, {
+				'grant_type': 'refresh_token',
+				'refresh_token': token.refreshToken
+			});
+		}
+
+		// oauthFlow performs the stateful registration and access granting of an OAuth
+		// client.
+		function oauthFlow(cozy, storage, clientParams, onRegistered) {
+			var ignoreCachedCredentials = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
+
+			if (ignoreCachedCredentials) {
+				return storage.clear().then(function () {
+					return oauthFlow(cozy, storage, clientParams, onRegistered, false);
+				});
+			}
+
+			var tryCount = 0;
+
+			function clearAndRetry(err) {
+				if (tryCount++ > 0) {
+					throw err;
+				}
+				return storage.clear().then(function () {
+					return oauthFlow(cozy, storage, clientParams, onRegistered);
+				});
+			}
+
+			function registerNewClient() {
+				return storage.clear().then(function () {
+					return registerClient(cozy, clientParams);
+				}).then(function (client) {
+					var _getAuthCodeURL = getAuthCodeURL(cozy, client, clientParams.scopes),
+					    url = _getAuthCodeURL.url,
+					    state = _getAuthCodeURL.state;
+
+					return storage.save(StateKey, { client: client, url: url, state: state });
+				});
+			}
+
+			return Promise.all([storage.load(CredsKey), storage.load(StateKey)]).then(function (_ref) {
+				var _ref2 = _slicedToArray(_ref, 2),
+				    credentials = _ref2[0],
+				    storedState = _ref2[1];
+
+				// If credentials are cached we re-fetch the registered client with the
+				// said token. Fetching the client, if the token is outdated we should try
+				// the token is refreshed.
+				if (credentials) {
+					var oldClient = void 0,
+					    _token = void 0;
+					try {
+						oldClient = new Client(credentials.client);
+						_token = new AccessToken(credentials.token);
+					} catch (err) {
+						// bad cache, we should clear and retry the process
+						return clearAndRetry(err);
+					}
+					return getClient(cozy, oldClient).then(function (client) {
+						return { client: client, token: _token };
+					}).catch(function (err) {
+						// If we fall into an error while fetching the client (because of a
+						// bad connectivity for instance), we do not bail the whole process
+						// since the client should be able to continue with the persisted
+						// client and token.
+						//
+						// If it is an explicit Unauthorized error though, we bail, clear th
+						// cache and retry.
+						if (_fetch.FetchError.isUnauthorized(err) || _fetch.FetchError.isNotFound(err)) {
+							throw new Error('Client has been revoked');
+						}
+						return { client: oldClient, token: _token };
+					});
+				}
+
+				// Otherwise register a new client if necessary (ie. no client is stored)
+				// and call the onRegistered callback to wait for the user to grant the
+				// access. Finally fetches to access token on success.
+				var statePromise = void 0;
+				if (!storedState) {
+					statePromise = registerNewClient();
+				} else {
+					statePromise = Promise.resolve(storedState);
+				}
+
+				var client = void 0,
+				    state = void 0,
+				    token = void 0;
+				return statePromise.then(function (data) {
+					client = data.client;
+					state = data.state;
+					return Promise.resolve(onRegistered(client, data.url));
+				}).then(function (pageURL) {
+					return getAccessToken(cozy, client, state, pageURL);
+				}).then(function (t) {
+					token = t;
+				}).then(function () {
+					return storage.delete(StateKey);
+				}).then(function () {
+					return { client: client, token: token };
+				});
+			}).then(function (creds) {
+				return storage.save(CredsKey, creds);
+			}, function (err) {
+				if (_fetch.FetchError.isUnauthorized(err)) {
+					return clearAndRetry(err);
+				} else {
+					throw err;
+				}
+			});
+		}
+
+		// retrieveToken perform a request on the access_token entrypoint in order to
+		// fetch a token.
+		function retrieveToken(cozy, client, token, query) {
+			if (!(client instanceof Client)) {
+				client = new Client(client);
+			}
+			if (!client.isRegistered()) {
+				return Promise.reject(new Error('Client not registered'));
+			}
+			var body = (0, _utils.encodeQuery)(Object.assign({}, query, {
+				'client_id': client.clientID,
+				'client_secret': client.clientSecret
+			}));
+			return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/auth/access_token', body, {
+				disableAuth: token === null,
+				dontRetry: true,
+				manualAuthCredentials: { client: client, token: token },
+				headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+			}).then(function (data) {
+				data.refreshToken = data.refreshToken || query.refresh_token;
+				return new AccessToken(data);
+			});
+		}
+
+		// getGrantCodeFromPageURL extract the state and access_code query parameters
+		// from the given url
+		function getGrantCodeFromPageURL() {
+			var pageURL = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+
+			if (pageURL === '' && typeof window !== 'undefined') {
+				pageURL = window.location.href;
+			}
+			var queries = (0, _utils.decodeQuery)(pageURL);
+			if (!queries.hasOwnProperty('state')) {
+				return null;
+			}
+			return {
+				state: queries['state'],
+				code: queries['access_code']
+			};
+		}
+
+		// generateRandomState will try to generate a 128bits random value from a secure
+		// pseudo random generator. It will fallback on Math.random if it cannot find
+		// such generator.
+		function generateRandomState() {
+			var buffer = void 0;
+			if (typeof window !== 'undefined' && typeof window.crypto !== 'undefined' && typeof window.crypto.getRandomValues === 'function') {
+				buffer = new Uint8Array(StateSize);
+				window.crypto.getRandomValues(buffer);
+			} else {
+				try {
+					buffer = __webpack_require__(96).randomBytes(StateSize);
+				} catch (e) {}
+			}
+			if (!buffer) {
+				buffer = new Array(StateSize);
+				for (var i = 0; i < buffer.length; i++) {
+					buffer[i] = Math.floor(Math.random() * 255);
+				}
+			}
+			return btoa(String.fromCharCode.apply(null, buffer)).replace(/=+$/, '').replace(/\//g, '_').replace(/\+/g, '-');
+		}
+		/* WEBPACK VAR INJECTION */
+	}).call(exports, __webpack_require__(92));
+
+	/***/
+},
 /* 94 */
-/***/ function(module, exports, __webpack_require__) {
+/***/function (module, exports, __webpack_require__) {
 
 	'use strict';
-	
+
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+		value: true
 	});
 	exports.FetchError = undefined;
-	
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); /* global fetch */
-	
-	
+
+	var _slicedToArray = function () {
+		function sliceIterator(arr, i) {
+			var _arr = [];var _n = true;var _d = false;var _e = undefined;try {
+				for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+					_arr.push(_s.value);if (i && _arr.length === i) break;
+				}
+			} catch (err) {
+				_d = true;_e = err;
+			} finally {
+				try {
+					if (!_n && _i["return"]) _i["return"]();
+				} finally {
+					if (_d) throw _e;
+				}
+			}return _arr;
+		}return function (arr, i) {
+			if (Array.isArray(arr)) {
+				return arr;
+			} else if (Symbol.iterator in Object(arr)) {
+				return sliceIterator(arr, i);
+			} else {
+				throw new TypeError("Invalid attempt to destructure non-iterable instance");
+			}
+		};
+	}(); /* global fetch */
+
 	exports.cozyFetch = cozyFetch;
 	exports.cozyFetchJSON = cozyFetchJSON;
 	exports.cozyFetchRawJSON = cozyFetchRawJSON;
-	
+
 	var _auth_v = __webpack_require__(93);
-	
+
 	var _utils = __webpack_require__(89);
-	
+
 	var _jsonapi = __webpack_require__(95);
-	
+
 	var _jsonapi2 = _interopRequireDefault(_jsonapi);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : { default: obj };
+	}
+
+	function _classCallCheck(instance, Constructor) {
+		if (!(instance instanceof Constructor)) {
+			throw new TypeError("Cannot call a class as a function");
+		}
+	}
+
+	function _possibleConstructorReturn(self, call) {
+		if (!self) {
+			throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+		}return call && ((typeof call === "undefined" ? "undefined" : _typeof2(call)) === "object" || typeof call === "function") ? call : self;
+	}
+
+	function _inherits(subClass, superClass) {
+		if (typeof superClass !== "function" && superClass !== null) {
+			throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof2(superClass)));
+		}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+
 	function cozyFetch(cozy, path) {
-	  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-	
-	  return cozy.fullpath(path).then(function (fullpath) {
-	    var resp = void 0;
-	    if (options.disableAuth) {
-	      resp = fetch(fullpath, options);
-	    } else if (options.manualAuthCredentials) {
-	      resp = cozyFetchWithAuth(cozy, fullpath, options, options.manualAuthCredentials);
-	    } else {
-	      resp = cozy.authorize().then(function (credentials) {
-	        return cozyFetchWithAuth(cozy, fullpath, options, credentials);
-	      });
-	    }
-	    return resp.then(handleResponse);
-	  });
+		var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+		return cozy.fullpath(path).then(function (fullpath) {
+			var resp = void 0;
+			if (options.disableAuth) {
+				resp = fetch(fullpath, options);
+			} else if (options.manualAuthCredentials) {
+				resp = cozyFetchWithAuth(cozy, fullpath, options, options.manualAuthCredentials);
+			} else {
+				resp = cozy.authorize().then(function (credentials) {
+					return cozyFetchWithAuth(cozy, fullpath, options, credentials);
+				});
+			}
+			return resp.then(handleResponse);
+		});
 	}
-	
+
 	function cozyFetchWithAuth(cozy, fullpath, options, credentials) {
-	  if (credentials) {
-	    options.headers = options.headers || {};
-	    options.headers['Authorization'] = credentials.token.toAuthHeader();
-	  }
-	
-	  // the option credentials:include tells fetch to include the cookies in the
-	  // request even for cross-origin requests
-	  options.credentials = 'include';
-	
-	  return Promise.all([cozy.isV2(), fetch(fullpath, options)]).then(function (_ref) {
-	    var _ref2 = _slicedToArray(_ref, 2),
-	        isV2 = _ref2[0],
-	        res = _ref2[1];
-	
-	    if (res.status !== 400 && res.status !== 401 || isV2 || !credentials || options.dontRetry) {
-	      return res;
-	    }
-	    // we try to refresh the token only for OAuth, ie, the client defined
-	    // and the token is an instance of AccessToken.
-	    var client = credentials.client,
-	        token = credentials.token;
-	
-	    if (!client || !(token instanceof _auth_v.AccessToken)) {
-	      return res;
-	    }
-	    options.dontRetry = true;
-	    return (0, _utils.retry)(function () {
-	      return (0, _auth_v.refreshToken)(cozy, client, token);
-	    }, 3)().then(function (newToken) {
-	      return cozy.saveCredentials(client, newToken);
-	    }).then(function (credentials) {
-	      return cozyFetchWithAuth(cozy, fullpath, options, credentials);
-	    });
-	  });
+		if (credentials) {
+			options.headers = options.headers || {};
+			options.headers['Authorization'] = credentials.token.toAuthHeader();
+		}
+
+		// the option credentials:include tells fetch to include the cookies in the
+		// request even for cross-origin requests
+		options.credentials = 'include';
+
+		return Promise.all([cozy.isV2(), fetch(fullpath, options)]).then(function (_ref) {
+			var _ref2 = _slicedToArray(_ref, 2),
+			    isV2 = _ref2[0],
+			    res = _ref2[1];
+
+			if (res.status !== 400 && res.status !== 401 || isV2 || !credentials || options.dontRetry) {
+				return res;
+			}
+			// we try to refresh the token only for OAuth, ie, the client defined
+			// and the token is an instance of AccessToken.
+			var client = credentials.client,
+			    token = credentials.token;
+
+			if (!client || !(token instanceof _auth_v.AccessToken)) {
+				return res;
+			}
+			options.dontRetry = true;
+			return (0, _utils.retry)(function () {
+				return (0, _auth_v.refreshToken)(cozy, client, token);
+			}, 3)().then(function (newToken) {
+				return cozy.saveCredentials(client, newToken);
+			}).then(function (credentials) {
+				return cozyFetchWithAuth(cozy, fullpath, options, credentials);
+			});
+		});
 	}
-	
+
 	function cozyFetchJSON(cozy, method, path, body) {
-	  var options = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
-	
-	  return fetchJSON(cozy, method, path, body, options).then(handleJSONResponse);
+		var options = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+
+		return fetchJSON(cozy, method, path, body, options).then(handleJSONResponse);
 	}
-	
+
 	function cozyFetchRawJSON(cozy, method, path, body) {
-	  var options = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
-	
-	  return fetchJSON(cozy, method, path, body, options).then(function (response) {
-	    return handleJSONResponse(response, false);
-	  });
+		var options = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+
+		return fetchJSON(cozy, method, path, body, options).then(function (response) {
+			return handleJSONResponse(response, false);
+		});
 	}
-	
+
 	function fetchJSON(cozy, method, path, body) {
-	  var options = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
-	
-	  options.method = method;
-	
-	  var headers = options.headers = options.headers || {};
-	
-	  headers['Accept'] = 'application/json';
-	
-	  if (method !== 'GET' && method !== 'HEAD' && body !== undefined) {
-	    if (headers['Content-Type']) {
-	      options.body = body;
-	    } else {
-	      headers['Content-Type'] = 'application/json';
-	      options.body = JSON.stringify(body);
-	    }
-	  }
-	
-	  return cozyFetch(cozy, path, options);
+		var options = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : {};
+
+		options.method = method;
+
+		var headers = options.headers = options.headers || {};
+
+		headers['Accept'] = 'application/json';
+
+		if (method !== 'GET' && method !== 'HEAD' && body !== undefined) {
+			if (headers['Content-Type']) {
+				options.body = body;
+			} else {
+				headers['Content-Type'] = 'application/json';
+				options.body = JSON.stringify(body);
+			}
+		}
+
+		return cozyFetch(cozy, path, options);
 	}
-	
+
 	function handleResponse(res) {
-	  if (res.ok) {
-	    return res;
-	  }
-	  var data = void 0;
-	  var contentType = res.headers.get('content-type');
-	  if (contentType && contentType.indexOf('json') >= 0) {
-	    data = res.json();
-	  } else {
-	    data = res.text();
-	  }
-	  return data.then(function (err) {
-	    throw new FetchError(res, err);
-	  });
+		if (res.ok) {
+			return res;
+		}
+		var data = void 0;
+		var contentType = res.headers.get('content-type');
+		if (contentType && contentType.indexOf('json') >= 0) {
+			data = res.json();
+		} else {
+			data = res.text();
+		}
+		return data.then(function (err) {
+			throw new FetchError(res, err);
+		});
 	}
-	
+
 	function handleJSONResponse(res) {
-	  var processJSONAPI = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-	
-	  var contentType = res.headers.get('content-type');
-	  if (!contentType || contentType.indexOf('json') < 0) {
-	    return res.text(function (data) {
-	      throw new FetchError(res, new Error('Response is not JSON: ' + data));
-	    });
-	  }
-	
-	  var json = res.json();
-	  if (contentType.indexOf('application/vnd.api+json') === 0 && processJSONAPI) {
-	    return json.then(_jsonapi2.default);
-	  } else {
-	    return json;
-	  }
+		var processJSONAPI = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+		var contentType = res.headers.get('content-type');
+		if (!contentType || contentType.indexOf('json') < 0) {
+			return res.text(function (data) {
+				throw new FetchError(res, new Error('Response is not JSON: ' + data));
+			});
+		}
+
+		var json = res.json();
+		if (contentType.indexOf('application/vnd.api+json') === 0 && processJSONAPI) {
+			return json.then(_jsonapi2.default);
+		} else {
+			return json;
+		}
 	}
-	
+
 	var FetchError = exports.FetchError = function (_Error) {
-	  _inherits(FetchError, _Error);
-	
-	  function FetchError(res, reason) {
-	    _classCallCheck(this, FetchError);
-	
-	    var _this = _possibleConstructorReturn(this, (FetchError.__proto__ || Object.getPrototypeOf(FetchError)).call(this));
-	
-	    if (Error.captureStackTrace) {
-	      Error.captureStackTrace(_this, _this.constructor);
-	    }
-	    // XXX We have to hardcode this because babel doesn't play nice when extending Error
-	    _this.name = 'FetchError';
-	    _this.response = res;
-	    _this.url = res.url;
-	    _this.status = res.status;
-	    _this.reason = reason;
-	
-	    Object.defineProperty(_this, 'message', {
-	      value: reason.message || (typeof reason === 'string' ? reason : JSON.stringify(reason))
-	    });
-	    return _this;
-	  }
-	
-	  return FetchError;
+		_inherits(FetchError, _Error);
+
+		function FetchError(res, reason) {
+			_classCallCheck(this, FetchError);
+
+			var _this = _possibleConstructorReturn(this, (FetchError.__proto__ || Object.getPrototypeOf(FetchError)).call(this));
+
+			if (Error.captureStackTrace) {
+				Error.captureStackTrace(_this, _this.constructor);
+			}
+			// XXX We have to hardcode this because babel doesn't play nice when extending Error
+			_this.name = 'FetchError';
+			_this.response = res;
+			_this.url = res.url;
+			_this.status = res.status;
+			_this.reason = reason;
+
+			Object.defineProperty(_this, 'message', {
+				value: reason.message || (typeof reason === 'string' ? reason : JSON.stringify(reason))
+			});
+			return _this;
+		}
+
+		return FetchError;
 	}(Error);
-	
+
 	FetchError.isUnauthorized = function (err) {
-	  // XXX We can't use err instanceof FetchError because of the caveats of babel
-	  return err.name === 'FetchError' && err.status === 401;
-	};
-	
-	FetchError.isNotFound = function (err) {
-	  // XXX We can't use err instanceof FetchError because of the caveats of babel
-	  return err.name === 'FetchError' && err.status === 404;
+		// XXX We can't use err instanceof FetchError because of the caveats of babel
+		return err.name === 'FetchError' && err.status === 401;
 	};
 
-/***/ },
+	FetchError.isNotFound = function (err) {
+		// XXX We can't use err instanceof FetchError because of the caveats of babel
+		return err.name === 'FetchError' && err.status === 404;
+	};
+
+	/***/
+},
 /* 95 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	'use strict';
-	
+
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+		value: true
 	});
 	function indexKey(doc) {
-	  return doc.type + '/' + doc.id;
+		return doc.type + '/' + doc.id;
 	}
-	
+
 	function findByRef(resources, ref) {
-	  return resources[indexKey(ref)];
+		return resources[indexKey(ref)];
 	}
-	
+
 	function handleResource(rawResource, resources, links) {
-	  var resource = {
-	    _id: rawResource.id,
-	    _type: rawResource.type,
-	    _rev: rawResource.meta && rawResource.meta.rev,
-	    links: Object.assign({}, rawResource.links, links),
-	    attributes: rawResource.attributes,
-	    relations: function relations(name) {
-	      var rels = rawResource.relationships[name];
-	      if (rels === undefined || rels.data === undefined) return undefined;
-	      if (rels.data === null) return null;
-	      if (!Array.isArray(rels.data)) return findByRef(resources, rels.data);
-	      return rels.data.map(function (ref) {
-	        return findByRef(resources, ref);
-	      });
-	    }
-	  };
-	  if (rawResource.relationships) {
-	    resource.relationships = rawResource.relationships;
-	  }
-	
-	  resources[indexKey(rawResource)] = resource;
-	
-	  return resource;
+		var resource = {
+			_id: rawResource.id,
+			_type: rawResource.type,
+			_rev: rawResource.meta && rawResource.meta.rev,
+			links: Object.assign({}, rawResource.links, links),
+			attributes: rawResource.attributes,
+			relations: function relations(name) {
+				var rels = rawResource.relationships[name];
+				if (rels === undefined || rels.data === undefined) return undefined;
+				if (rels.data === null) return null;
+				if (!Array.isArray(rels.data)) return findByRef(resources, rels.data);
+				return rels.data.map(function (ref) {
+					return findByRef(resources, ref);
+				});
+			}
+		};
+		if (rawResource.relationships) {
+			resource.relationships = rawResource.relationships;
+		}
+
+		resources[indexKey(rawResource)] = resource;
+
+		return resource;
 	}
-	
+
 	function handleTopLevel(doc) {
-	  var resources = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-	
-	  // build an index of included resource by Type & ID
-	  var included = doc.included;
-	
-	  if (Array.isArray(included)) {
-	    included.forEach(function (r) {
-	      return handleResource(r, resources, doc.links);
-	    });
-	  }
-	
-	  if (Array.isArray(doc.data)) {
-	    return doc.data.map(function (r) {
-	      return handleResource(r, resources, doc.links);
-	    });
-	  } else {
-	    return handleResource(doc.data, resources, doc.links);
-	  }
+		var resources = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+		// build an index of included resource by Type & ID
+		var included = doc.included;
+
+		if (Array.isArray(included)) {
+			included.forEach(function (r) {
+				return handleResource(r, resources, doc.links);
+			});
+		}
+
+		if (Array.isArray(doc.data)) {
+			return doc.data.map(function (r) {
+				return handleResource(r, resources, doc.links);
+			});
+		} else {
+			return handleResource(doc.data, resources, doc.links);
+		}
 	}
-	
+
 	exports.default = handleTopLevel;
 
-/***/ },
+	/***/
+},
 /* 96 */
-/***/ function(module, exports) {
+/***/function (module, exports) {
 
 	module.exports = __webpack_require__(5);
 
-/***/ },
+	/***/
+},
 /* 97 */
-/***/ function(module, exports, __webpack_require__) {
+/***/function (module, exports, __webpack_require__) {
 
 	'use strict';
-	
+
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+		value: true
 	});
 	exports.create = create;
 	exports.find = find;
@@ -59360,506 +59782,540 @@ module.exports = baseKonnector
 	exports.update = update;
 	exports.updateAttributes = updateAttributes;
 	exports._delete = _delete;
-	
+
 	var _utils = __webpack_require__(89);
-	
+
 	var _doctypes = __webpack_require__(98);
-	
+
 	var _fetch = __webpack_require__(94);
-	
+
 	var NOREV = 'stack-v2-no-rev';
-	
+
 	function create(cozy, doctype, attributes) {
-	  return cozy.isV2().then(function (isV2) {
-	    doctype = (0, _doctypes.normalizeDoctype)(cozy, isV2, doctype);
-	    if (isV2) {
-	      attributes.docType = doctype;
-	    }
-	    var path = (0, _utils.createPath)(cozy, isV2, doctype, attributes._id);
-	    var httpVerb = attributes._id ? 'PUT' : 'POST';
-	    delete attributes._id;
-	    return (0, _fetch.cozyFetchJSON)(cozy, httpVerb, path, attributes).then(function (resp) {
-	      if (isV2) {
-	        return find(cozy, doctype, resp._id);
-	      } else {
-	        return resp.data;
-	      }
-	    });
-	  });
-	}
-	
-	function find(cozy, doctype, id) {
-	  return cozy.isV2().then(function (isV2) {
-	    doctype = (0, _doctypes.normalizeDoctype)(cozy, isV2, doctype);
-	
-	    if (!id) {
-	      return Promise.reject(new Error('Missing id parameter'));
-	    }
-	
-	    var path = (0, _utils.createPath)(cozy, isV2, doctype, id);
-	    return (0, _fetch.cozyFetchJSON)(cozy, 'GET', path).then(function (resp) {
-	      if (isV2) {
-	        return Object.assign(resp, { _rev: NOREV });
-	      } else {
-	        return resp;
-	      }
-	    });
-	  });
-	}
-	
-	function findMany(cozy, doctype, ids) {
-	  if (!(ids instanceof Array)) {
-	    return Promise.reject(new Error('Parameter ids must be a non-empty array'));
-	  }
-	  if (ids.length === 0) {
-	    // So users don't need to be defensive regarding the array content.
-	    // This should not hide issues in user code since the result will be an
-	    // empty object anyway.
-	    return Promise.resolve({});
-	  }
-	
-	  return cozy.isV2().then(function (isV2) {
-	    if (isV2) {
-	      return Promise.reject(new Error('findMany is not available on v2'));
-	    }
-	
-	    var path = (0, _utils.createPath)(cozy, isV2, doctype, '_all_docs', { include_docs: true });
-	
-	    return (0, _fetch.cozyFetchJSON)(cozy, 'POST', path, { keys: ids }).then(function (resp) {
-	      var docs = {};
-	
-	      var _iteratorNormalCompletion = true;
-	      var _didIteratorError = false;
-	      var _iteratorError = undefined;
-	
-	      try {
-	        for (var _iterator = resp.rows[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	          var row = _step.value;
-	          var key = row.key,
-	              doc = row.doc,
-	              error = row.error;
-	
-	          docs[key] = error ? { error: error } : { doc: doc };
-	        }
-	      } catch (err) {
-	        _didIteratorError = true;
-	        _iteratorError = err;
-	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion && _iterator.return) {
-	            _iterator.return();
-	          }
-	        } finally {
-	          if (_didIteratorError) {
-	            throw _iteratorError;
-	          }
-	        }
-	      }
-	
-	      return docs;
-	    }).catch(function (error) {
-	      if (error.status !== 404) return Promise.reject(error);
-	
-	      // When no doc was ever created and the database does not exist yet,
-	      // the response will be a 404 error.
-	      var docs = {};
-	
-	      var _iteratorNormalCompletion2 = true;
-	      var _didIteratorError2 = false;
-	      var _iteratorError2 = undefined;
-	
-	      try {
-	        for (var _iterator2 = ids[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	          var id = _step2.value;
-	
-	          docs[id] = { error: error };
-	        }
-	      } catch (err) {
-	        _didIteratorError2 = true;
-	        _iteratorError2 = err;
-	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-	            _iterator2.return();
-	          }
-	        } finally {
-	          if (_didIteratorError2) {
-	            throw _iteratorError2;
-	          }
-	        }
-	      }
-	
-	      return docs;
-	    });
-	  });
-	}
-	
-	function findAll(cozy, doctype) {
-	  return cozy.isV2().then(function (isV2) {
-	    if (isV2) {
-	      return Promise.reject(new Error('findAll is not available on v2'));
-	    }
-	
-	    var path = (0, _utils.createPath)(cozy, isV2, doctype, '_all_docs', { include_docs: true });
-	
-	    return (0, _fetch.cozyFetchJSON)(cozy, 'POST', path, {}).then(function (resp) {
-	      var docs = [];
-	
-	      var _iteratorNormalCompletion3 = true;
-	      var _didIteratorError3 = false;
-	      var _iteratorError3 = undefined;
-	
-	      try {
-	        for (var _iterator3 = resp.rows[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-	          var row = _step3.value;
-	          var doc = row.doc;
-	          // if not couchDB indexes
-	
-	          if (!doc._id.match(/_design\//)) docs.push(doc);
-	        }
-	      } catch (err) {
-	        _didIteratorError3 = true;
-	        _iteratorError3 = err;
-	      } finally {
-	        try {
-	          if (!_iteratorNormalCompletion3 && _iterator3.return) {
-	            _iterator3.return();
-	          }
-	        } finally {
-	          if (_didIteratorError3) {
-	            throw _iteratorError3;
-	          }
-	        }
-	      }
-	
-	      return docs;
-	    }).catch(function (error) {
-	      // the _all_docs endpoint returns a 404 error if no document with the given
-	      // doctype exists.
-	      if (error.status === 404) return [];
-	      throw error;
-	    });
-	  });
-	}
-	
-	function changesFeed(cozy, doctype, options) {
-	  return cozy.isV2().then(function (isV2) {
-	    doctype = (0, _doctypes.normalizeDoctype)(cozy, isV2, doctype);
-	    var path = (0, _utils.createPath)(cozy, isV2, doctype, '_changes', options);
-	    return (0, _fetch.cozyFetchJSON)(cozy, 'GET', path);
-	  });
-	}
-	
-	function update(cozy, doctype, doc, changes) {
-	  return cozy.isV2().then(function (isV2) {
-	    doctype = (0, _doctypes.normalizeDoctype)(cozy, isV2, doctype);
-	    var _id = doc._id,
-	        _rev = doc._rev;
-	
-	
-	    if (!_id) {
-	      return Promise.reject(new Error('Missing _id field in passed document'));
-	    }
-	
-	    if (!isV2 && !_rev) {
-	      return Promise.reject(new Error('Missing _rev field in passed document'));
-	    }
-	
-	    if (isV2) {
-	      changes = Object.assign({ _id: _id }, changes);
-	    } else {
-	      changes = Object.assign({ _id: _id, _rev: _rev }, changes);
-	    }
-	
-	    var path = (0, _utils.createPath)(cozy, isV2, doctype, _id);
-	    return (0, _fetch.cozyFetchJSON)(cozy, 'PUT', path, changes).then(function (resp) {
-	      if (isV2) {
-	        return find(cozy, doctype, _id);
-	      } else {
-	        return resp.data;
-	      }
-	    });
-	  });
-	}
-	
-	function updateAttributes(cozy, doctype, _id, changes) {
-	  var tries = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 3;
-	
-	  return cozy.isV2().then(function (isV2) {
-	    doctype = (0, _doctypes.normalizeDoctype)(cozy, isV2, doctype);
-	    return find(cozy, doctype, _id).then(function (doc) {
-	      return update(cozy, doctype, doc, Object.assign({ _id: _id }, doc, changes));
-	    }).catch(function (err) {
-	      if (tries > 0) {
-	        return updateAttributes(cozy, doctype, _id, changes, tries - 1);
-	      } else {
-	        throw err;
-	      }
-	    });
-	  });
-	}
-	
-	function _delete(cozy, doctype, doc) {
-	  return cozy.isV2().then(function (isV2) {
-	    doctype = (0, _doctypes.normalizeDoctype)(cozy, isV2, doctype);
-	    var _id = doc._id,
-	        _rev = doc._rev;
-	
-	
-	    if (!_id) {
-	      return Promise.reject(new Error('Missing _id field in passed document'));
-	    }
-	
-	    if (!isV2 && !_rev) {
-	      return Promise.reject(new Error('Missing _rev field in passed document'));
-	    }
-	
-	    var query = isV2 ? null : { rev: _rev };
-	    var path = (0, _utils.createPath)(cozy, isV2, doctype, _id, query);
-	    return (0, _fetch.cozyFetchJSON)(cozy, 'DELETE', path).then(function (resp) {
-	      if (isV2) {
-	        return { id: _id, rev: NOREV };
-	      } else {
-	        return resp;
-	      }
-	    });
-	  });
+		return cozy.isV2().then(function (isV2) {
+			doctype = (0, _doctypes.normalizeDoctype)(cozy, isV2, doctype);
+			if (isV2) {
+				attributes.docType = doctype;
+			}
+			var path = (0, _utils.createPath)(cozy, isV2, doctype, attributes._id);
+			var httpVerb = attributes._id ? 'PUT' : 'POST';
+			delete attributes._id;
+			return (0, _fetch.cozyFetchJSON)(cozy, httpVerb, path, attributes).then(function (resp) {
+				if (isV2) {
+					return find(cozy, doctype, resp._id);
+				} else {
+					return resp.data;
+				}
+			});
+		});
 	}
 
-/***/ },
+	function find(cozy, doctype, id) {
+		return cozy.isV2().then(function (isV2) {
+			doctype = (0, _doctypes.normalizeDoctype)(cozy, isV2, doctype);
+
+			if (!id) {
+				return Promise.reject(new Error('Missing id parameter'));
+			}
+
+			var path = (0, _utils.createPath)(cozy, isV2, doctype, id);
+			return (0, _fetch.cozyFetchJSON)(cozy, 'GET', path).then(function (resp) {
+				if (isV2) {
+					return Object.assign(resp, { _rev: NOREV });
+				} else {
+					return resp;
+				}
+			});
+		});
+	}
+
+	function findMany(cozy, doctype, ids) {
+		if (!(ids instanceof Array)) {
+			return Promise.reject(new Error('Parameter ids must be a non-empty array'));
+		}
+		if (ids.length === 0) {
+			// So users don't need to be defensive regarding the array content.
+			// This should not hide issues in user code since the result will be an
+			// empty object anyway.
+			return Promise.resolve({});
+		}
+
+		return cozy.isV2().then(function (isV2) {
+			if (isV2) {
+				return Promise.reject(new Error('findMany is not available on v2'));
+			}
+
+			var path = (0, _utils.createPath)(cozy, isV2, doctype, '_all_docs', { include_docs: true });
+
+			return (0, _fetch.cozyFetchJSON)(cozy, 'POST', path, { keys: ids }).then(function (resp) {
+				var docs = {};
+
+				var _iteratorNormalCompletion = true;
+				var _didIteratorError = false;
+				var _iteratorError = undefined;
+
+				try {
+					for (var _iterator = resp.rows[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+						var row = _step.value;
+						var key = row.key,
+						    doc = row.doc,
+						    error = row.error;
+
+						docs[key] = error ? { error: error } : { doc: doc };
+					}
+				} catch (err) {
+					_didIteratorError = true;
+					_iteratorError = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion && _iterator.return) {
+							_iterator.return();
+						}
+					} finally {
+						if (_didIteratorError) {
+							throw _iteratorError;
+						}
+					}
+				}
+
+				return docs;
+			}).catch(function (error) {
+				if (error.status !== 404) return Promise.reject(error);
+
+				// When no doc was ever created and the database does not exist yet,
+				// the response will be a 404 error.
+				var docs = {};
+
+				var _iteratorNormalCompletion2 = true;
+				var _didIteratorError2 = false;
+				var _iteratorError2 = undefined;
+
+				try {
+					for (var _iterator2 = ids[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+						var id = _step2.value;
+
+						docs[id] = { error: error };
+					}
+				} catch (err) {
+					_didIteratorError2 = true;
+					_iteratorError2 = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion2 && _iterator2.return) {
+							_iterator2.return();
+						}
+					} finally {
+						if (_didIteratorError2) {
+							throw _iteratorError2;
+						}
+					}
+				}
+
+				return docs;
+			});
+		});
+	}
+
+	function findAll(cozy, doctype) {
+		return cozy.isV2().then(function (isV2) {
+			if (isV2) {
+				return Promise.reject(new Error('findAll is not available on v2'));
+			}
+
+			var path = (0, _utils.createPath)(cozy, isV2, doctype, '_all_docs', { include_docs: true });
+
+			return (0, _fetch.cozyFetchJSON)(cozy, 'POST', path, {}).then(function (resp) {
+				var docs = [];
+
+				var _iteratorNormalCompletion3 = true;
+				var _didIteratorError3 = false;
+				var _iteratorError3 = undefined;
+
+				try {
+					for (var _iterator3 = resp.rows[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+						var row = _step3.value;
+						var doc = row.doc;
+						// if not couchDB indexes
+
+						if (!doc._id.match(/_design\//)) docs.push(doc);
+					}
+				} catch (err) {
+					_didIteratorError3 = true;
+					_iteratorError3 = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion3 && _iterator3.return) {
+							_iterator3.return();
+						}
+					} finally {
+						if (_didIteratorError3) {
+							throw _iteratorError3;
+						}
+					}
+				}
+
+				return docs;
+			}).catch(function (error) {
+				// the _all_docs endpoint returns a 404 error if no document with the given
+				// doctype exists.
+				if (error.status === 404) return [];
+				throw error;
+			});
+		});
+	}
+
+	function changesFeed(cozy, doctype, options) {
+		return cozy.isV2().then(function (isV2) {
+			doctype = (0, _doctypes.normalizeDoctype)(cozy, isV2, doctype);
+			var path = (0, _utils.createPath)(cozy, isV2, doctype, '_changes', options);
+			return (0, _fetch.cozyFetchJSON)(cozy, 'GET', path);
+		});
+	}
+
+	function update(cozy, doctype, doc, changes) {
+		return cozy.isV2().then(function (isV2) {
+			doctype = (0, _doctypes.normalizeDoctype)(cozy, isV2, doctype);
+			var _id = doc._id,
+			    _rev = doc._rev;
+
+			if (!_id) {
+				return Promise.reject(new Error('Missing _id field in passed document'));
+			}
+
+			if (!isV2 && !_rev) {
+				return Promise.reject(new Error('Missing _rev field in passed document'));
+			}
+
+			if (isV2) {
+				changes = Object.assign({ _id: _id }, changes);
+			} else {
+				changes = Object.assign({ _id: _id, _rev: _rev }, changes);
+			}
+
+			var path = (0, _utils.createPath)(cozy, isV2, doctype, _id);
+			return (0, _fetch.cozyFetchJSON)(cozy, 'PUT', path, changes).then(function (resp) {
+				if (isV2) {
+					return find(cozy, doctype, _id);
+				} else {
+					return resp.data;
+				}
+			});
+		});
+	}
+
+	function updateAttributes(cozy, doctype, _id, changes) {
+		var tries = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 3;
+
+		return cozy.isV2().then(function (isV2) {
+			doctype = (0, _doctypes.normalizeDoctype)(cozy, isV2, doctype);
+			return find(cozy, doctype, _id).then(function (doc) {
+				return update(cozy, doctype, doc, Object.assign({ _id: _id }, doc, changes));
+			}).catch(function (err) {
+				if (tries > 0) {
+					return updateAttributes(cozy, doctype, _id, changes, tries - 1);
+				} else {
+					throw err;
+				}
+			});
+		});
+	}
+
+	function _delete(cozy, doctype, doc) {
+		return cozy.isV2().then(function (isV2) {
+			doctype = (0, _doctypes.normalizeDoctype)(cozy, isV2, doctype);
+			var _id = doc._id,
+			    _rev = doc._rev;
+
+			if (!_id) {
+				return Promise.reject(new Error('Missing _id field in passed document'));
+			}
+
+			if (!isV2 && !_rev) {
+				return Promise.reject(new Error('Missing _rev field in passed document'));
+			}
+
+			var query = isV2 ? null : { rev: _rev };
+			var path = (0, _utils.createPath)(cozy, isV2, doctype, _id, query);
+			return (0, _fetch.cozyFetchJSON)(cozy, 'DELETE', path).then(function (resp) {
+				if (isV2) {
+					return { id: _id, rev: NOREV };
+				} else {
+					return resp;
+				}
+			});
+		});
+	}
+
+	/***/
+},
 /* 98 */
-/***/ function(module, exports, __webpack_require__) {
+/***/function (module, exports, __webpack_require__) {
 
 	'use strict';
-	
+
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+		value: true
 	});
 	exports.DOCTYPE_FILES = undefined;
 	exports.normalizeDoctype = normalizeDoctype;
-	
+
 	var _utils = __webpack_require__(89);
-	
+
 	var DOCTYPE_FILES = exports.DOCTYPE_FILES = 'io.cozy.files';
-	
+
 	var KNOWN_DOCTYPES = {
-	  'files': DOCTYPE_FILES,
-	  'folder': DOCTYPE_FILES,
-	  'contact': 'io.cozy.contacts',
-	  'event': 'io.cozy.events',
-	  'track': 'io.cozy.labs.music.track',
-	  'playlist': 'io.cozy.labs.music.playlist'
+		'files': DOCTYPE_FILES,
+		'folder': DOCTYPE_FILES,
+		'contact': 'io.cozy.contacts',
+		'event': 'io.cozy.events',
+		'track': 'io.cozy.labs.music.track',
+		'playlist': 'io.cozy.labs.music.playlist'
 	};
-	
+
 	var REVERSE_KNOWN = {};
 	Object.keys(KNOWN_DOCTYPES).forEach(function (k) {
-	  REVERSE_KNOWN[KNOWN_DOCTYPES[k]] = k;
+		REVERSE_KNOWN[KNOWN_DOCTYPES[k]] = k;
 	});
-	
+
 	function normalizeDoctype(cozy, isV2, doctype) {
-	  var isQualified = doctype.indexOf('.') !== -1;
-	  if (isV2 && isQualified) {
-	    var known = REVERSE_KNOWN[doctype];
-	    if (known) return known;
-	    return doctype.replace(/\./g, '-');
-	  }
-	  if (!isV2 && !isQualified) {
-	    var _known = KNOWN_DOCTYPES[doctype];
-	    if (_known) {
-	      (0, _utils.warn)('you are using a non-qualified doctype ' + doctype + ' assumed to be ' + _known);
-	      return _known;
-	    }
-	    throw new Error('Doctype ' + doctype + ' should be qualified.');
-	  }
-	  return doctype;
+		var isQualified = doctype.indexOf('.') !== -1;
+		if (isV2 && isQualified) {
+			var known = REVERSE_KNOWN[doctype];
+			if (known) return known;
+			return doctype.replace(/\./g, '-');
+		}
+		if (!isV2 && !isQualified) {
+			var _known = KNOWN_DOCTYPES[doctype];
+			if (_known) {
+				(0, _utils.warn)('you are using a non-qualified doctype ' + doctype + ' assumed to be ' + _known);
+				return _known;
+			}
+			throw new Error('Doctype ' + doctype + ' should be qualified.');
+		}
+		return doctype;
 	}
 
-/***/ },
+	/***/
+},
 /* 99 */
-/***/ function(module, exports, __webpack_require__) {
+/***/function (module, exports, __webpack_require__) {
 
 	'use strict';
-	
+
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+		value: true
 	});
-	
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-	
+
+	var _slicedToArray = function () {
+		function sliceIterator(arr, i) {
+			var _arr = [];var _n = true;var _d = false;var _e = undefined;try {
+				for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+					_arr.push(_s.value);if (i && _arr.length === i) break;
+				}
+			} catch (err) {
+				_d = true;_e = err;
+			} finally {
+				try {
+					if (!_n && _i["return"]) _i["return"]();
+				} finally {
+					if (_d) throw _e;
+				}
+			}return _arr;
+		}return function (arr, i) {
+			if (Array.isArray(arr)) {
+				return arr;
+			} else if (Symbol.iterator in Object(arr)) {
+				return sliceIterator(arr, i);
+			} else {
+				throw new TypeError("Invalid attempt to destructure non-iterable instance");
+			}
+		};
+	}();
+
+	var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+		return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+	} : function (obj) {
+		return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+	};
+
 	exports.defineIndex = defineIndex;
 	exports.query = query;
 	exports.queryFiles = queryFiles;
 	exports.parseSelector = parseSelector;
 	exports.normalizeSelector = normalizeSelector;
 	exports.makeMapReduceQuery = makeMapReduceQuery;
-	
+
 	var _utils = __webpack_require__(89);
-	
+
 	var _doctypes = __webpack_require__(98);
-	
+
 	var _fetch = __webpack_require__(94);
-	
-	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-	
+
+	function _defineProperty(obj, key, value) {
+		if (key in obj) {
+			Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });
+		} else {
+			obj[key] = value;
+		}return obj;
+	}
+
 	function defineIndex(cozy, doctype, fields) {
-	  return cozy.isV2().then(function (isV2) {
-	    doctype = (0, _doctypes.normalizeDoctype)(cozy, isV2, doctype);
-	    if (!Array.isArray(fields) || fields.length === 0) {
-	      throw new Error('defineIndex fields should be a non-empty array');
-	    }
-	    if (isV2) {
-	      return defineIndexV2(cozy, doctype, fields);
-	    } else {
-	      return defineIndexV3(cozy, doctype, fields);
-	    }
-	  });
+		return cozy.isV2().then(function (isV2) {
+			doctype = (0, _doctypes.normalizeDoctype)(cozy, isV2, doctype);
+			if (!Array.isArray(fields) || fields.length === 0) {
+				throw new Error('defineIndex fields should be a non-empty array');
+			}
+			if (isV2) {
+				return defineIndexV2(cozy, doctype, fields);
+			} else {
+				return defineIndexV3(cozy, doctype, fields);
+			}
+		});
 	}
-	
+
 	function query(cozy, indexRef, options) {
-	  return cozy.isV2().then(function (isV2) {
-	    if (!indexRef) {
-	      throw new Error('query should be passed the indexRef');
-	    }
-	    if (isV2) {
-	      return queryV2(cozy, indexRef, options);
-	    } else {
-	      return queryV3(cozy, indexRef, options);
-	    }
-	  });
+		return cozy.isV2().then(function (isV2) {
+			if (!indexRef) {
+				throw new Error('query should be passed the indexRef');
+			}
+			if (isV2) {
+				return queryV2(cozy, indexRef, options);
+			} else {
+				return queryV3(cozy, indexRef, options);
+			}
+		});
 	}
-	
+
 	function queryFiles(cozy, indexRef, options) {
-	  var opts = getV3Options(indexRef, options);
-	  return (0, _fetch.cozyFetchRawJSON)(cozy, 'POST', '/files/_find', opts).then(function (response) {
-	    return options.wholeResponse ? response : response.docs;
-	  });
+		var opts = getV3Options(indexRef, options);
+		return (0, _fetch.cozyFetchRawJSON)(cozy, 'POST', '/files/_find', opts).then(function (response) {
+			return options.wholeResponse ? response : response.docs;
+		});
 	}
-	
+
 	// Internals
-	
+
 	var VALUEOPERATORS = ['$eq', '$gt', '$gte', '$lt', '$lte'];
 	var LOGICOPERATORS = ['$or', '$and', '$not'];
-	
+
 	/* eslint-disable */
 	var MAP_TEMPLATE = function (doc) {
-	  if (doc.docType.toLowerCase() === 'DOCTYPEPLACEHOLDER') {
-	    emit(FIELDSPLACEHOLDER, doc);
-	  }
+		if (doc.docType.toLowerCase() === 'DOCTYPEPLACEHOLDER') {
+			emit(FIELDSPLACEHOLDER, doc);
+		}
 	}.toString().replace(/ /g, '').replace(/\n/g, '');
-	var COUCHDB_INFINITY = { '\uFFFF': '\uFFFF' };
+	var COUCHDB_INFINITY = { "\uFFFF": "\uFFFF" };
 	var COUCHDB_LOWEST = null;
 	/* eslint-enable */
-	
+
 	// defineIndexV2 is equivalent to defineIndex but only works for V2.
 	// It transforms the index fields into a map reduce view.
 	function defineIndexV2(cozy, doctype, fields) {
-	  var indexName = 'by' + fields.map(capitalize).join('');
-	  var indexDefinition = { map: makeMapFunction(doctype, fields), reduce: '_count' };
-	  var path = '/request/' + doctype + '/' + indexName + '/';
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'PUT', path, indexDefinition).then(function () {
-	    return { doctype: doctype, type: 'mapreduce', name: indexName, fields: fields };
-	  });
+		var indexName = 'by' + fields.map(capitalize).join('');
+		var indexDefinition = { map: makeMapFunction(doctype, fields), reduce: '_count' };
+		var path = '/request/' + doctype + '/' + indexName + '/';
+		return (0, _fetch.cozyFetchJSON)(cozy, 'PUT', path, indexDefinition).then(function () {
+			return { doctype: doctype, type: 'mapreduce', name: indexName, fields: fields };
+		});
 	}
-	
+
 	function defineIndexV3(cozy, doctype, fields) {
-	  var path = (0, _utils.createPath)(cozy, false, doctype, '_index');
-	  var indexDefinition = { 'index': { fields: fields } };
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'POST', path, indexDefinition).then(function (response) {
-	    var indexResult = { doctype: doctype, type: 'mango', name: response.id, fields: fields };
-	
-	    if (response.result === 'exists') return indexResult;
-	
-	    // indexes might not be usable right after being created; so we delay the resolving until they are
-	    var selector = {};
-	    selector[fields[0]] = { '$gt': null };
-	
-	    var opts = getV3Options(indexResult, { 'selector': selector });
-	    var path = (0, _utils.createPath)(cozy, false, indexResult.doctype, '_find');
-	    return (0, _fetch.cozyFetchJSON)(cozy, 'POST', path, opts).then(function () {
-	      return indexResult;
-	    }).catch(function () {
-	      // one retry
-	      return (0, _utils.sleep)(1000).then(function () {
-	        return (0, _fetch.cozyFetchJSON)(cozy, 'POST', path, opts);
-	      }).then(function () {
-	        return indexResult;
-	      }).catch(function () {
-	        return (0, _utils.sleep)(500).then(function () {
-	          return indexResult;
-	        });
-	      });
-	    });
-	  });
+		var path = (0, _utils.createPath)(cozy, false, doctype, '_index');
+		var indexDefinition = { 'index': { fields: fields } };
+		return (0, _fetch.cozyFetchJSON)(cozy, 'POST', path, indexDefinition).then(function (response) {
+			var indexResult = { doctype: doctype, type: 'mango', name: response.id, fields: fields };
+
+			if (response.result === 'exists') return indexResult;
+
+			// indexes might not be usable right after being created; so we delay the resolving until they are
+			var selector = {};
+			selector[fields[0]] = { '$gt': null };
+
+			var opts = getV3Options(indexResult, { 'selector': selector });
+			var path = (0, _utils.createPath)(cozy, false, indexResult.doctype, '_find');
+			return (0, _fetch.cozyFetchJSON)(cozy, 'POST', path, opts).then(function () {
+				return indexResult;
+			}).catch(function () {
+				// one retry
+				return (0, _utils.sleep)(1000).then(function () {
+					return (0, _fetch.cozyFetchJSON)(cozy, 'POST', path, opts);
+				}).then(function () {
+					return indexResult;
+				}).catch(function () {
+					return (0, _utils.sleep)(500).then(function () {
+						return indexResult;
+					});
+				});
+			});
+		});
 	}
-	
+
 	// queryV2 is equivalent to query but only works for V2.
 	// It transforms the query into a _views call using makeMapReduceQuery
 	function queryV2(cozy, indexRef, options) {
-	  if (indexRef.type !== 'mapreduce') {
-	    throw new Error('query indexRef should be the return value of defineIndexV2');
-	  }
-	  if (options.fields) {
-	    (0, _utils.warn)('query fields will be ignored on v2');
-	  }
-	
-	  var path = '/request/' + indexRef.doctype + '/' + indexRef.name + '/';
-	  var opts = makeMapReduceQuery(indexRef, options);
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'POST', path, opts).then(function (response) {
-	    return response.map(function (r) {
-	      return r.value;
-	    });
-	  });
+		if (indexRef.type !== 'mapreduce') {
+			throw new Error('query indexRef should be the return value of defineIndexV2');
+		}
+		if (options.fields) {
+			(0, _utils.warn)('query fields will be ignored on v2');
+		}
+
+		var path = '/request/' + indexRef.doctype + '/' + indexRef.name + '/';
+		var opts = makeMapReduceQuery(indexRef, options);
+		return (0, _fetch.cozyFetchJSON)(cozy, 'POST', path, opts).then(function (response) {
+			return response.map(function (r) {
+				return r.value;
+			});
+		});
 	}
-	
+
 	// queryV3 is equivalent to query but only works for V3
 	function queryV3(cozy, indexRef, options) {
-	  var opts = getV3Options(indexRef, options);
-	
-	  var path = (0, _utils.createPath)(cozy, false, indexRef.doctype, '_find');
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'POST', path, opts).then(function (response) {
-	    return options.wholeResponse ? response : response.docs;
-	  });
+		var opts = getV3Options(indexRef, options);
+
+		var path = (0, _utils.createPath)(cozy, false, indexRef.doctype, '_find');
+		return (0, _fetch.cozyFetchJSON)(cozy, 'POST', path, opts).then(function (response) {
+			return options.wholeResponse ? response : response.docs;
+		});
 	}
-	
+
 	function getV3Options(indexRef, options) {
-	  if (indexRef.type !== 'mango') {
-	    throw new Error('indexRef should be the return value of defineIndexV3');
-	  }
-	
-	  var opts = {
-	    use_index: indexRef.name,
-	    fields: options.fields,
-	    selector: options.selector,
-	    limit: options.limit,
-	    skip: options.skip,
-	    since: options.since,
-	    sort: options.sort
-	  };
-	
-	  if (options.descending) {
-	    opts.sort = indexRef.fields.map(function (f) {
-	      return _defineProperty({}, f, 'desc');
-	    });
-	  }
-	
-	  return opts;
+		if (indexRef.type !== 'mango') {
+			throw new Error('indexRef should be the return value of defineIndexV3');
+		}
+
+		var opts = {
+			use_index: indexRef.name,
+			fields: options.fields,
+			selector: options.selector,
+			limit: options.limit,
+			skip: options.skip,
+			since: options.since,
+			sort: options.sort
+		};
+
+		if (options.descending) {
+			opts.sort = indexRef.fields.map(function (f) {
+				return _defineProperty({}, f, 'desc');
+			});
+		}
+
+		return opts;
 	}
-	
+
 	// misc
 	function capitalize(name) {
-	  return name.charAt(0).toUpperCase() + name.slice(1);
+		return name.charAt(0).toUpperCase() + name.slice(1);
 	}
-	
+
 	function makeMapFunction(doctype, fields) {
-	  fields = '[' + fields.map(function (name) {
-	    return 'doc.' + name;
-	  }).join(',') + ']';
-	
-	  return MAP_TEMPLATE.replace('DOCTYPEPLACEHOLDER', doctype.toLowerCase()).replace('FIELDSPLACEHOLDER', fields);
+		fields = '[' + fields.map(function (name) {
+			return 'doc.' + name;
+		}).join(',') + ']';
+
+		return MAP_TEMPLATE.replace('DOCTYPEPLACEHOLDER', doctype.toLowerCase()).replace('FIELDSPLACEHOLDER', fields);
 	}
-	
+
 	// parseSelector takes a mango selector and returns it as an array of filter
 	// a filter is [path, operator, value] array
 	// a path is an array of field names
@@ -59868,29 +60324,29 @@ module.exports = baseKonnector
 	// parseSelector({"test":{"deep": {"$gt": 3}}})
 	// [[['test', 'deep'], '$gt', 3 ]]
 	function parseSelector(selector) {
-	  var path = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-	  var operator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '$eq';
-	
-	  if ((typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) !== 'object') {
-	    return [[path, operator, selector]];
-	  }
-	
-	  var keys = Object.keys(selector);
-	  if (keys.length === 0) {
-	    throw new Error('empty selector');
-	  } else {
-	    return keys.reduce(function (acc, k) {
-	      if (LOGICOPERATORS.indexOf(k) !== -1) {
-	        throw new Error('cozy-client-js does not support mango logic ops');
-	      } else if (VALUEOPERATORS.indexOf(k) !== -1) {
-	        return acc.concat(parseSelector(selector[k], path, k));
-	      } else {
-	        return acc.concat(parseSelector(selector[k], path.concat(k), '$eq'));
-	      }
-	    }, []);
-	  }
+		var path = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+		var operator = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '$eq';
+
+		if ((typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) !== 'object') {
+			return [[path, operator, selector]];
+		}
+
+		var keys = Object.keys(selector);
+		if (keys.length === 0) {
+			throw new Error('empty selector');
+		} else {
+			return keys.reduce(function (acc, k) {
+				if (LOGICOPERATORS.indexOf(k) !== -1) {
+					throw new Error('cozy-client-js does not support mango logic ops');
+				} else if (VALUEOPERATORS.indexOf(k) !== -1) {
+					return acc.concat(parseSelector(selector[k], path, k));
+				} else {
+					return acc.concat(parseSelector(selector[k], path.concat(k), '$eq'));
+				}
+			}, []);
+		}
 	}
-	
+
 	// normalizeSelector takes a mango selector and returns it as an object
 	// normalized.
 	// This function is only exported so it can be unit tested.
@@ -59898,123 +60354,151 @@ module.exports = baseKonnector
 	// parseSelector({"test":{"deep": {"$gt": 3}}})
 	// {"test.deep": {"$gt": 3}}
 	function normalizeSelector(selector) {
-	  var filters = parseSelector(selector);
-	  return filters.reduce(function (acc, filter) {
-	    var _filter = _slicedToArray(filter, 3),
-	        path = _filter[0],
-	        op = _filter[1],
-	        value = _filter[2];
-	
-	    var field = path.join('.');
-	    acc[field] = acc[field] || {};
-	    acc[field][op] = value;
-	    return acc;
-	  }, {});
+		var filters = parseSelector(selector);
+		return filters.reduce(function (acc, filter) {
+			var _filter = _slicedToArray(filter, 3),
+			    path = _filter[0],
+			    op = _filter[1],
+			    value = _filter[2];
+
+			var field = path.join('.');
+			acc[field] = acc[field] || {};
+			acc[field][op] = value;
+			return acc;
+		}, {});
 	}
-	
+
 	// applySelector takes the normalized selector for the current field
 	// and append the proper values to opts.startkey, opts.endkey
 	function applySelector(selector, opts) {
-	  var value = selector['$eq'];
-	  var lower = COUCHDB_LOWEST;
-	  var upper = COUCHDB_INFINITY;
-	  var inclusiveEnd = void 0;
-	
-	  if (value) {
-	    opts.startkey.push(value);
-	    opts.endkey.push(value);
-	    return false;
-	  }
-	
-	  value = selector['$gt'];
-	  if (value) {
-	    throw new Error('operator $gt (strict greater than) not supported');
-	  }
-	
-	  value = selector['$gte'];
-	  if (value) {
-	    lower = value;
-	  }
-	
-	  value = selector['$lte'];
-	  if (value) {
-	    upper = value;
-	    inclusiveEnd = true;
-	  }
-	
-	  value = selector['$lt'];
-	  if (value) {
-	    upper = value;
-	    inclusiveEnd = false;
-	  }
-	
-	  opts.startkey.push(lower);
-	  opts.endkey.push(upper);
-	  if (inclusiveEnd !== undefined) opts.inclusive_end = inclusiveEnd;
-	  return true;
+		var value = selector['$eq'];
+		var lower = COUCHDB_LOWEST;
+		var upper = COUCHDB_INFINITY;
+		var inclusiveEnd = void 0;
+
+		if (value) {
+			opts.startkey.push(value);
+			opts.endkey.push(value);
+			return false;
+		}
+
+		value = selector['$gt'];
+		if (value) {
+			throw new Error('operator $gt (strict greater than) not supported');
+		}
+
+		value = selector['$gte'];
+		if (value) {
+			lower = value;
+		}
+
+		value = selector['$lte'];
+		if (value) {
+			upper = value;
+			inclusiveEnd = true;
+		}
+
+		value = selector['$lt'];
+		if (value) {
+			upper = value;
+			inclusiveEnd = false;
+		}
+
+		opts.startkey.push(lower);
+		opts.endkey.push(upper);
+		if (inclusiveEnd !== undefined) opts.inclusive_end = inclusiveEnd;
+		return true;
 	}
-	
+
 	// makeMapReduceQuery takes a mango query and generate _views call parameters
 	// to obtain same results depending on fields in the passed indexRef.
 	function makeMapReduceQuery(indexRef, query) {
-	  var mrquery = {
-	    startkey: [],
-	    endkey: [],
-	    reduce: false
-	  };
-	  var firstFreeValueField = null;
-	  var normalizedSelector = normalizeSelector(query.selector);
-	
-	  indexRef.fields.forEach(function (field) {
-	    var selector = normalizedSelector[field];
-	
-	    if (selector && firstFreeValueField != null) {
-	      throw new Error('Selector on field ' + field + ', but not on ' + firstFreeValueField + ' which is higher in index fields.');
-	    } else if (selector) {
-	      selector.used = true;
-	      var isFreeValue = applySelector(selector, mrquery);
-	      if (isFreeValue) firstFreeValueField = field;
-	    } else if (firstFreeValueField == null) {
-	      firstFreeValueField = field;
-	      mrquery.endkey.push(COUCHDB_INFINITY);
-	    }
-	  });
-	
-	  Object.keys(normalizedSelector).forEach(function (field) {
-	    if (!normalizedSelector[field].used) {
-	      throw new Error('Cant apply selector on ' + field + ', it is not in index');
-	    }
-	  });
-	
-	  if (query.descending) {
-	    mrquery = {
-	      descending: true,
-	      reduce: false,
-	      startkey: mrquery.endkey,
-	      endkey: mrquery.startkey,
-	      inclusive_end: mrquery.inclusive_end
-	    };
-	  }
-	
-	  return mrquery;
+		var mrquery = {
+			startkey: [],
+			endkey: [],
+			reduce: false
+		};
+		var firstFreeValueField = null;
+		var normalizedSelector = normalizeSelector(query.selector);
+
+		indexRef.fields.forEach(function (field) {
+			var selector = normalizedSelector[field];
+
+			if (selector && firstFreeValueField != null) {
+				throw new Error('Selector on field ' + field + ', but not on ' + firstFreeValueField + ' which is higher in index fields.');
+			} else if (selector) {
+				selector.used = true;
+				var isFreeValue = applySelector(selector, mrquery);
+				if (isFreeValue) firstFreeValueField = field;
+			} else if (firstFreeValueField == null) {
+				firstFreeValueField = field;
+				mrquery.endkey.push(COUCHDB_INFINITY);
+			}
+		});
+
+		Object.keys(normalizedSelector).forEach(function (field) {
+			if (!normalizedSelector[field].used) {
+				throw new Error('Cant apply selector on ' + field + ', it is not in index');
+			}
+		});
+
+		if (query.descending) {
+			mrquery = {
+				descending: true,
+				reduce: false,
+				startkey: mrquery.endkey,
+				endkey: mrquery.startkey,
+				inclusive_end: mrquery.inclusive_end
+			};
+		}
+
+		return mrquery;
 	}
 
-/***/ },
+	/***/
+},
 /* 100 */
-/***/ function(module, exports, __webpack_require__) {
+/***/function (module, exports, __webpack_require__) {
 
 	'use strict';
-	
+
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+		value: true
 	});
 	exports.TRASH_DIR_ID = exports.ROOT_DIR_ID = undefined;
-	
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; /* global Blob, File */
-	
-	
+
+	var _slicedToArray = function () {
+		function sliceIterator(arr, i) {
+			var _arr = [];var _n = true;var _d = false;var _e = undefined;try {
+				for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+					_arr.push(_s.value);if (i && _arr.length === i) break;
+				}
+			} catch (err) {
+				_d = true;_e = err;
+			} finally {
+				try {
+					if (!_n && _i["return"]) _i["return"]();
+				} finally {
+					if (_d) throw _e;
+				}
+			}return _arr;
+		}return function (arr, i) {
+			if (Array.isArray(arr)) {
+				return arr;
+			} else if (Symbol.iterator in Object(arr)) {
+				return sliceIterator(arr, i);
+			} else {
+				throw new TypeError("Invalid attempt to destructure non-iterable instance");
+			}
+		};
+	}();
+
+	var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+		return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+	} : function (obj) {
+		return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+	}; /* global Blob, File */
+
 	exports.create = create;
 	exports.createDirectory = createDirectory;
 	exports.createDirectoryByPath = createDirectoryByPath;
@@ -60036,707 +60520,712 @@ module.exports = baseKonnector
 	exports.clearTrash = clearTrash;
 	exports.restoreById = restoreById;
 	exports.destroyById = destroyById;
-	
+
 	var _fetch = __webpack_require__(94);
-	
+
 	var _jsonapi = __webpack_require__(95);
-	
+
 	var _jsonapi2 = _interopRequireDefault(_jsonapi);
-	
+
 	var _doctypes = __webpack_require__(98);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
+
+	function _interopRequireDefault(obj) {
+		return obj && obj.__esModule ? obj : { default: obj };
+	}
+
 	// global variables
 	var ROOT_DIR_ID = exports.ROOT_DIR_ID = 'io.cozy.files.root-dir';
 	var TRASH_DIR_ID = exports.TRASH_DIR_ID = 'io.cozy.files.trash-dir';
-	
+
 	var contentTypeOctetStream = 'application/octet-stream';
-	
+
 	function doUpload(cozy, data, method, path, options) {
-	  if (!data) {
-	    throw new Error('missing data argument');
-	  }
-	
-	  // transform any ArrayBufferView to ArrayBuffer
-	  if (data.buffer && data.buffer instanceof ArrayBuffer) {
-	    data = data.buffer;
-	  }
-	
-	  var isBuffer = typeof ArrayBuffer !== 'undefined' && data instanceof ArrayBuffer;
-	  var isFile = typeof File !== 'undefined' && data instanceof File;
-	  var isBlob = typeof Blob !== 'undefined' && data instanceof Blob;
-	  var isStream = data.readable === true && typeof data.pipe === 'function';
-	  var isString = typeof data === 'string';
-	
-	  if (!isBuffer && !isFile && !isBlob && !isStream && !isString) {
-	    throw new Error('invalid data type');
-	  }
-	
-	  var _ref = options || {},
-	      contentType = _ref.contentType,
-	      checksum = _ref.checksum,
-	      lastModifiedDate = _ref.lastModifiedDate,
-	      ifMatch = _ref.ifMatch;
-	
-	  if (!contentType) {
-	    if (isBuffer) {
-	      contentType = contentTypeOctetStream;
-	    } else if (isFile) {
-	      contentType = data.type || contentTypeOctetStream;
-	      if (!lastModifiedDate) {
-	        lastModifiedDate = data.lastModifiedDate;
-	      }
-	    } else if (isBlob) {
-	      contentType = data.type || contentTypeOctetStream;
-	    } else if (isStream) {
-	      contentType = contentTypeOctetStream;
-	    } else if (typeof data === 'string') {
-	      contentType = 'text/plain';
-	    }
-	  }
-	
-	  if (lastModifiedDate && typeof lastModifiedDate === 'string') {
-	    lastModifiedDate = new Date(lastModifiedDate);
-	  }
-	
-	  return (0, _fetch.cozyFetch)(cozy, path, {
-	    method: method,
-	    headers: {
-	      'Content-Type': contentType,
-	      'Content-MD5': checksum || '',
-	      'Date': lastModifiedDate ? lastModifiedDate.toGMTString() : '',
-	      'If-Match': ifMatch || ''
-	    },
-	    body: data
-	  }).then(function (res) {
-	    var json = res.json();
-	    if (!res.ok) {
-	      return json.then(function (err) {
-	        throw err;
-	      });
-	    } else {
-	      return json.then(_jsonapi2.default);
-	    }
-	  });
-	}
-	
-	function create(cozy, data, options) {
-	  var _ref2 = options || {},
-	      name = _ref2.name,
-	      dirID = _ref2.dirID,
-	      executable = _ref2.executable;
-	
-	  // handle case where data is a file and contains the name
-	
-	
-	  if (!name && typeof data.name === 'string') {
-	    name = data.name;
-	  }
-	
-	  if (typeof name !== 'string' || name === '') {
-	    throw new Error('missing name argument');
-	  }
-	
-	  if (executable === undefined) {
-	    executable = false;
-	  }
-	
-	  var path = '/files/' + encodeURIComponent(dirID || '');
-	  var query = '?Name=' + encodeURIComponent(name) + '&Type=file&Executable=' + executable;
-	  return doUpload(cozy, data, 'POST', '' + path + query, options);
-	}
-	
-	function createDirectory(cozy, options) {
-	  var _ref3 = options || {},
-	      name = _ref3.name,
-	      dirID = _ref3.dirID,
-	      lastModifiedDate = _ref3.lastModifiedDate;
-	
-	  if (typeof name !== 'string' || name === '') {
-	    throw new Error('missing name argument');
-	  }
-	
-	  if (lastModifiedDate && typeof lastModifiedDate === 'string') {
-	    lastModifiedDate = new Date(lastModifiedDate);
-	  }
-	
-	  var path = '/files/' + encodeURIComponent(dirID || '');
-	  var query = '?Name=' + encodeURIComponent(name) + '&Type=directory';
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '' + path + query, undefined, {
-	    headers: {
-	      'Date': lastModifiedDate ? lastModifiedDate.toGMTString() : ''
-	    }
-	  });
-	}
-	
-	function getDirectoryOrCreate(cozy, name, parentDirectory) {
-	  if (parentDirectory && !parentDirectory.attributes) throw new Error('Malformed parent directory');
-	
-	  var path = (parentDirectory._id === ROOT_DIR_ID ? '' : parentDirectory.attributes.path) + '/' + name;
-	
-	  return cozy.files.statByPath(path || '/').catch(function (error) {
-	    var parsedError = JSON.parse(error.message);
-	    var errors = parsedError.errors;
-	    if (errors && errors.length && errors[0].status === '404') {
-	      return cozy.files.createDirectory({
-	        name: name,
-	        dirID: parentDirectory && parentDirectory._id
-	      });
-	    }
-	
-	    throw errors;
-	  });
-	}
-	
-	function createDirectoryByPath(cozy, path) {
-	  var parts = path.split('/').filter(function (part) {
-	    return part !== '';
-	  });
-	
-	  var rootDirectoryPromise = cozy.files.statById(ROOT_DIR_ID);
-	
-	  return parts.length ? parts.reduce(function (parentDirectoryPromise, part) {
-	    return parentDirectoryPromise.then(function (parentDirectory) {
-	      return getDirectoryOrCreate(cozy, part, parentDirectory);
-	    });
-	  }, rootDirectoryPromise) : rootDirectoryPromise;
-	}
-	
-	function updateById(cozy, id, data, options) {
-	  return doUpload(cozy, data, 'PUT', '/files/' + encodeURIComponent(id), options);
-	}
-	
-	function doUpdateAttributes(cozy, attrs, path, options) {
-	  if (!attrs || (typeof attrs === 'undefined' ? 'undefined' : _typeof(attrs)) !== 'object') {
-	    throw new Error('missing attrs argument');
-	  }
-	
-	  var _ref4 = options || {},
-	      ifMatch = _ref4.ifMatch;
-	
-	  var body = { data: { attributes: attrs } };
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'PATCH', path, body, {
-	    headers: {
-	      'If-Match': ifMatch || ''
-	    }
-	  });
-	}
-	
-	function updateAttributesById(cozy, id, attrs, options) {
-	  return doUpdateAttributes(cozy, attrs, '/files/' + encodeURIComponent(id), options);
-	}
-	
-	function updateAttributesByPath(cozy, path, attrs, options) {
-	  return doUpdateAttributes(cozy, attrs, '/files/metadata?Path=' + encodeURIComponent(path), options);
-	}
-	
-	function trashById(cozy, id, options) {
-	  if (typeof id !== 'string' || id === '') {
-	    throw new Error('missing id argument');
-	  }
-	
-	  var _ref5 = options || {},
-	      ifMatch = _ref5.ifMatch;
-	
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'DELETE', '/files/' + encodeURIComponent(id), undefined, {
-	    headers: {
-	      'If-Match': ifMatch || ''
-	    }
-	  });
-	}
-	
-	function statById(cozy, id) {
-	  var offline = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-	  var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-	
-	  if (offline && cozy.offline.hasDatabase(_doctypes.DOCTYPE_FILES)) {
-	    var db = cozy.offline.getDatabase(_doctypes.DOCTYPE_FILES);
-	    return Promise.all([db.get(id), db.find(Object.assign({ selector: { 'dir_id': id } }, options))]).then(function (_ref6) {
-	      var _ref7 = _slicedToArray(_ref6, 2),
-	          doc = _ref7[0],
-	          children = _ref7[1];
-	
-	      if (id === ROOT_DIR_ID) {
-	        children.docs = children.docs.filter(function (doc) {
-	          return doc._id !== TRASH_DIR_ID;
-	        });
-	      }
-	      children = sortFiles(children.docs.map(function (doc) {
-	        return addIsDir(toJsonApi(cozy, doc));
-	      }));
-	      return addIsDir(toJsonApi(cozy, doc, children));
-	    });
-	  }
-	  var query = Object.keys(options).length === 0 ? '' : '?' + encodePageOptions(options);
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/files/' + encodeURIComponent(id) + query).then(addIsDir);
-	}
-	
-	function statByPath(cozy, path) {
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/files/metadata?Path=' + encodeURIComponent(path)).then(addIsDir);
-	}
-	
-	function downloadById(cozy, id) {
-	  return (0, _fetch.cozyFetch)(cozy, '/files/download/' + encodeURIComponent(id));
-	}
-	
-	function downloadByPath(cozy, path) {
-	  return (0, _fetch.cozyFetch)(cozy, '/files/download?Path=' + encodeURIComponent(path));
-	}
-	
-	function extractResponseLinkRelated(res) {
-	  var href = res.links && res.links.related;
-	  if (!href) throw new Error('No related link in server response');
-	  return href;
-	}
-	
-	function getDownloadLinkByPath(cozy, path) {
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/files/downloads?Path=' + encodeURIComponent(path)).then(extractResponseLinkRelated);
-	}
-	
-	function getDownloadLinkById(cozy, id) {
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/files/downloads?Id=' + encodeURIComponent(id)).then(extractResponseLinkRelated);
-	}
-	
-	function getFilePath(cozy) {
-	  var file = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-	  var folder = arguments[2];
-	
-	  if (!folder || !folder.attributes) {
-	    throw Error('Folder should be valid with an attributes.path property');
-	  }
-	
-	  var folderPath = folder.attributes.path.endsWith('/') ? folder.attributes.path : folder.attributes.path + '/';
-	
-	  return '' + folderPath + file.name;
-	}
-	
-	function getCollectionShareLink(cozy, id, collectionType) {
-	  if (!id) {
-	    return Promise.reject(Error('An id should be provided to create a share link'));
-	  }
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/permissions?codes=email', {
-	    data: {
-	      type: 'io.cozy.permissions',
-	      attributes: {
-	        permissions: {
-	          files: {
-	            type: 'io.cozy.files',
-	            verbs: ['GET'],
-	            values: [id],
-	            selector: 'referenced_by'
-	          },
-	          collection: {
-	            type: collectionType,
-	            verbs: ['GET'],
-	            values: [id]
-	          }
-	        }
-	      }
-	    }
-	  }).then(function (data) {
-	    return { sharecode: 'sharecode=' + data.attributes.codes.email, id: 'id=' + id };
-	  });
-	}
-	
-	function getArchiveLinkByPaths(cozy, paths) {
-	  var name = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'files';
-	
-	  var archive = {
-	    type: 'io.cozy.archives',
-	    attributes: {
-	      name: name,
-	      files: paths
-	    }
-	  };
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/files/archive', { data: archive }).then(extractResponseLinkRelated);
-	}
-	
-	function getArchiveLinkByIds(cozy, ids) {
-	  var name = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'files';
-	
-	  var archive = {
-	    type: 'io.cozy.archives',
-	    attributes: {
-	      name: name,
-	      ids: ids
-	    }
-	  };
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/files/archive', { data: archive }).then(extractResponseLinkRelated);
-	}
-	
-	function listTrash(cozy) {
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/files/trash');
-	}
-	
-	function clearTrash(cozy) {
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'DELETE', '/files/trash');
-	}
-	
-	function restoreById(cozy, id) {
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/files/trash/' + encodeURIComponent(id));
-	}
-	
-	function destroyById(cozy, id, options) {
-	  var _ref8 = options || {},
-	      ifMatch = _ref8.ifMatch;
-	
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'DELETE', '/files/trash/' + encodeURIComponent(id), undefined, {
-	    headers: {
-	      'If-Match': ifMatch || ''
-	    }
-	  });
-	}
-	
-	function addIsDir(obj) {
-	  obj.isDir = obj.attributes.type === 'directory';
-	  return obj;
-	}
-	
-	function encodePageOptions(options) {
-	  var opts = [];
-	  for (var name in options) {
-	    opts.push('page[' + encodeURIComponent(name) + ']=' + encodeURIComponent(options[name]));
-	  }
-	  return opts.join('&');
-	}
-	
-	function toJsonApi(cozy, doc) {
-	  var contents = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-	
-	  var clone = JSON.parse(JSON.stringify(doc));
-	  delete clone._id;
-	  delete clone._rev;
-	  return {
-	    _id: doc._id,
-	    _rev: doc._rev,
-	    _type: _doctypes.DOCTYPE_FILES,
-	    attributes: clone,
-	    relationships: {
-	      contents: {
-	        data: contents,
-	        meta: {
-	          count: contents.length
-	        }
-	      }
-	    },
-	    relations: function relations(name) {
-	      if (name === 'contents') {
-	        return contents;
-	      }
-	    }
-	  };
-	}
-	
-	function sortFiles(allFiles) {
-	  var folders = allFiles.filter(function (f) {
-	    return f.attributes.type === 'directory';
-	  });
-	  var files = allFiles.filter(function (f) {
-	    return f.attributes.type !== 'directory';
-	  });
-	  var sort = function sort(files) {
-	    return files.sort(function (a, b) {
-	      return a.attributes.name.localeCompare(b.attributes.name);
-	    });
-	  };
-	  return sort(folders).concat(sort(files));
+		if (!data) {
+			throw new Error('missing data argument');
+		}
+
+		// transform any ArrayBufferView to ArrayBuffer
+		if (data.buffer && data.buffer instanceof ArrayBuffer) {
+			data = data.buffer;
+		}
+
+		var isBuffer = typeof ArrayBuffer !== 'undefined' && data instanceof ArrayBuffer;
+		var isFile = typeof File !== 'undefined' && data instanceof File;
+		var isBlob = typeof Blob !== 'undefined' && data instanceof Blob;
+		var isStream = data.readable === true && typeof data.pipe === 'function';
+		var isString = typeof data === 'string';
+
+		if (!isBuffer && !isFile && !isBlob && !isStream && !isString) {
+			throw new Error('invalid data type');
+		}
+
+		var _ref = options || {},
+		    contentType = _ref.contentType,
+		    checksum = _ref.checksum,
+		    lastModifiedDate = _ref.lastModifiedDate,
+		    ifMatch = _ref.ifMatch;
+
+		if (!contentType) {
+			if (isBuffer) {
+				contentType = contentTypeOctetStream;
+			} else if (isFile) {
+				contentType = data.type || contentTypeOctetStream;
+				if (!lastModifiedDate) {
+					lastModifiedDate = data.lastModifiedDate;
+				}
+			} else if (isBlob) {
+				contentType = data.type || contentTypeOctetStream;
+			} else if (isStream) {
+				contentType = contentTypeOctetStream;
+			} else if (typeof data === 'string') {
+				contentType = 'text/plain';
+			}
+		}
+
+		if (lastModifiedDate && typeof lastModifiedDate === 'string') {
+			lastModifiedDate = new Date(lastModifiedDate);
+		}
+
+		return (0, _fetch.cozyFetch)(cozy, path, {
+			method: method,
+			headers: {
+				'Content-Type': contentType,
+				'Content-MD5': checksum || '',
+				'Date': lastModifiedDate ? lastModifiedDate.toGMTString() : '',
+				'If-Match': ifMatch || ''
+			},
+			body: data
+		}).then(function (res) {
+			var json = res.json();
+			if (!res.ok) {
+				return json.then(function (err) {
+					throw err;
+				});
+			} else {
+				return json.then(_jsonapi2.default);
+			}
+		});
 	}
 
-/***/ },
+	function create(cozy, data, options) {
+		var _ref2 = options || {},
+		    name = _ref2.name,
+		    dirID = _ref2.dirID,
+		    executable = _ref2.executable;
+
+		// handle case where data is a file and contains the name
+
+
+		if (!name && typeof data.name === 'string') {
+			name = data.name;
+		}
+
+		if (typeof name !== 'string' || name === '') {
+			throw new Error('missing name argument');
+		}
+
+		if (executable === undefined) {
+			executable = false;
+		}
+
+		var path = '/files/' + encodeURIComponent(dirID || '');
+		var query = '?Name=' + encodeURIComponent(name) + '&Type=file&Executable=' + executable;
+		return doUpload(cozy, data, 'POST', '' + path + query, options);
+	}
+
+	function createDirectory(cozy, options) {
+		var _ref3 = options || {},
+		    name = _ref3.name,
+		    dirID = _ref3.dirID,
+		    lastModifiedDate = _ref3.lastModifiedDate;
+
+		if (typeof name !== 'string' || name === '') {
+			throw new Error('missing name argument');
+		}
+
+		if (lastModifiedDate && typeof lastModifiedDate === 'string') {
+			lastModifiedDate = new Date(lastModifiedDate);
+		}
+
+		var path = '/files/' + encodeURIComponent(dirID || '');
+		var query = '?Name=' + encodeURIComponent(name) + '&Type=directory';
+		return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '' + path + query, undefined, {
+			headers: {
+				'Date': lastModifiedDate ? lastModifiedDate.toGMTString() : ''
+			}
+		});
+	}
+
+	function getDirectoryOrCreate(cozy, name, parentDirectory) {
+		if (parentDirectory && !parentDirectory.attributes) throw new Error('Malformed parent directory');
+
+		var path = (parentDirectory._id === ROOT_DIR_ID ? '' : parentDirectory.attributes.path) + '/' + name;
+
+		return cozy.files.statByPath(path || '/').catch(function (error) {
+			var parsedError = JSON.parse(error.message);
+			var errors = parsedError.errors;
+			if (errors && errors.length && errors[0].status === '404') {
+				return cozy.files.createDirectory({
+					name: name,
+					dirID: parentDirectory && parentDirectory._id
+				});
+			}
+
+			throw errors;
+		});
+	}
+
+	function createDirectoryByPath(cozy, path) {
+		var parts = path.split('/').filter(function (part) {
+			return part !== '';
+		});
+
+		var rootDirectoryPromise = cozy.files.statById(ROOT_DIR_ID);
+
+		return parts.length ? parts.reduce(function (parentDirectoryPromise, part) {
+			return parentDirectoryPromise.then(function (parentDirectory) {
+				return getDirectoryOrCreate(cozy, part, parentDirectory);
+			});
+		}, rootDirectoryPromise) : rootDirectoryPromise;
+	}
+
+	function updateById(cozy, id, data, options) {
+		return doUpload(cozy, data, 'PUT', '/files/' + encodeURIComponent(id), options);
+	}
+
+	function doUpdateAttributes(cozy, attrs, path, options) {
+		if (!attrs || (typeof attrs === 'undefined' ? 'undefined' : _typeof(attrs)) !== 'object') {
+			throw new Error('missing attrs argument');
+		}
+
+		var _ref4 = options || {},
+		    ifMatch = _ref4.ifMatch;
+
+		var body = { data: { attributes: attrs } };
+		return (0, _fetch.cozyFetchJSON)(cozy, 'PATCH', path, body, {
+			headers: {
+				'If-Match': ifMatch || ''
+			}
+		});
+	}
+
+	function updateAttributesById(cozy, id, attrs, options) {
+		return doUpdateAttributes(cozy, attrs, '/files/' + encodeURIComponent(id), options);
+	}
+
+	function updateAttributesByPath(cozy, path, attrs, options) {
+		return doUpdateAttributes(cozy, attrs, '/files/metadata?Path=' + encodeURIComponent(path), options);
+	}
+
+	function trashById(cozy, id, options) {
+		if (typeof id !== 'string' || id === '') {
+			throw new Error('missing id argument');
+		}
+
+		var _ref5 = options || {},
+		    ifMatch = _ref5.ifMatch;
+
+		return (0, _fetch.cozyFetchJSON)(cozy, 'DELETE', '/files/' + encodeURIComponent(id), undefined, {
+			headers: {
+				'If-Match': ifMatch || ''
+			}
+		});
+	}
+
+	function statById(cozy, id) {
+		var offline = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+		var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+		if (offline && cozy.offline.hasDatabase(_doctypes.DOCTYPE_FILES)) {
+			var db = cozy.offline.getDatabase(_doctypes.DOCTYPE_FILES);
+			return Promise.all([db.get(id), db.find(Object.assign({ selector: { 'dir_id': id } }, options))]).then(function (_ref6) {
+				var _ref7 = _slicedToArray(_ref6, 2),
+				    doc = _ref7[0],
+				    children = _ref7[1];
+
+				if (id === ROOT_DIR_ID) {
+					children.docs = children.docs.filter(function (doc) {
+						return doc._id !== TRASH_DIR_ID;
+					});
+				}
+				children = sortFiles(children.docs.map(function (doc) {
+					return addIsDir(toJsonApi(cozy, doc));
+				}));
+				return addIsDir(toJsonApi(cozy, doc, children));
+			});
+		}
+		var query = Object.keys(options).length === 0 ? '' : '?' + encodePageOptions(options);
+		return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/files/' + encodeURIComponent(id) + query).then(addIsDir);
+	}
+
+	function statByPath(cozy, path) {
+		return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/files/metadata?Path=' + encodeURIComponent(path)).then(addIsDir);
+	}
+
+	function downloadById(cozy, id) {
+		return (0, _fetch.cozyFetch)(cozy, '/files/download/' + encodeURIComponent(id));
+	}
+
+	function downloadByPath(cozy, path) {
+		return (0, _fetch.cozyFetch)(cozy, '/files/download?Path=' + encodeURIComponent(path));
+	}
+
+	function extractResponseLinkRelated(res) {
+		var href = res.links && res.links.related;
+		if (!href) throw new Error('No related link in server response');
+		return href;
+	}
+
+	function getDownloadLinkByPath(cozy, path) {
+		return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/files/downloads?Path=' + encodeURIComponent(path)).then(extractResponseLinkRelated);
+	}
+
+	function getDownloadLinkById(cozy, id) {
+		return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/files/downloads?Id=' + encodeURIComponent(id)).then(extractResponseLinkRelated);
+	}
+
+	function getFilePath(cozy) {
+		var file = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+		var folder = arguments[2];
+
+		if (!folder || !folder.attributes) {
+			throw Error('Folder should be valid with an attributes.path property');
+		}
+
+		var folderPath = folder.attributes.path.endsWith('/') ? folder.attributes.path : folder.attributes.path + '/';
+
+		return '' + folderPath + file.name;
+	}
+
+	function getCollectionShareLink(cozy, id, collectionType) {
+		if (!id) {
+			return Promise.reject(Error('An id should be provided to create a share link'));
+		}
+		return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/permissions?codes=email', {
+			data: {
+				type: 'io.cozy.permissions',
+				attributes: {
+					permissions: {
+						files: {
+							type: 'io.cozy.files',
+							verbs: ['GET'],
+							values: [id],
+							selector: 'referenced_by'
+						},
+						collection: {
+							type: collectionType,
+							verbs: ['GET'],
+							values: [id]
+						}
+					}
+				}
+			}
+		}).then(function (data) {
+			return { sharecode: 'sharecode=' + data.attributes.codes.email, id: 'id=' + id };
+		});
+	}
+
+	function getArchiveLinkByPaths(cozy, paths) {
+		var name = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'files';
+
+		var archive = {
+			type: 'io.cozy.archives',
+			attributes: {
+				name: name,
+				files: paths
+			}
+		};
+		return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/files/archive', { data: archive }).then(extractResponseLinkRelated);
+	}
+
+	function getArchiveLinkByIds(cozy, ids) {
+		var name = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'files';
+
+		var archive = {
+			type: 'io.cozy.archives',
+			attributes: {
+				name: name,
+				ids: ids
+			}
+		};
+		return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/files/archive', { data: archive }).then(extractResponseLinkRelated);
+	}
+
+	function listTrash(cozy) {
+		return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/files/trash');
+	}
+
+	function clearTrash(cozy) {
+		return (0, _fetch.cozyFetchJSON)(cozy, 'DELETE', '/files/trash');
+	}
+
+	function restoreById(cozy, id) {
+		return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/files/trash/' + encodeURIComponent(id));
+	}
+
+	function destroyById(cozy, id, options) {
+		var _ref8 = options || {},
+		    ifMatch = _ref8.ifMatch;
+
+		return (0, _fetch.cozyFetchJSON)(cozy, 'DELETE', '/files/trash/' + encodeURIComponent(id), undefined, {
+			headers: {
+				'If-Match': ifMatch || ''
+			}
+		});
+	}
+
+	function addIsDir(obj) {
+		obj.isDir = obj.attributes.type === 'directory';
+		return obj;
+	}
+
+	function encodePageOptions(options) {
+		var opts = [];
+		for (var name in options) {
+			opts.push('page[' + encodeURIComponent(name) + ']=' + encodeURIComponent(options[name]));
+		}
+		return opts.join('&');
+	}
+
+	function toJsonApi(cozy, doc) {
+		var contents = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+
+		var clone = JSON.parse(JSON.stringify(doc));
+		delete clone._id;
+		delete clone._rev;
+		return {
+			_id: doc._id,
+			_rev: doc._rev,
+			_type: _doctypes.DOCTYPE_FILES,
+			attributes: clone,
+			relationships: {
+				contents: {
+					data: contents,
+					meta: {
+						count: contents.length
+					}
+				}
+			},
+			relations: function relations(name) {
+				if (name === 'contents') {
+					return contents;
+				}
+			}
+		};
+	}
+
+	function sortFiles(allFiles) {
+		var folders = allFiles.filter(function (f) {
+			return f.attributes.type === 'directory';
+		});
+		var files = allFiles.filter(function (f) {
+			return f.attributes.type !== 'directory';
+		});
+		var sort = function sort(files) {
+			return files.sort(function (a, b) {
+				return a.attributes.name.localeCompare(b.attributes.name);
+			});
+		};
+		return sort(folders).concat(sort(files));
+	}
+
+	/***/
+},
 /* 101 */
-/***/ function(module, exports, __webpack_require__) {
+/***/function (module, exports, __webpack_require__) {
 
 	'use strict';
-	
+
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+		value: true
 	});
 	exports.create = create;
 	exports.createService = createService;
-	
+
 	var _fetch = __webpack_require__(94);
-	
+
 	var intentClass = 'coz-intent';
-	
+
 	// helper to serialize/deserialize an error for/from postMessage
 	var errorSerializer = function () {
-	  function mapErrorProperties(from, to) {
-	    var result = Object.assign(to, from);
-	    var nativeProperties = ['name', 'message'];
-	    return nativeProperties.reduce(function (result, property) {
-	      if (from[property]) {
-	        to[property] = from[property];
-	      }
-	      return result;
-	    }, result);
-	  }
-	  return {
-	    serialize: function serialize(error) {
-	      return mapErrorProperties(error, {});
-	    },
-	    deserialize: function deserialize(data) {
-	      return mapErrorProperties(data, new Error(data.message));
-	    }
-	  };
+		function mapErrorProperties(from, to) {
+			var result = Object.assign(to, from);
+			var nativeProperties = ['name', 'message'];
+			return nativeProperties.reduce(function (result, property) {
+				if (from[property]) {
+					to[property] = from[property];
+				}
+				return result;
+			}, result);
+		}
+		return {
+			serialize: function serialize(error) {
+				return mapErrorProperties(error, {});
+			},
+			deserialize: function deserialize(data) {
+				return mapErrorProperties(data, new Error(data.message));
+			}
+		};
 	}();
-	
+
 	// inject iframe for service in given element
 	function injectService(url, element, intent, data, onReadyCallback) {
-	  var document = element.ownerDocument;
-	  if (!document) throw new Error('Cannot retrieve document object from given element');
-	
-	  var window = document.defaultView;
-	  if (!window) throw new Error('Cannot retrieve window object from document');
-	
-	  var iframe = document.createElement('iframe');
-	  // if callback provided for when iframe is loaded
-	  if (typeof onReadyCallback === 'function') iframe.onload = onReadyCallback;
-	  iframe.setAttribute('src', url);
-	  iframe.classList.add(intentClass);
-	  element.appendChild(iframe);
-	
-	  // Keeps only http://domain:port/
-	  var serviceOrigin = url.split('/', 3).join('/');
-	
-	  return new Promise(function (resolve, reject) {
-	    var handshaken = false;
-	    var messageHandler = function messageHandler(event) {
-	      if (event.origin !== serviceOrigin) return;
-	
-	      if (event.data.type === 'load') {
-	        // Safari 9.1 (At least) send a MessageEvent when the iframe loads,
-	        // making the handshake fails.
-	        console.warn && console.warn('Cozy Client ignored MessageEvent having data.type `load`.');
-	        return;
-	      }
-	
-	      if (event.data.type === 'intent-' + intent._id + ':ready') {
-	        handshaken = true;
-	        return event.source.postMessage(data, event.origin);
-	      }
-	
-	      if (handshaken && event.data.type === 'intent-' + intent._id + ':resize') {
-	        ['width', 'height', 'maxWidth', 'maxHeight'].forEach(function (prop) {
-	          if (event.data.transition) element.style.transition = event.data.transition;
-	          if (event.data.dimensions[prop]) element.style[prop] = event.data.dimensions[prop] + 'px';
-	        });
-	
-	        return true;
-	      }
-	
-	      window.removeEventListener('message', messageHandler);
-	      var removeIntentFrame = function removeIntentFrame() {
-	        // check if the parent node has not been already removed from the DOM
-	        iframe.parentNode && iframe.parentNode.removeChild(iframe);
-	      };
-	
-	      if (handshaken && event.data.type === 'intent-' + intent._id + ':exposeFrameRemoval') {
-	        return resolve({ removeIntentFrame: removeIntentFrame, doc: event.data.document });
-	      }
-	
-	      removeIntentFrame();
-	
-	      if (event.data.type === 'intent-' + intent._id + ':error') {
-	        return reject(errorSerializer.deserialize(event.data.error));
-	      }
-	
-	      if (handshaken && event.data.type === 'intent-' + intent._id + ':cancel') {
-	        return resolve(null);
-	      }
-	
-	      if (handshaken && event.data.type === 'intent-' + intent._id + ':done') {
-	        return resolve(event.data.document);
-	      }
-	
-	      if (!handshaken) {
-	        return reject(new Error('Unexpected handshake message from intent service'));
-	      }
-	
-	      // We may be in a state where the messageHandler is still attached to then
-	      // window, but will not be needed anymore. For example, the service failed
-	      // before adding the `unload` listener, so no `intent:cancel` message has
-	      // never been sent.
-	      // So we simply ignore other messages, and this listener will stay here,
-	      // waiting for a message which will never come, forever (almost).
-	    };
-	
-	    window.addEventListener('message', messageHandler);
-	  });
+		var document = element.ownerDocument;
+		if (!document) throw new Error('Cannot retrieve document object from given element');
+
+		var window = document.defaultView;
+		if (!window) throw new Error('Cannot retrieve window object from document');
+
+		var iframe = document.createElement('iframe');
+		// if callback provided for when iframe is loaded
+		if (typeof onReadyCallback === 'function') iframe.onload = onReadyCallback;
+		iframe.setAttribute('src', url);
+		iframe.classList.add(intentClass);
+		element.appendChild(iframe);
+
+		// Keeps only http://domain:port/
+		var serviceOrigin = url.split('/', 3).join('/');
+
+		return new Promise(function (resolve, reject) {
+			var handshaken = false;
+			var messageHandler = function messageHandler(event) {
+				if (event.origin !== serviceOrigin) return;
+
+				if (event.data.type === 'load') {
+					// Safari 9.1 (At least) send a MessageEvent when the iframe loads,
+					// making the handshake fails.
+					console.warn && console.warn('Cozy Client ignored MessageEvent having data.type `load`.');
+					return;
+				}
+
+				if (event.data.type === 'intent-' + intent._id + ':ready') {
+					handshaken = true;
+					return event.source.postMessage(data, event.origin);
+				}
+
+				if (handshaken && event.data.type === 'intent-' + intent._id + ':resize') {
+					['width', 'height', 'maxWidth', 'maxHeight'].forEach(function (prop) {
+						if (event.data.transition) element.style.transition = event.data.transition;
+						if (event.data.dimensions[prop]) element.style[prop] = event.data.dimensions[prop] + 'px';
+					});
+
+					return true;
+				}
+
+				window.removeEventListener('message', messageHandler);
+				var removeIntentFrame = function removeIntentFrame() {
+					// check if the parent node has not been already removed from the DOM
+					iframe.parentNode && iframe.parentNode.removeChild(iframe);
+				};
+
+				if (handshaken && event.data.type === 'intent-' + intent._id + ':exposeFrameRemoval') {
+					return resolve({ removeIntentFrame: removeIntentFrame, doc: event.data.document });
+				}
+
+				removeIntentFrame();
+
+				if (event.data.type === 'intent-' + intent._id + ':error') {
+					return reject(errorSerializer.deserialize(event.data.error));
+				}
+
+				if (handshaken && event.data.type === 'intent-' + intent._id + ':cancel') {
+					return resolve(null);
+				}
+
+				if (handshaken && event.data.type === 'intent-' + intent._id + ':done') {
+					return resolve(event.data.document);
+				}
+
+				if (!handshaken) {
+					return reject(new Error('Unexpected handshake message from intent service'));
+				}
+
+				// We may be in a state where the messageHandler is still attached to then
+				// window, but will not be needed anymore. For example, the service failed
+				// before adding the `unload` listener, so no `intent:cancel` message has
+				// never been sent.
+				// So we simply ignore other messages, and this listener will stay here,
+				// waiting for a message which will never come, forever (almost).
+			};
+
+			window.addEventListener('message', messageHandler);
+		});
 	}
-	
+
 	function create(cozy, action, type) {
-	  var data = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-	  var permissions = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
-	
-	  if (!action) throw new Error('Misformed intent, "action" property must be provided');
-	  if (!type) throw new Error('Misformed intent, "type" property must be provided');
-	
-	  var createPromise = (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/intents', {
-	    data: {
-	      type: 'io.cozy.intents',
-	      attributes: {
-	        action: action,
-	        type: type,
-	        data: data,
-	        permissions: permissions
-	      }
-	    }
-	  });
-	
-	  createPromise.start = function (element, onReadyCallback) {
-	    return createPromise.then(function (intent) {
-	      var service = intent.attributes.services && intent.attributes.services[0];
-	
-	      if (!service) {
-	        return Promise.reject(new Error('Unable to find a service'));
-	      }
-	
-	      return injectService(service.href, element, intent, data, onReadyCallback);
-	    });
-	  };
-	
-	  return createPromise;
+		var data = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+		var permissions = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : [];
+
+		if (!action) throw new Error('Misformed intent, "action" property must be provided');
+		if (!type) throw new Error('Misformed intent, "type" property must be provided');
+
+		var createPromise = (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/intents', {
+			data: {
+				type: 'io.cozy.intents',
+				attributes: {
+					action: action,
+					type: type,
+					data: data,
+					permissions: permissions
+				}
+			}
+		});
+
+		createPromise.start = function (element, onReadyCallback) {
+			return createPromise.then(function (intent) {
+				var service = intent.attributes.services && intent.attributes.services[0];
+
+				if (!service) {
+					return Promise.reject(new Error('Unable to find a service'));
+				}
+
+				return injectService(service.href, element, intent, data, onReadyCallback);
+			});
+		};
+
+		return createPromise;
 	}
-	
+
 	function listenClientData(intent, window) {
-	  return new Promise(function (resolve, reject) {
-	    var messageEventListener = function messageEventListener(event) {
-	      if (event.origin !== intent.attributes.client) return;
-	
-	      window.removeEventListener('message', messageEventListener);
-	      resolve(event.data);
-	    };
-	
-	    window.addEventListener('message', messageEventListener);
-	    window.parent.postMessage({
-	      type: 'intent-' + intent._id + ':ready'
-	    }, intent.attributes.client);
-	  });
+		return new Promise(function (resolve, reject) {
+			var messageEventListener = function messageEventListener(event) {
+				if (event.origin !== intent.attributes.client) return;
+
+				window.removeEventListener('message', messageEventListener);
+				resolve(event.data);
+			};
+
+			window.addEventListener('message', messageEventListener);
+			window.parent.postMessage({
+				type: 'intent-' + intent._id + ':ready'
+			}, intent.attributes.client);
+		});
 	}
-	
+
 	// returns a service to communicate with intent client
 	function createService(cozy, intentId, serviceWindow) {
-	  serviceWindow = serviceWindow || typeof window !== 'undefined' && window;
-	  if (!serviceWindow) throw new Error('Intent service should be used in browser');
-	
-	  intentId = intentId || serviceWindow.location.search.split('=')[1];
-	  if (!intentId) throw new Error('Cannot retrieve intent from URL');
-	
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/intents/' + intentId).then(function (intent) {
-	    var terminated = false;
-	
-	    var _terminate = function _terminate(message) {
-	      if (terminated) throw new Error('Intent service has already been terminated');
-	      terminated = true;
-	      serviceWindow.parent.postMessage(message, intent.attributes.client);
-	    };
-	
-	    var resizeClient = function resizeClient(dimensions, transitionProperty) {
-	      if (terminated) throw new Error('Intent service has been terminated');
-	
-	      var message = {
-	        type: 'intent-' + intent._id + ':resize',
-	        // if a dom element is passed, calculate its size
-	        dimensions: dimensions.element ? Object.assign({}, dimensions, {
-	          maxHeight: dimensions.element.clientHeight,
-	          maxWidth: dimensions.element.clientWidth
-	        }) : dimensions,
-	        transition: transitionProperty
-	      };
-	
-	      serviceWindow.parent.postMessage(message, intent.attributes.client);
-	    };
-	
-	    var cancel = function cancel() {
-	      _terminate({ type: 'intent-' + intent._id + ':cancel' });
-	    };
-	
-	    // Prevent unfulfilled client promises when this window unloads for a
-	    // reason or another.
-	    serviceWindow.addEventListener('unload', function () {
-	      if (!terminated) cancel();
-	    });
-	
-	    return listenClientData(intent, serviceWindow).then(function (data) {
-	      return {
-	        getData: function getData() {
-	          return data;
-	        },
-	        getIntent: function getIntent() {
-	          return intent;
-	        },
-	        terminate: function terminate(doc) {
-	          if (data && data.exposeIntentFrameRemoval) {
-	            return _terminate({
-	              type: 'intent-' + intent._id + ':exposeFrameRemoval',
-	              document: doc
-	            });
-	          } else {
-	            return _terminate({
-	              type: 'intent-' + intent._id + ':done',
-	              document: doc
-	            });
-	          }
-	        },
-	        throw: function _throw(error) {
-	          return _terminate({
-	            type: 'intent-' + intent._id + ':error',
-	            error: errorSerializer.serialize(error)
-	          });
-	        },
-	        resizeClient: resizeClient,
-	        cancel: cancel
-	      };
-	    });
-	  });
+		serviceWindow = serviceWindow || typeof window !== 'undefined' && window;
+		if (!serviceWindow) throw new Error('Intent service should be used in browser');
+
+		intentId = intentId || serviceWindow.location.search.split('=')[1];
+		if (!intentId) throw new Error('Cannot retrieve intent from URL');
+
+		return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/intents/' + intentId).then(function (intent) {
+			var terminated = false;
+
+			var _terminate = function _terminate(message) {
+				if (terminated) throw new Error('Intent service has already been terminated');
+				terminated = true;
+				serviceWindow.parent.postMessage(message, intent.attributes.client);
+			};
+
+			var resizeClient = function resizeClient(dimensions, transitionProperty) {
+				if (terminated) throw new Error('Intent service has been terminated');
+
+				var message = {
+					type: 'intent-' + intent._id + ':resize',
+					// if a dom element is passed, calculate its size
+					dimensions: dimensions.element ? Object.assign({}, dimensions, {
+						maxHeight: dimensions.element.clientHeight,
+						maxWidth: dimensions.element.clientWidth
+					}) : dimensions,
+					transition: transitionProperty
+				};
+
+				serviceWindow.parent.postMessage(message, intent.attributes.client);
+			};
+
+			var cancel = function cancel() {
+				_terminate({ type: 'intent-' + intent._id + ':cancel' });
+			};
+
+			// Prevent unfulfilled client promises when this window unloads for a
+			// reason or another.
+			serviceWindow.addEventListener('unload', function () {
+				if (!terminated) cancel();
+			});
+
+			return listenClientData(intent, serviceWindow).then(function (data) {
+				return {
+					getData: function getData() {
+						return data;
+					},
+					getIntent: function getIntent() {
+						return intent;
+					},
+					terminate: function terminate(doc) {
+						if (data && data.exposeIntentFrameRemoval) {
+							return _terminate({
+								type: 'intent-' + intent._id + ':exposeFrameRemoval',
+								document: doc
+							});
+						} else {
+							return _terminate({
+								type: 'intent-' + intent._id + ':done',
+								document: doc
+							});
+						}
+					},
+					throw: function _throw(error) {
+						return _terminate({
+							type: 'intent-' + intent._id + ':error',
+							error: errorSerializer.serialize(error)
+						});
+					},
+					resizeClient: resizeClient,
+					cancel: cancel
+				};
+			});
+		});
 	}
 
-/***/ },
+	/***/
+},
 /* 102 */
-/***/ function(module, exports, __webpack_require__) {
+/***/function (module, exports, __webpack_require__) {
 
 	'use strict';
-	
+
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+		value: true
 	});
 	exports.count = count;
 	exports.queued = queued;
 	exports.create = create;
-	
+
 	var _fetch = __webpack_require__(94);
-	
+
 	function count(cozy, workerType) {
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/jobs/queue/' + workerType).then(function (data) {
-	    return data.length;
-	  });
-	}
-	
-	function queued(cozy, workerType) {
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/jobs/queue/' + workerType);
-	}
-	
-	function create(cozy, workerType, args, options) {
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/jobs/queue/' + workerType, {
-	    data: {
-	      type: 'io.cozy.jobs',
-	      attributes: {
-	        arguments: args || {},
-	        options: options || {}
-	      }
-	    }
-	  });
+		return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/jobs/queue/' + workerType).then(function (data) {
+			return data.length;
+		});
 	}
 
-/***/ },
+	function queued(cozy, workerType) {
+		return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/jobs/queue/' + workerType);
+	}
+
+	function create(cozy, workerType, args, options) {
+		return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/jobs/queue/' + workerType, {
+			data: {
+				type: 'io.cozy.jobs',
+				attributes: {
+					arguments: args || {},
+					options: options || {}
+				}
+			}
+		});
+	}
+
+	/***/
+},
 /* 103 */
-/***/ function(module, exports, __webpack_require__) {
+/***/function (module, exports, __webpack_require__) {
 
 	'use strict';
-	
+
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+		value: true
 	});
 	exports.replicationOfflineError = undefined;
 	exports.init = init;
@@ -60755,310 +61244,310 @@ module.exports = baseKonnector
 	exports.startRepeatedReplication = startRepeatedReplication;
 	exports.stopRepeatedReplication = stopRepeatedReplication;
 	exports.stopAllRepeatedReplication = stopAllRepeatedReplication;
-	
+
 	var _doctypes = __webpack_require__(98);
-	
+
 	var _auth_v = __webpack_require__(93);
-	
+
 	var _utils = __webpack_require__(89);
-	
+
 	var replicationOfflineError = exports.replicationOfflineError = 'Replication abort, your device is actually offline.'; /* global PouchDB, pouchdbFind */
-	
-	
+
 	var pluginLoaded = false;
-	
+
 	/*
-	  For each doctype we have some parameters:
-	  cozy._offline[doctype] = {
-	    database: pouchdb database
-	    replication: the pouchdb replication
-	    replicationPromise: promise of replication
-	    interval: repeated replication interval
-	  }
-	*/
-	
+   For each doctype we have some parameters:
+   cozy._offline[doctype] = {
+     database: pouchdb database
+     replication: the pouchdb replication
+     replicationPromise: promise of replication
+     interval: repeated replication interval
+   }
+ */
+
 	function init(cozy, _ref) {
-	  var _ref$options = _ref.options,
-	      options = _ref$options === undefined ? {} : _ref$options,
-	      _ref$doctypes = _ref.doctypes,
-	      doctypes = _ref$doctypes === undefined ? [] : _ref$doctypes;
-	
-	  if (typeof PouchDB === 'undefined') throw new Error('Missing pouchdb dependency for offline mode. Please run "yarn add pouchdb" and provide PouchDB as a webpack plugin.');
-	  if (typeof pouchdbFind === 'undefined') throw new Error('Missing pouchdb-find dependency for offline mode. Please run "yarn add pouchdb-find" and provide pouchdbFind as webpack plugin.');
-	  var _iteratorNormalCompletion = true;
-	  var _didIteratorError = false;
-	  var _iteratorError = undefined;
-	
-	  try {
-	    for (var _iterator = doctypes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	      var doctype = _step.value;
-	
-	      createDatabase(cozy, doctype, options);
-	    }
-	  } catch (err) {
-	    _didIteratorError = true;
-	    _iteratorError = err;
-	  } finally {
-	    try {
-	      if (!_iteratorNormalCompletion && _iterator.return) {
-	        _iterator.return();
-	      }
-	    } finally {
-	      if (_didIteratorError) {
-	        throw _iteratorError;
-	      }
-	    }
-	  }
+		var _ref$options = _ref.options,
+		    options = _ref$options === undefined ? {} : _ref$options,
+		    _ref$doctypes = _ref.doctypes,
+		    doctypes = _ref$doctypes === undefined ? [] : _ref$doctypes;
+
+		if (typeof PouchDB === 'undefined') throw new Error('Missing pouchdb dependency for offline mode. Please run "yarn add pouchdb" and provide PouchDB as a webpack plugin.');
+		if (typeof pouchdbFind === 'undefined') throw new Error('Missing pouchdb-find dependency for offline mode. Please run "yarn add pouchdb-find" and provide pouchdbFind as webpack plugin.');
+		var _iteratorNormalCompletion = true;
+		var _didIteratorError = false;
+		var _iteratorError = undefined;
+
+		try {
+			for (var _iterator = doctypes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+				var doctype = _step.value;
+
+				createDatabase(cozy, doctype, options);
+			}
+		} catch (err) {
+			_didIteratorError = true;
+			_iteratorError = err;
+		} finally {
+			try {
+				if (!_iteratorNormalCompletion && _iterator.return) {
+					_iterator.return();
+				}
+			} finally {
+				if (_didIteratorError) {
+					throw _iteratorError;
+				}
+			}
+		}
 	}
-	
+
 	// helper
-	
+
 	function getInfo(cozy, doctype) {
-	  cozy._offline = cozy._offline || [];
-	  cozy._offline[doctype] = cozy._offline[doctype] || {};
-	  return cozy._offline[doctype];
+		cozy._offline = cozy._offline || [];
+		cozy._offline[doctype] = cozy._offline[doctype] || {};
+		return cozy._offline[doctype];
 	}
-	
+
 	function getDoctypes(cozy) {
-	  cozy._offline = cozy._offline || [];
-	  return Object.keys(cozy._offline);
+		cozy._offline = cozy._offline || [];
+		return Object.keys(cozy._offline);
 	}
-	
+
 	//
 	// DATABASE
 	//
-	
+
 	function hasDatabase(cozy, doctype) {
-	  return getDatabase(cozy, doctype) !== undefined;
+		return getDatabase(cozy, doctype) !== undefined;
 	}
-	
+
 	function getDatabase(cozy, doctype) {
-	  return getInfo(cozy, doctype).database;
+		return getInfo(cozy, doctype).database;
 	}
-	
+
 	function setDatabase(cozy, doctype, database) {
-	  cozy._offline[doctype].database = database;
-	  return getDatabase(cozy, doctype);
+		cozy._offline[doctype].database = database;
+		return getDatabase(cozy, doctype);
 	}
-	
+
 	function createDatabase(cozy, doctype) {
-	  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-	
-	  if (!pluginLoaded) {
-	    PouchDB.plugin(pouchdbFind);
-	    pluginLoaded = true;
-	  }
-	
-	  if (hasDatabase(cozy, doctype)) {
-	    return Promise.resolve(getDatabase(cozy, doctype));
-	  }
-	
-	  setDatabase(cozy, doctype, new PouchDB(doctype, options));
-	  return createIndexes(cozy, doctype).then(function () {
-	    return getDatabase(cozy, doctype);
-	  });
+		var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+		if (!pluginLoaded) {
+			PouchDB.plugin(pouchdbFind);
+			pluginLoaded = true;
+		}
+
+		if (hasDatabase(cozy, doctype)) {
+			return Promise.resolve(getDatabase(cozy, doctype));
+		}
+
+		setDatabase(cozy, doctype, new PouchDB(doctype, options));
+		return createIndexes(cozy, doctype).then(function () {
+			return getDatabase(cozy, doctype);
+		});
 	}
-	
+
 	function destroyDatabase(cozy, doctype) {
-	  if (!hasDatabase(cozy, doctype)) {
-	    return Promise.resolve(false);
-	  }
-	
-	  return stopRepeatedReplication(cozy, doctype).then(function () {
-	    return stopReplication(cozy, doctype);
-	  }).then(function () {
-	    return getDatabase(cozy, doctype).destroy();
-	  }).then(function (response) {
-	    setDatabase(cozy, doctype, undefined);
-	    return response;
-	  });
+		if (!hasDatabase(cozy, doctype)) {
+			return Promise.resolve(false);
+		}
+
+		return stopRepeatedReplication(cozy, doctype).then(function () {
+			return stopReplication(cozy, doctype);
+		}).then(function () {
+			return getDatabase(cozy, doctype).destroy();
+		}).then(function (response) {
+			setDatabase(cozy, doctype, undefined);
+			return response;
+		});
 	}
-	
+
 	function destroyAllDatabase(cozy) {
-	  var doctypes = getDoctypes(cozy);
-	  var destroy = function destroy(doctype) {
-	    return destroyDatabase(cozy, doctype);
-	  };
-	  return Promise.all(doctypes.map(destroy));
+		var doctypes = getDoctypes(cozy);
+		var destroy = function destroy(doctype) {
+			return destroyDatabase(cozy, doctype);
+		};
+		return Promise.all(doctypes.map(destroy));
 	}
-	
+
 	function createIndexes(cozy, doctype) {
-	  if (doctype === _doctypes.DOCTYPE_FILES) {
-	    return getDatabase(cozy, doctype).createIndex({ index: { fields: ['dir_id'] } });
-	  }
-	  return Promise.resolve();
+		if (doctype === _doctypes.DOCTYPE_FILES) {
+			return getDatabase(cozy, doctype).createIndex({ index: { fields: ['dir_id'] } });
+		}
+		return Promise.resolve();
 	}
-	
+
 	//
 	// REPLICATION
 	//
-	
+
 	function hasReplication(cozy, doctype) {
-	  return getReplication(cozy, doctype) !== undefined;
+		return getReplication(cozy, doctype) !== undefined;
 	}
-	
+
 	function getReplication(cozy, doctype) {
-	  return getInfo(cozy, doctype).replication;
+		return getInfo(cozy, doctype).replication;
 	}
-	
+
 	function setReplication(cozy, doctype, replication) {
-	  cozy._offline[doctype].replication = replication;
-	  return getReplication(cozy, doctype);
+		cozy._offline[doctype].replication = replication;
+		return getReplication(cozy, doctype);
 	}
-	
+
 	function getReplicationUrl(cozy, doctype) {
-	  return cozy.authorize().then(function (credentials) {
-	    var basic = credentials.token.toBasicAuth();
-	    return (cozy._url + '/data/' + doctype).replace('//', '//' + basic);
-	  });
+		return cozy.authorize().then(function (credentials) {
+			var basic = credentials.token.toBasicAuth();
+			return (cozy._url + '/data/' + doctype).replace('//', '//' + basic);
+		});
 	}
-	
+
 	function getReplicationPromise(cozy, doctype) {
-	  return getInfo(cozy, doctype).replicationPromise;
+		return getInfo(cozy, doctype).replicationPromise;
 	}
-	
+
 	function setReplicationPromise(cozy, doctype, promise) {
-	  cozy._offline[doctype].replicationPromise = promise;
-	  return getReplicationPromise(cozy, doctype);
+		cozy._offline[doctype].replicationPromise = promise;
+		return getReplicationPromise(cozy, doctype);
 	}
-	
+
 	function replicateFromCozy(cozy, doctype) {
-	  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-	
-	  return setReplicationPromise(cozy, doctype, new Promise(function (resolve, reject) {
-	    if (!hasDatabase(cozy, doctype)) {
-	      createDatabase(cozy, doctype);
-	    }
-	    if (options.live === true) {
-	      return reject(new Error('You can\'t use `live` option with Cozy couchdb.'));
-	    }
-	
-	    if ((0, _utils.isOffline)()) {
-	      reject(replicationOfflineError);
-	      options.onError && options.onError(replicationOfflineError);
-	      return;
-	    }
-	
-	    getReplicationUrl(cozy, doctype).then(function (url) {
-	      return setReplication(cozy, doctype, getDatabase(cozy, doctype).replicate.from(url, options).on('complete', function (info) {
-	        setReplication(cozy, doctype, undefined);
-	        resolve(info);
-	        options.onComplete && options.onComplete(info);
-	      }).on('error', function (err) {
-	        if (err.error === 'code=400, message=Expired token') {
-	          cozy.authorize().then(function (_ref2) {
-	            var client = _ref2.client,
-	                token = _ref2.token;
-	
-	            (0, _auth_v.refreshToken)(cozy, client, token).then(function (newToken) {
-	              return cozy.saveCredentials(client, newToken);
-	            }).then(function (credentials) {
-	              return replicateFromCozy(cozy, doctype, options);
-	            });
-	          });
-	        } else {
-	          console.warn('ReplicateFromCozy \'' + doctype + '\' Error:');
-	          console.warn(err);
-	          setReplication(cozy, doctype, undefined);
-	          reject(err);
-	          options.onError && options.onError(err);
-	        }
-	      }));
-	    });
-	  }));
+		var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+		return setReplicationPromise(cozy, doctype, new Promise(function (resolve, reject) {
+			if (!hasDatabase(cozy, doctype)) {
+				createDatabase(cozy, doctype);
+			}
+			if (options.live === true) {
+				return reject(new Error('You can\'t use `live` option with Cozy couchdb.'));
+			}
+
+			if ((0, _utils.isOffline)()) {
+				reject(replicationOfflineError);
+				options.onError && options.onError(replicationOfflineError);
+				return;
+			}
+
+			getReplicationUrl(cozy, doctype).then(function (url) {
+				return setReplication(cozy, doctype, getDatabase(cozy, doctype).replicate.from(url, options).on('complete', function (info) {
+					setReplication(cozy, doctype, undefined);
+					resolve(info);
+					options.onComplete && options.onComplete(info);
+				}).on('error', function (err) {
+					if (err.error === 'code=400, message=Expired token') {
+						cozy.authorize().then(function (_ref2) {
+							var client = _ref2.client,
+							    token = _ref2.token;
+
+							(0, _auth_v.refreshToken)(cozy, client, token).then(function (newToken) {
+								return cozy.saveCredentials(client, newToken);
+							}).then(function (credentials) {
+								return replicateFromCozy(cozy, doctype, options);
+							});
+						});
+					} else {
+						console.warn('ReplicateFromCozy \'' + doctype + '\' Error:');
+						console.warn(err);
+						setReplication(cozy, doctype, undefined);
+						reject(err);
+						options.onError && options.onError(err);
+					}
+				}));
+			});
+		}));
 	}
-	
+
 	function stopReplication(cozy, doctype) {
-	  if (!getDatabase(cozy, doctype) || !hasReplication(cozy, doctype)) {
-	    return Promise.resolve();
-	  }
-	
-	  return new Promise(function (resolve) {
-	    try {
-	      getReplicationPromise(cozy, doctype).then(function () {
-	        resolve();
-	      });
-	      getReplication(cozy, doctype).cancel();
-	      // replication is set to undefined by complete replication
-	    } catch (e) {
-	      resolve();
-	    }
-	  });
+		if (!getDatabase(cozy, doctype) || !hasReplication(cozy, doctype)) {
+			return Promise.resolve();
+		}
+
+		return new Promise(function (resolve) {
+			try {
+				getReplicationPromise(cozy, doctype).then(function () {
+					resolve();
+				});
+				getReplication(cozy, doctype).cancel();
+				// replication is set to undefined by complete replication
+			} catch (e) {
+				resolve();
+			}
+		});
 	}
-	
+
 	function stopAllReplication(cozy) {
-	  var doctypes = getDoctypes(cozy);
-	  var stop = function stop(doctype) {
-	    return stopReplication(cozy, doctype);
-	  };
-	  return Promise.all(doctypes.map(stop));
+		var doctypes = getDoctypes(cozy);
+		var stop = function stop(doctype) {
+			return stopReplication(cozy, doctype);
+		};
+		return Promise.all(doctypes.map(stop));
 	}
-	
+
 	//
 	// REPEATED REPLICATION
 	//
-	
+
 	function getRepeatedReplication(cozy, doctype) {
-	  return getInfo(cozy, doctype).interval;
-	}
-	
-	function setRepeatedReplication(cozy, doctype, interval) {
-	  cozy._offline[doctype].interval = interval;
-	}
-	
-	function hasRepeatedReplication(cozy, doctype) {
-	  return getRepeatedReplication(cozy, doctype) !== undefined;
-	}
-	
-	function startRepeatedReplication(cozy, doctype, timer) {
-	  var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-	
-	  // TODO: add timer limitation for not flooding Gozy
-	  if (hasRepeatedReplication(cozy, doctype)) {
-	    return getRepeatedReplication(cozy, doctype);
-	  }
-	
-	  return setRepeatedReplication(cozy, doctype, setInterval(function () {
-	    if ((0, _utils.isOffline)()) {
-	      // network is offline, replication cannot be launched
-	      console.info(replicationOfflineError);
-	      return;
-	    }
-	    if (!hasReplication(cozy, doctype)) {
-	      replicateFromCozy(cozy, doctype, options);
-	      // TODO: add replicationToCozy
-	    }
-	  }, timer * 1000));
-	}
-	
-	function stopRepeatedReplication(cozy, doctype) {
-	  if (hasRepeatedReplication(cozy, doctype)) {
-	    clearInterval(getRepeatedReplication(cozy, doctype));
-	    setRepeatedReplication(cozy, doctype, undefined);
-	  }
-	  if (hasReplication(cozy, doctype)) {
-	    return stopReplication(cozy, doctype);
-	  }
-	
-	  return Promise.resolve();
-	}
-	
-	function stopAllRepeatedReplication(cozy) {
-	  var doctypes = getDoctypes(cozy);
-	  var stop = function stop(doctype) {
-	    return stopRepeatedReplication(cozy, doctype);
-	  };
-	  return Promise.all(doctypes.map(stop));
+		return getInfo(cozy, doctype).interval;
 	}
 
-/***/ },
+	function setRepeatedReplication(cozy, doctype, interval) {
+		cozy._offline[doctype].interval = interval;
+	}
+
+	function hasRepeatedReplication(cozy, doctype) {
+		return getRepeatedReplication(cozy, doctype) !== undefined;
+	}
+
+	function startRepeatedReplication(cozy, doctype, timer) {
+		var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+		// TODO: add timer limitation for not flooding Gozy
+		if (hasRepeatedReplication(cozy, doctype)) {
+			return getRepeatedReplication(cozy, doctype);
+		}
+
+		return setRepeatedReplication(cozy, doctype, setInterval(function () {
+			if ((0, _utils.isOffline)()) {
+				// network is offline, replication cannot be launched
+				console.info(replicationOfflineError);
+				return;
+			}
+			if (!hasReplication(cozy, doctype)) {
+				replicateFromCozy(cozy, doctype, options);
+				// TODO: add replicationToCozy
+			}
+		}, timer * 1000));
+	}
+
+	function stopRepeatedReplication(cozy, doctype) {
+		if (hasRepeatedReplication(cozy, doctype)) {
+			clearInterval(getRepeatedReplication(cozy, doctype));
+			setRepeatedReplication(cozy, doctype, undefined);
+		}
+		if (hasReplication(cozy, doctype)) {
+			return stopReplication(cozy, doctype);
+		}
+
+		return Promise.resolve();
+	}
+
+	function stopAllRepeatedReplication(cozy) {
+		var doctypes = getDoctypes(cozy);
+		var stop = function stop(doctype) {
+			return stopRepeatedReplication(cozy, doctype);
+		};
+		return Promise.all(doctypes.map(stop));
+	}
+
+	/***/
+},
 /* 104 */
-/***/ function(module, exports, __webpack_require__) {
+/***/function (module, exports, __webpack_require__) {
 
 	'use strict';
-	
+
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+		value: true
 	});
 	exports.diskUsage = diskUsage;
 	exports.changePassphrase = changePassphrase;
@@ -61067,99 +61556,101 @@ module.exports = baseKonnector
 	exports.getClients = getClients;
 	exports.deleteClientById = deleteClientById;
 	exports.updateLastSync = updateLastSync;
-	
+
 	var _fetch = __webpack_require__(94);
-	
+
 	function diskUsage(cozy) {
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/settings/disk-usage');
-	}
-	
-	function changePassphrase(cozy, currentPassPhrase, newPassPhrase) {
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'PUT', '/settings/passphrase', {
-	    current_passphrase: currentPassPhrase,
-	    new_passphrase: newPassPhrase
-	  });
-	}
-	
-	function getInstance(cozy) {
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/settings/instance');
-	}
-	
-	function updateInstance(cozy, instance) {
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'PUT', '/settings/instance', instance);
-	}
-	
-	function getClients(cozy) {
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/settings/clients');
-	}
-	
-	function deleteClientById(cozy, id) {
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'DELETE', '/settings/clients/' + id);
-	}
-	
-	function updateLastSync(cozy) {
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/settings/synchronized');
+		return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/settings/disk-usage');
 	}
 
-/***/ },
+	function changePassphrase(cozy, currentPassPhrase, newPassPhrase) {
+		return (0, _fetch.cozyFetchJSON)(cozy, 'PUT', '/settings/passphrase', {
+			current_passphrase: currentPassPhrase,
+			new_passphrase: newPassPhrase
+		});
+	}
+
+	function getInstance(cozy) {
+		return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/settings/instance');
+	}
+
+	function updateInstance(cozy, instance) {
+		return (0, _fetch.cozyFetchJSON)(cozy, 'PUT', '/settings/instance', instance);
+	}
+
+	function getClients(cozy) {
+		return (0, _fetch.cozyFetchJSON)(cozy, 'GET', '/settings/clients');
+	}
+
+	function deleteClientById(cozy, id) {
+		return (0, _fetch.cozyFetchJSON)(cozy, 'DELETE', '/settings/clients/' + id);
+	}
+
+	function updateLastSync(cozy) {
+		return (0, _fetch.cozyFetchJSON)(cozy, 'POST', '/settings/synchronized');
+	}
+
+	/***/
+},
 /* 105 */
-/***/ function(module, exports, __webpack_require__) {
+/***/function (module, exports, __webpack_require__) {
 
 	'use strict';
-	
+
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+		value: true
 	});
 	exports.removeReferencedFiles = exports.addReferencedFiles = undefined;
 	exports.listReferencedFiles = listReferencedFiles;
 	exports.fetchReferencedFiles = fetchReferencedFiles;
-	
+
 	var _fetch = __webpack_require__(94);
-	
+
 	var _doctypes = __webpack_require__(98);
-	
+
 	function updateRelations(verb) {
-	  return function (cozy, doc, ids) {
-	    if (!doc) throw new Error('missing doc argument');
-	    if (!Array.isArray(ids)) ids = [ids];
-	
-	    var refs = ids.map(function (id) {
-	      return { type: _doctypes.DOCTYPE_FILES, id: id };
-	    });
-	
-	    return (0, _fetch.cozyFetchJSON)(cozy, verb, makeReferencesPath(doc), { data: refs });
-	  };
-	}
-	
-	var addReferencedFiles = exports.addReferencedFiles = updateRelations('POST');
-	var removeReferencedFiles = exports.removeReferencedFiles = updateRelations('DELETE');
-	
-	function listReferencedFiles(cozy, doc) {
-	  if (!doc) throw new Error('missing doc argument');
-	  return (0, _fetch.cozyFetchJSON)(cozy, 'GET', makeReferencesPath(doc)).then(function (files) {
-	    return files.map(function (file) {
-	      return file._id;
-	    });
-	  });
-	}
-	
-	function fetchReferencedFiles(cozy, doc, options) {
-	  if (!doc) throw new Error('missing doc argument');
-	  var params = Object.keys(options).map(function (key) {
-	    return '&page[' + key + ']=' + options[key];
-	  }).join('');
-	  // As datetime is the only sort option available, I see no reason to not have it by default
-	  return (0, _fetch.cozyFetchRawJSON)(cozy, 'GET', makeReferencesPath(doc) + '?include=files&sort=datetime' + params);
-	}
-	
-	function makeReferencesPath(doc) {
-	  var type = encodeURIComponent(doc._type);
-	  var id = encodeURIComponent(doc._id);
-	  return '/data/' + type + '/' + id + '/relationships/references';
+		return function (cozy, doc, ids) {
+			if (!doc) throw new Error('missing doc argument');
+			if (!Array.isArray(ids)) ids = [ids];
+
+			var refs = ids.map(function (id) {
+				return { type: _doctypes.DOCTYPE_FILES, id: id };
+			});
+
+			return (0, _fetch.cozyFetchJSON)(cozy, verb, makeReferencesPath(doc), { data: refs });
+		};
 	}
 
-/***/ }
-/******/ ])));
+	var addReferencedFiles = exports.addReferencedFiles = updateRelations('POST');
+	var removeReferencedFiles = exports.removeReferencedFiles = updateRelations('DELETE');
+
+	function listReferencedFiles(cozy, doc) {
+		if (!doc) throw new Error('missing doc argument');
+		return (0, _fetch.cozyFetchJSON)(cozy, 'GET', makeReferencesPath(doc)).then(function (files) {
+			return files.map(function (file) {
+				return file._id;
+			});
+		});
+	}
+
+	function fetchReferencedFiles(cozy, doc, options) {
+		if (!doc) throw new Error('missing doc argument');
+		var params = Object.keys(options).map(function (key) {
+			return '&page[' + key + ']=' + options[key];
+		}).join('');
+		// As datetime is the only sort option available, I see no reason to not have it by default
+		return (0, _fetch.cozyFetchRawJSON)(cozy, 'GET', makeReferencesPath(doc) + '?include=files&sort=datetime' + params);
+	}
+
+	function makeReferencesPath(doc) {
+		var type = encodeURIComponent(doc._type);
+		var id = encodeURIComponent(doc._id);
+		return '/data/' + type + '/' + id + '/relationships/references';
+	}
+
+	/***/
+}
+/******/]));
 //# sourceMappingURL=cozy-client.node.js.map
 
 /***/ }),
@@ -67057,126 +67548,128 @@ for (var collections = getKeys(DOMIterables), i = 0; i < collections.length; i++
 /* 715 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const fs = __webpack_require__(40)
-const path = __webpack_require__(25)
-const log = __webpack_require__(37).namespace('cozy-client-js-stub')
-const uuid = __webpack_require__(716)
-const sha1 = __webpack_require__(718)
-const bytesToUuid = __webpack_require__(137)
-const mimetypes = __webpack_require__(138)
+"use strict";
 
-let fixture = {}
-const FIXTURE_PATH = path.resolve('fixture.json')
+
+var fs = __webpack_require__(40);
+var path = __webpack_require__(25);
+var log = __webpack_require__(37).namespace('cozy-client-js-stub');
+var uuid = __webpack_require__(716);
+var sha1 = __webpack_require__(718);
+var bytesToUuid = __webpack_require__(137);
+var mimetypes = __webpack_require__(138);
+
+var fixture = {};
+var FIXTURE_PATH = path.resolve('fixture.json');
 if (fs.existsSync(FIXTURE_PATH)) {
-  log('debug', `Found ${FIXTURE_PATH} fixture file`)
-  fixture = !(function webpackMissingModule() { var e = new Error("Cannot find module \".\""); e.code = 'MODULE_NOT_FOUND'; throw e; }())
+  log('debug', 'Found ' + FIXTURE_PATH + ' fixture file');
+  fixture = !(function webpackMissingModule() { var e = new Error("Cannot find module \".\""); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 }
 
 module.exports = {
   data: {
-    create (doctype, item) {
-      log('info', item, `creating ${doctype}`)
-      const ns = bytesToUuid(sha1(doctype))
-      const _id = uuid(JSON.stringify(item), ns).replace(/-/gi, '')
-      return Promise.resolve(Object.assign({}, item, {_id}))
+    create: function create(doctype, item) {
+      log('info', item, 'creating ' + doctype);
+      var ns = bytesToUuid(sha1(doctype));
+      var _id = uuid(JSON.stringify(item), ns).replace(/-/gi, '');
+      return Promise.resolve(Object.assign({}, item, { _id: _id }));
     },
-    updateAttributes (doctype, id, attrs) {
-      log('info', attrs, `updating ${id} in ${doctype}`)
-      return Promise.resolve(Object.assign({}, attrs, {_id: id}))
+    updateAttributes: function updateAttributes(doctype, id, attrs) {
+      log('info', attrs, 'updating ' + id + ' in ' + doctype);
+      return Promise.resolve(Object.assign({}, attrs, { _id: id }));
     },
-    defineIndex (doctype) {
-      return Promise.resolve({doctype})
+    defineIndex: function defineIndex(doctype) {
+      return Promise.resolve({ doctype: doctype });
     },
-    query (index) {
-      let result = null
+    query: function query(index) {
+      var result = null;
       if (fixture[index.doctype]) {
-        result = fixture[index.doctype]
+        result = fixture[index.doctype];
       } else {
-        result = []
+        result = [];
       }
-      return Promise.resolve(result)
+      return Promise.resolve(result);
     },
-    findAll (doctype) {
-      let result = null
+    findAll: function findAll(doctype) {
+      var result = null;
       if (fixture[doctype]) {
-        result = fixture[doctype]
+        result = fixture[doctype];
       } else {
-        result = []
+        result = [];
       }
-      return Promise.resolve(result)
+      return Promise.resolve(result);
     },
-    delete () {
-      return Promise.resolve({})
+    delete: function _delete() {
+      return Promise.resolve({});
     },
-    find (doctype, id) {
+    find: function find(doctype, id) {
       // Find the doc in the fixture
       // exeption for "io.cozy.accounts" doctype where we return konnector-dev-config.json content
-      let result = null
+      var result = null;
       if (doctype === 'io.cozy.accounts') {
-        const config = __webpack_require__(721)()
-        result = {auth: config.fields}
+        var config = __webpack_require__(721)();
+        result = { auth: config.fields };
       } else {
-        return Promise.reject(new Error('find is not implemented yet in cozy-client-js stub'))
+        return Promise.reject(new Error('find is not implemented yet in cozy-client-js stub'));
       }
-      return Promise.resolve(result)
+      return Promise.resolve(result);
     }
   },
   files: {
-    statByPath (pathToCheck) {
+    statByPath: function statByPath(pathToCheck) {
       // check this path in .
-      return new Promise((resolve, reject) => {
-        log('debug', `Checking if ${pathToCheck} exists`)
-        const realpath = path.join('.', pathToCheck)
-        log('debug', `Real path : ${realpath}`)
+      return new Promise(function (resolve, reject) {
+        log('debug', 'Checking if ' + pathToCheck + ' exists');
+        var realpath = path.join('.', pathToCheck);
+        log('debug', 'Real path : ' + realpath);
         if (fs.existsSync(realpath)) {
-          resolve({_id: pathToCheck})
+          resolve({ _id: pathToCheck });
         } else {
-          throw new Error(`${pathToCheck} does not exist`)
+          throw new Error(pathToCheck + ' does not exist');
         }
-      })
+      });
     },
-    statById (idToCheck) {
+    statById: function statById(idToCheck) {
       // just return the / path for dev purpose
-      return Promise.resolve({attributes: {path: '/'}})
+      return Promise.resolve({ attributes: { path: '/' } });
     },
-    create (file, options) {
-      return new Promise((resolve, reject) => {
-        log('debug', `Creating new file ${options.name}`)
-        const finalPath = path.join('.', options.dirID, options.name)
-        log('debug', `Real path : ${finalPath}`)
-        let writeStream = fs.createWriteStream(finalPath)
-        file.pipe(writeStream)
+    create: function create(file, options) {
+      return new Promise(function (resolve, reject) {
+        log('debug', 'Creating new file ' + options.name);
+        var finalPath = path.join('.', options.dirID, options.name);
+        log('debug', 'Real path : ' + finalPath);
+        var writeStream = fs.createWriteStream(finalPath);
+        file.pipe(writeStream);
 
-        file.on('end', () => {
-          log('info', `File ${finalPath} created`)
-          const extension = path.extname(options.name).substr(1)
+        file.on('end', function () {
+          log('info', 'File ' + finalPath + ' created');
+          var extension = path.extname(options.name).substr(1);
           resolve({
             _id: options.name,
             attributes: {
               mime: mimetypes.lookup(extension),
               name: options.name
             }
-          })
-        })
+          });
+        });
 
-        writeStream.on('error', err => {
-          log('warn', `Error : ${err} while trying to write file`)
-          reject(new Error(err))
-        })
-      })
+        writeStream.on('error', function (err) {
+          log('warn', 'Error : ' + err + ' while trying to write file');
+          reject(new Error(err));
+        });
+      });
     },
-    createDirectory (options) {
-      return new Promise(resolve => {
-        log('info', `Creating new directory ${options.name}`)
-        const finalPath = path.join('.', options.dirID, options.name)
-        log('info', `Real path : ${finalPath}`)
-        fs.mkdirSync(finalPath)
-        resolve()
-      })
+    createDirectory: function createDirectory(options) {
+      return new Promise(function (resolve) {
+        log('info', 'Creating new directory ' + options.name);
+        var finalPath = path.join('.', options.dirID, options.name);
+        log('info', 'Real path : ' + finalPath);
+        fs.mkdirSync(finalPath);
+        resolve();
+      });
     }
   }
-}
-
+};
 
 /***/ }),
 /* 716 */
@@ -67376,30 +67869,31 @@ module.exports = {"application/1d-interleaved-parityfec":{"source":"iana"},"appl
 "use strict";
 
 
-const fs = __webpack_require__(40)
-const path = __webpack_require__(25)
-const log = __webpack_require__(37)
+var fs = __webpack_require__(40);
+var path = __webpack_require__(25);
+var log = __webpack_require__(37);
 
-module.exports = getKonnectorConfig
+module.exports = getKonnectorConfig;
 
-const configPath = path.resolve('konnector-dev-config.json')
+var configPath = path.resolve('konnector-dev-config.json');
 
-function getKonnectorConfig () {
-  if (!fs.existsSync(configPath)) createKonnectorConfig()
-  return !(function webpackMissingModule() { var e = new Error("Cannot find module \".\""); e.code = 'MODULE_NOT_FOUND'; throw e; }())
+function getKonnectorConfig() {
+  if (!fs.existsSync(configPath)) createKonnectorConfig();
+  return !(function webpackMissingModule() { var e = new Error("Cannot find module \".\""); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 }
 
-const template = {
+var template = {
   COZY_URL: 'http://cozy.tools:8080', // this URL resolves to localhost, it works well when you have running local cozy-stack
   fields: {} // TODO read the fields in the manifest and add these fields in the template
-}
+};
 
-function createKonnectorConfig () {
-  fs.writeFileSync(configPath, JSON.stringify(template, null, '  '))
-  log('warn', `No ${configPath} file found, creating an empty one. To let you add fields for your connector.`)
-  setImmediate(() => process.exit())
+function createKonnectorConfig() {
+  fs.writeFileSync(configPath, JSON.stringify(template, null, '  '));
+  log('warn', 'No ' + configPath + ' file found, creating an empty one. To let you add fields for your connector.');
+  setImmediate(function () {
+    return process.exit();
+  });
 }
-
 
 /***/ }),
 /* 722 */
@@ -88648,6 +89142,9 @@ module.exports = function (obj) {
 /* 870 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 /**
  * Export cheerio (with )
  */
@@ -88659,7 +89156,6 @@ exports = module.exports = __webpack_require__(331);
 */
 
 exports.version = __webpack_require__(1015).version;
-
 
 /***/ }),
 /* 871 */
@@ -93143,6 +93639,11 @@ module.exports = customDefaultsAssignIn;
 /* 942 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var $ = __webpack_require__(220),
     utils = __webpack_require__(119),
     isTag = utils.isTag,
@@ -93153,26 +93654,28 @@ var $ = __webpack_require__(220),
     rspace = /\s+/,
     dataAttrPrefix = 'data-',
     _ = {
-      forEach: __webpack_require__(121),
-      extend: __webpack_require__(356),
-      some: __webpack_require__(541)
-    },
-
-  // Lookup table for coercing string data-* attributes to their corresponding
-  // JavaScript primitives
-  primitives = {
-    null: null,
-    true: true,
-    false: false
-  },
-
-  // Attributes that are booleans
-  rboolean = /^(?:autofocus|autoplay|async|checked|controls|defer|disabled|hidden|loop|multiple|open|readonly|required|scoped|selected)$/i,
-  // Matches strings that look like JSON objects or arrays
-  rbrace = /^(?:\{[\w\W]*\}|\[[\w\W]*\])$/;
+  forEach: __webpack_require__(121),
+  extend: __webpack_require__(356),
+  some: __webpack_require__(541)
+},
 
 
-var getAttr = function(elem, name) {
+// Lookup table for coercing string data-* attributes to their corresponding
+// JavaScript primitives
+primitives = {
+  null: null,
+  true: true,
+  false: false
+},
+
+
+// Attributes that are booleans
+rboolean = /^(?:autofocus|autoplay|async|checked|controls|defer|disabled|hidden|loop|multiple|open|readonly|required|scoped|selected)$/i,
+
+// Matches strings that look like JSON objects or arrays
+rbrace = /^(?:\{[\w\W]*\}|\[[\w\W]*\])$/;
+
+var getAttr = function getAttr(elem, name) {
   if (!elem || !isTag(elem)) return;
 
   if (!elem.attribs) {
@@ -93195,35 +93698,33 @@ var getAttr = function(elem, name) {
   }
 
   // Mimic DOM with default value for radios/checkboxes
-  if (elem.name === 'input' &&
-      (elem.attribs.type === 'radio' || elem.attribs.type === 'checkbox') &&
-      name === 'value') {
+  if (elem.name === 'input' && (elem.attribs.type === 'radio' || elem.attribs.type === 'checkbox') && name === 'value') {
     return 'on';
   }
 };
 
-var setAttr = function(el, name, value) {
+var setAttr = function setAttr(el, name, value) {
 
   if (value === null) {
     removeAttribute(el, name);
   } else {
-    el.attribs[name] = value+'';
+    el.attribs[name] = value + '';
   }
 };
 
-exports.attr = function(name, value) {
+exports.attr = function (name, value) {
   // Set the value (with attr map support)
-  if (typeof name === 'object' || value !== undefined) {
+  if ((typeof name === 'undefined' ? 'undefined' : _typeof(name)) === 'object' || value !== undefined) {
     if (typeof value === 'function') {
-      return domEach(this, function(i, el) {
+      return domEach(this, function (i, el) {
         setAttr(el, name, value.call(el, i, el.attribs[name]));
       });
     }
-    return domEach(this, function(i, el) {
+    return domEach(this, function (i, el) {
       if (!isTag(el)) return;
 
-      if (typeof name === 'object') {
-        _.forEach(name, function(objValue, objName) {
+      if ((typeof name === 'undefined' ? 'undefined' : _typeof(name)) === 'object') {
+        _.forEach(name, function (objValue, objName) {
           setAttr(el, objName, objValue);
         });
       } else {
@@ -93235,17 +93736,13 @@ exports.attr = function(name, value) {
   return getAttr(this[0], name);
 };
 
-var getProp = function (el, name) {
+var getProp = function getProp(el, name) {
   if (!el || !isTag(el)) return;
 
-  return hasOwn.call(el, name)
-      ? el[name]
-      : rboolean.test(name)
-          ? getAttr(el, name) !== undefined
-          : getAttr(el, name);
+  return hasOwn.call(el, name) ? el[name] : rboolean.test(name) ? getAttr(el, name) !== undefined : getAttr(el, name);
 };
 
-var setProp = function (el, name, value) {
+var setProp = function setProp(el, name, value) {
   el[name] = rboolean.test(name) ? !!value : value;
 };
 
@@ -93277,37 +93774,35 @@ exports.prop = function (name, value) {
     return property;
   }
 
-  if (typeof name === 'object' || value !== undefined) {
+  if ((typeof name === 'undefined' ? 'undefined' : _typeof(name)) === 'object' || value !== undefined) {
 
     if (typeof value === 'function') {
-      return domEach(this, function(j, el) {
+      return domEach(this, function (j, el) {
         setProp(el, name, value.call(el, j, getProp(el, name)));
       });
     }
 
-    return domEach(this, function(__, el) {
+    return domEach(this, function (__, el) {
       if (!isTag(el)) return;
 
-      if (typeof name === 'object') {
+      if ((typeof name === 'undefined' ? 'undefined' : _typeof(name)) === 'object') {
 
-        _.forEach(name, function(val, key) {
+        _.forEach(name, function (val, key) {
           setProp(el, key, val);
         });
-
       } else {
         setProp(el, name, value);
       }
     });
-
   }
 };
 
-var setData = function(el, name, value) {
+var setData = function setData(el, name, value) {
   if (!el.data) {
     el.data = {};
   }
 
-  if (typeof name === 'object') return _.extend(el.data, name);
+  if ((typeof name === 'undefined' ? 'undefined' : _typeof(name)) === 'object') return _.extend(el.data, name);
   if (typeof name === 'string' && value !== undefined) {
     el.data[name] = value;
   }
@@ -93317,15 +93812,15 @@ var setData = function(el, name, value) {
 // and (if present) cache the value in the node's internal data store. If no
 // attribute name is specified, read *all* HTML5 `data-*` attributes in this
 // manner.
-var readData = function(el, name) {
+var readData = function readData(el, name) {
   var readAll = arguments.length === 1;
   var domNames, domName, jsNames, jsName, value, idx, length;
 
   if (readAll) {
-    domNames = Object.keys(el.attribs).filter(function(attrName) {
+    domNames = Object.keys(el.attribs).filter(function (attrName) {
       return attrName.slice(0, dataAttrPrefix.length) === dataAttrPrefix;
     });
-    jsNames = domNames.map(function(_domName) {
+    jsNames = domNames.map(function (_domName) {
       return camelCase(_domName.slice(dataAttrPrefix.length));
     });
   } else {
@@ -93346,7 +93841,7 @@ var readData = function(el, name) {
       } else if (rbrace.test(value)) {
         try {
           value = JSON.parse(value);
-        } catch(e){ }
+        } catch (e) {}
       }
 
       el.data[jsName] = value;
@@ -93356,7 +93851,7 @@ var readData = function(el, name) {
   return readAll ? el.data : value;
 };
 
-exports.data = function(name, value) {
+exports.data = function (name, value) {
   var elem = this[0];
 
   if (!elem || !isTag(elem)) return;
@@ -93371,8 +93866,8 @@ exports.data = function(name, value) {
   }
 
   // Set the value (with attr map support)
-  if (typeof name === 'object' || value !== undefined) {
-    domEach(this, function(i, el) {
+  if ((typeof name === 'undefined' ? 'undefined' : _typeof(name)) === 'object' || value !== undefined) {
+    domEach(this, function (i, el) {
       setData(el, name, value);
     });
     return this;
@@ -93387,11 +93882,11 @@ exports.data = function(name, value) {
  * Get the value of an element
  */
 
-exports.val = function(value) {
+exports.val = function (value) {
   var querying = arguments.length === 0,
       element = this[0];
 
-  if(!element) return;
+  if (!element) return;
 
   switch (element.name) {
     case 'textarea':
@@ -93415,10 +93910,10 @@ exports.val = function(value) {
           returnValue;
       if (option === undefined) return undefined;
       if (!querying) {
-        if (!hasOwn.call(this.attr(), 'multiple') && typeof value == 'object') {
+        if (!hasOwn.call(this.attr(), 'multiple') && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) == 'object') {
           return this;
         }
-        if (typeof value != 'object') {
+        if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) != 'object') {
           value = [value];
         }
         this.find('option').removeAttr('selected');
@@ -93430,7 +93925,7 @@ exports.val = function(value) {
       returnValue = option.attr('value');
       if (hasOwn.call(this.attr(), 'multiple')) {
         returnValue = [];
-        domEach(option, function(__, el) {
+        domEach(option, function (__, el) {
           returnValue.push(getAttr(el, 'value'));
         });
       }
@@ -93448,35 +93943,32 @@ exports.val = function(value) {
  * Remove an attribute
  */
 
-var removeAttribute = function(elem, name) {
-  if (!elem.attribs || !hasOwn.call(elem.attribs, name))
-    return;
+var removeAttribute = function removeAttribute(elem, name) {
+  if (!elem.attribs || !hasOwn.call(elem.attribs, name)) return;
 
   delete elem.attribs[name];
 };
 
-
-exports.removeAttr = function(name) {
-  domEach(this, function(i, elem) {
+exports.removeAttr = function (name) {
+  domEach(this, function (i, elem) {
     removeAttribute(elem, name);
   });
 
   return this;
 };
 
-exports.hasClass = function(className) {
-  return _.some(this, function(elem) {
+exports.hasClass = function (className) {
+  return _.some(this, function (elem) {
     var attrs = elem.attribs,
         clazz = attrs && attrs['class'],
         idx = -1,
         end;
 
     if (clazz && className.length) {
-      while ((idx = clazz.indexOf(className, idx+1)) > -1) {
+      while ((idx = clazz.indexOf(className, idx + 1)) > -1) {
         end = idx + className.length;
 
-        if ((idx === 0 || rspace.test(clazz[idx-1]))
-            && (end === clazz.length || rspace.test(clazz[end]))) {
+        if ((idx === 0 || rspace.test(clazz[idx - 1])) && (end === clazz.length || rspace.test(clazz[end]))) {
           return true;
         }
       }
@@ -93484,10 +93976,10 @@ exports.hasClass = function(className) {
   });
 };
 
-exports.addClass = function(value) {
+exports.addClass = function (value) {
   // Support functions
   if (typeof value === 'function') {
-    return domEach(this, function(i, el) {
+    return domEach(this, function (i, el) {
       var className = el.attribs['class'] || '';
       exports.addClass.call([el], value.call(el, i, className));
     });
@@ -93498,7 +93990,6 @@ exports.addClass = function(value) {
 
   var classNames = value.split(rspace),
       numElements = this.length;
-
 
   for (var i = 0; i < numElements; i++) {
     // If selected element isn't a tag, move on
@@ -93518,8 +94009,7 @@ exports.addClass = function(value) {
       // Check if class already exists
       for (var j = 0; j < numClasses; j++) {
         var appendClass = classNames[j] + ' ';
-        if (setClass.indexOf(' ' + appendClass) < 0)
-          setClass += appendClass;
+        if (setClass.indexOf(' ' + appendClass) < 0) setClass += appendClass;
       }
 
       setAttr(this[i], 'class', setClass.trim());
@@ -93529,21 +94019,17 @@ exports.addClass = function(value) {
   return this;
 };
 
-var splitClass = function(className) {
+var splitClass = function splitClass(className) {
   return className ? className.trim().split(rspace) : [];
 };
 
-exports.removeClass = function(value) {
-  var classes,
-      numClasses,
-      removeAll;
+exports.removeClass = function (value) {
+  var classes, numClasses, removeAll;
 
   // Handle if value is a function
   if (typeof value === 'function') {
-    return domEach(this, function(i, el) {
-      exports.removeClass.call(
-        [el], value.call(el, i, el.attribs['class'] || '')
-      );
+    return domEach(this, function (i, el) {
+      exports.removeClass.call([el], value.call(el, i, el.attribs['class'] || ''));
     });
   }
 
@@ -93551,7 +94037,7 @@ exports.removeClass = function(value) {
   numClasses = classes.length;
   removeAll = arguments.length === 0;
 
-  return domEach(this, function(i, el) {
+  return domEach(this, function (i, el) {
     if (!isTag(el)) return;
 
     if (removeAll) {
@@ -93581,15 +94067,11 @@ exports.removeClass = function(value) {
   });
 };
 
-exports.toggleClass = function(value, stateVal) {
+exports.toggleClass = function (value, stateVal) {
   // Support functions
   if (typeof value === 'function') {
-    return domEach(this, function(i, el) {
-      exports.toggleClass.call(
-        [el],
-        value.call(el, i, el.attribs['class'] || '', stateVal),
-        stateVal
-      );
+    return domEach(this, function (i, el) {
+      exports.toggleClass.call([el], value.call(el, i, el.attribs['class'] || '', stateVal), stateVal);
     });
   }
 
@@ -93597,11 +94079,11 @@ exports.toggleClass = function(value, stateVal) {
   if (!value || typeof value !== 'string') return this;
 
   var classNames = value.split(rspace),
-    numClasses = classNames.length,
-    state = typeof stateVal === 'boolean' ? stateVal ? 1 : -1 : 0,
-    numElements = this.length,
-    elementClasses,
-    index;
+      numClasses = classNames.length,
+      state = typeof stateVal === 'boolean' ? stateVal ? 1 : -1 : 0,
+      numElements = this.length,
+      elementClasses,
+      index;
 
   for (var i = 0; i < numElements; i++) {
     // If selected element isn't a tag, move on
@@ -93635,7 +94117,6 @@ exports.is = function (selector) {
   }
   return false;
 };
-
 
 /***/ }),
 /* 943 */
@@ -96533,21 +97014,24 @@ module.exports = baseSome;
 /* 1002 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 var select = __webpack_require__(221),
     utils = __webpack_require__(119),
     domEach = utils.domEach,
     uniqueSort = __webpack_require__(59).DomUtils.uniqueSort,
     isTag = utils.isTag,
     _ = {
-      bind: __webpack_require__(215),
-      forEach: __webpack_require__(121),
-      reject: __webpack_require__(1003),
-      filter: __webpack_require__(231),
-      reduce: __webpack_require__(1005)
-    };
+  bind: __webpack_require__(215),
+  forEach: __webpack_require__(121),
+  reject: __webpack_require__(1003),
+  filter: __webpack_require__(231),
+  reduce: __webpack_require__(1005)
+};
 
-exports.find = function(selectorOrHaystack) {
-  var elems = _.reduce(this, function(memo, elem) {
+exports.find = function (selectorOrHaystack) {
+  var elems = _.reduce(this, function (memo, elem) {
     return memo.concat(_.filter(elem.children, isTag));
   }, []);
   var contains = this.constructor.contains;
@@ -96560,7 +97044,7 @@ exports.find = function(selectorOrHaystack) {
       haystack = [selectorOrHaystack];
     }
 
-    return this._make(haystack.filter(function(elem) {
+    return this._make(haystack.filter(function (elem) {
       var idx, len;
       for (idx = 0, len = this.length; idx < len; ++idx) {
         if (contains(this[idx], elem)) {
@@ -96570,17 +97054,17 @@ exports.find = function(selectorOrHaystack) {
     }, this));
   }
 
-  var options = {__proto__: this.options, context: this.toArray()};
+  var options = { __proto__: this.options, context: this.toArray() };
 
   return this._make(select(selectorOrHaystack, elems, options));
 };
 
 // Get the parent of each element in the current set of matched elements,
 // optionally filtered by a selector.
-exports.parent = function(selector) {
+exports.parent = function (selector) {
   var set = [];
 
-  domEach(this, function(idx, elem) {
+  domEach(this, function (idx, elem) {
     var parentElem = elem.parent;
     if (parentElem && set.indexOf(parentElem) < 0) {
       set.push(parentElem);
@@ -96594,27 +97078,27 @@ exports.parent = function(selector) {
   return this._make(set);
 };
 
-exports.parents = function(selector) {
+exports.parents = function (selector) {
   var parentNodes = [];
 
   // When multiple DOM elements are in the original set, the resulting set will
   // be in *reverse* order of the original elements as well, with duplicates
   // removed.
-  this.get().reverse().forEach(function(elem) {
-    traverseParents(this, elem.parent, selector, Infinity)
-      .forEach(function(node) {
-        if (parentNodes.indexOf(node) === -1) {
-          parentNodes.push(node);
-        }
+  this.get().reverse().forEach(function (elem) {
+    traverseParents(this, elem.parent, selector, Infinity).forEach(function (node) {
+      if (parentNodes.indexOf(node) === -1) {
+        parentNodes.push(node);
       }
-    );
+    });
   }, this);
 
   return this._make(parentNodes);
 };
 
-exports.parentsUntil = function(selector, filter) {
-  var parentNodes = [], untilNode, untilNodes;
+exports.parentsUntil = function (selector, filter) {
+  var parentNodes = [],
+      untilNode,
+      untilNodes;
 
   if (typeof selector === 'string') {
     untilNode = select(selector, this.parents().toArray(), this.options)[0];
@@ -96628,12 +97112,12 @@ exports.parentsUntil = function(selector, filter) {
   // be in *reverse* order of the original elements as well, with duplicates
   // removed.
 
-  this.toArray().reverse().forEach(function(elem) {
-    while ((elem = elem.parent)) {
-      if ((untilNode && elem !== untilNode) ||
-        (untilNodes && untilNodes.indexOf(elem) === -1) ||
-        (!untilNode && !untilNodes)) {
-        if (isTag(elem) && parentNodes.indexOf(elem) === -1) { parentNodes.push(elem); }
+  this.toArray().reverse().forEach(function (elem) {
+    while (elem = elem.parent) {
+      if (untilNode && elem !== untilNode || untilNodes && untilNodes.indexOf(elem) === -1 || !untilNode && !untilNodes) {
+        if (isTag(elem) && parentNodes.indexOf(elem) === -1) {
+          parentNodes.push(elem);
+        }
       } else {
         break;
       }
@@ -96646,14 +97130,14 @@ exports.parentsUntil = function(selector, filter) {
 // For each element in the set, get the first element that matches the selector
 // by testing the element itself and traversing up through its ancestors in the
 // DOM tree.
-exports.closest = function(selector) {
+exports.closest = function (selector) {
   var set = [];
 
   if (!selector) {
     return this._make(set);
   }
 
-  domEach(this, function(idx, elem) {
+  domEach(this, function (idx, elem) {
     var closestElem = traverseParents(this, elem, selector, 1)[0];
 
     // Do not add duplicate elements to the set
@@ -96665,12 +97149,14 @@ exports.closest = function(selector) {
   return this._make(set);
 };
 
-exports.next = function(selector) {
-  if (!this[0]) { return this; }
+exports.next = function (selector) {
+  if (!this[0]) {
+    return this;
+  }
   var elems = [];
 
-  _.forEach(this, function(elem) {
-    while ((elem = elem.next)) {
+  _.forEach(this, function (elem) {
+    while (elem = elem.next) {
       if (isTag(elem)) {
         elems.push(elem);
         return;
@@ -96678,31 +97164,33 @@ exports.next = function(selector) {
     }
   });
 
-  return selector ?
-    exports.filter.call(elems, selector, this) :
-    this._make(elems);
+  return selector ? exports.filter.call(elems, selector, this) : this._make(elems);
 };
 
-exports.nextAll = function(selector) {
-  if (!this[0]) { return this; }
+exports.nextAll = function (selector) {
+  if (!this[0]) {
+    return this;
+  }
   var elems = [];
 
-  _.forEach(this, function(elem) {
-    while ((elem = elem.next)) {
+  _.forEach(this, function (elem) {
+    while (elem = elem.next) {
       if (isTag(elem) && elems.indexOf(elem) === -1) {
         elems.push(elem);
       }
     }
   });
 
-  return selector ?
-    exports.filter.call(elems, selector, this) :
-    this._make(elems);
+  return selector ? exports.filter.call(elems, selector, this) : this._make(elems);
 };
 
-exports.nextUntil = function(selector, filterSelector) {
-  if (!this[0]) { return this; }
-  var elems = [], untilNode, untilNodes;
+exports.nextUntil = function (selector, filterSelector) {
+  if (!this[0]) {
+    return this;
+  }
+  var elems = [],
+      untilNode,
+      untilNodes;
 
   if (typeof selector === 'string') {
     untilNode = select(selector, this.nextAll().get(), this.options)[0];
@@ -96712,11 +97200,9 @@ exports.nextUntil = function(selector, filterSelector) {
     untilNode = selector;
   }
 
-  _.forEach(this, function(elem) {
-    while ((elem = elem.next)) {
-      if ((untilNode && elem !== untilNode) ||
-        (untilNodes && untilNodes.indexOf(elem) === -1) ||
-        (!untilNode && !untilNodes)) {
+  _.forEach(this, function (elem) {
+    while (elem = elem.next) {
+      if (untilNode && elem !== untilNode || untilNodes && untilNodes.indexOf(elem) === -1 || !untilNode && !untilNodes) {
         if (isTag(elem) && elems.indexOf(elem) === -1) {
           elems.push(elem);
         }
@@ -96726,17 +97212,17 @@ exports.nextUntil = function(selector, filterSelector) {
     }
   });
 
-  return filterSelector ?
-    exports.filter.call(elems, filterSelector, this) :
-    this._make(elems);
+  return filterSelector ? exports.filter.call(elems, filterSelector, this) : this._make(elems);
 };
 
-exports.prev = function(selector) {
-  if (!this[0]) { return this; }
+exports.prev = function (selector) {
+  if (!this[0]) {
+    return this;
+  }
   var elems = [];
 
-  _.forEach(this, function(elem) {
-    while ((elem = elem.prev)) {
+  _.forEach(this, function (elem) {
+    while (elem = elem.prev) {
       if (isTag(elem)) {
         elems.push(elem);
         return;
@@ -96744,31 +97230,33 @@ exports.prev = function(selector) {
     }
   });
 
-  return selector ?
-    exports.filter.call(elems, selector, this) :
-    this._make(elems);
+  return selector ? exports.filter.call(elems, selector, this) : this._make(elems);
 };
 
-exports.prevAll = function(selector) {
-  if (!this[0]) { return this; }
+exports.prevAll = function (selector) {
+  if (!this[0]) {
+    return this;
+  }
   var elems = [];
 
-  _.forEach(this, function(elem) {
-    while ((elem = elem.prev)) {
+  _.forEach(this, function (elem) {
+    while (elem = elem.prev) {
       if (isTag(elem) && elems.indexOf(elem) === -1) {
         elems.push(elem);
       }
     }
   });
 
-  return selector ?
-    exports.filter.call(elems, selector, this) :
-    this._make(elems);
+  return selector ? exports.filter.call(elems, selector, this) : this._make(elems);
 };
 
-exports.prevUntil = function(selector, filterSelector) {
-  if (!this[0]) { return this; }
-  var elems = [], untilNode, untilNodes;
+exports.prevUntil = function (selector, filterSelector) {
+  if (!this[0]) {
+    return this;
+  }
+  var elems = [],
+      untilNode,
+      untilNodes;
 
   if (typeof selector === 'string') {
     untilNode = select(selector, this.prevAll().get(), this.options)[0];
@@ -96778,11 +97266,9 @@ exports.prevUntil = function(selector, filterSelector) {
     untilNode = selector;
   }
 
-  _.forEach(this, function(elem) {
-    while ((elem = elem.prev)) {
-      if ((untilNode && elem !== untilNode) ||
-        (untilNodes && untilNodes.indexOf(elem) === -1) ||
-        (!untilNode && !untilNodes)) {
+  _.forEach(this, function (elem) {
+    while (elem = elem.prev) {
+      if (untilNode && elem !== untilNode || untilNodes && untilNodes.indexOf(elem) === -1 || !untilNode && !untilNodes) {
         if (isTag(elem) && elems.indexOf(elem) === -1) {
           elems.push(elem);
         }
@@ -96792,18 +97278,15 @@ exports.prevUntil = function(selector, filterSelector) {
     }
   });
 
-  return filterSelector ?
-    exports.filter.call(elems, filterSelector, this) :
-    this._make(elems);
+  return filterSelector ? exports.filter.call(elems, filterSelector, this) : this._make(elems);
 };
 
-exports.siblings = function(selector) {
+exports.siblings = function (selector) {
   var parent = this.parent();
 
-  var elems = _.filter(
-    parent ? parent.children() : this.siblingsAndMe(),
-    _.bind(function(elem) { return isTag(elem) && !this.is(elem); }, this)
-  );
+  var elems = _.filter(parent ? parent.children() : this.siblingsAndMe(), _.bind(function (elem) {
+    return isTag(elem) && !this.is(elem);
+  }, this));
 
   if (selector !== undefined) {
     return exports.filter.call(elems, selector, this);
@@ -96812,9 +97295,9 @@ exports.siblings = function(selector) {
   }
 };
 
-exports.children = function(selector) {
+exports.children = function (selector) {
 
-  var elems = _.reduce(this, function(memo, elem) {
+  var elems = _.reduce(this, function (memo, elem) {
     return memo.concat(_.filter(elem.children, isTag));
   }, []);
 
@@ -96823,41 +97306,43 @@ exports.children = function(selector) {
   return exports.filter.call(elems, selector, this);
 };
 
-exports.contents = function() {
-  return this._make(_.reduce(this, function(all, elem) {
+exports.contents = function () {
+  return this._make(_.reduce(this, function (all, elem) {
     all.push.apply(all, elem.children);
     return all;
   }, []));
 };
 
-exports.each = function(fn) {
-  var i = 0, len = this.length;
-  while (i < len && fn.call(this[i], i, this[i]) !== false) ++i;
-  return this;
+exports.each = function (fn) {
+  var i = 0,
+      len = this.length;
+  while (i < len && fn.call(this[i], i, this[i]) !== false) {
+    ++i;
+  }return this;
 };
 
-exports.map = function(fn) {
-  return this._make(_.reduce(this, function(memo, el, i) {
+exports.map = function (fn) {
+  return this._make(_.reduce(this, function (memo, el, i) {
     var val = fn.call(el, i, el);
     return val == null ? memo : memo.concat(val);
   }, []));
 };
 
-var makeFilterMethod = function(filterFn) {
-  return function(match, container) {
+var makeFilterMethod = function makeFilterMethod(filterFn) {
+  return function (match, container) {
     var testFn;
     container = container || this;
 
     if (typeof match === 'string') {
       testFn = select.compile(match, container.options);
     } else if (typeof match === 'function') {
-      testFn = function(el, i) {
+      testFn = function testFn(el, i) {
         return match.call(el, i, el);
       };
     } else if (match.cheerio) {
       testFn = match.is.bind(match);
     } else {
-      testFn = function(el) {
+      testFn = function testFn(el) {
         return match === el;
       };
     }
@@ -96869,23 +97354,23 @@ var makeFilterMethod = function(filterFn) {
 exports.filter = makeFilterMethod(_.filter);
 exports.not = makeFilterMethod(_.reject);
 
-exports.has = function(selectorOrHaystack) {
+exports.has = function (selectorOrHaystack) {
   var that = this;
-  return exports.filter.call(this, function() {
+  return exports.filter.call(this, function () {
     return that._make(this).find(selectorOrHaystack).length > 0;
   });
 };
 
-exports.first = function() {
+exports.first = function () {
   return this.length > 1 ? this._make(this[0]) : this;
 };
 
-exports.last = function() {
+exports.last = function () {
   return this.length > 1 ? this._make(this[this.length - 1]) : this;
 };
 
 // Reduce the set of matched elements to the one at the specified index.
-exports.eq = function(i) {
+exports.eq = function (i) {
   i = +i;
 
   // Use the first identity optimization if possible
@@ -96896,16 +97381,16 @@ exports.eq = function(i) {
 };
 
 // Retrieve the DOM elements matched by the jQuery object.
-exports.get = function(i) {
+exports.get = function (i) {
   if (i == null) {
     return Array.prototype.slice.call(this);
   } else {
-    return this[i < 0 ? (this.length + i) : i];
+    return this[i < 0 ? this.length + i : i];
   }
 };
 
 // Search for a given element from among the matched elements.
-exports.index = function(selectorOrNeedle) {
+exports.index = function (selectorOrNeedle) {
   var $haystack, needle;
 
   if (arguments.length === 0) {
@@ -96922,7 +97407,7 @@ exports.index = function(selectorOrNeedle) {
   return $haystack.get().indexOf(needle);
 };
 
-exports.slice = function() {
+exports.slice = function () {
   return this._make([].slice.apply(this, arguments));
 };
 
@@ -96939,11 +97424,11 @@ function traverseParents(self, elem, selector, limit) {
 
 // End the most recent filtering operation in the current chain and return the
 // set of matched elements to its previous state.
-exports.end = function() {
+exports.end = function () {
   return this.prevObject || this._make([]);
 };
 
-exports.add = function(other, context) {
+exports.add = function (other, context) {
   var selection = this._make(other, context);
   var contents = uniqueSort(selection.get().concat(this.get()));
 
@@ -96957,12 +97442,9 @@ exports.add = function(other, context) {
 
 // Add the previous set of elements on the stack to the current set, optionally
 // filtered by a selector.
-exports.addBack = function(selector) {
-  return this.add(
-    arguments.length ? this.prevObject.filter(selector) : this.prevObject
-  );
+exports.addBack = function (selector) {
+  return this.add(arguments.length ? this.prevObject.filter(selector) : this.prevObject);
 };
-
 
 /***/ }),
 /* 1003 */
@@ -97152,6 +97634,9 @@ module.exports = baseReduce;
 /* 1007 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 var parse = __webpack_require__(145),
     $ = __webpack_require__(220),
     updateDOM = parse.update,
@@ -97162,10 +97647,10 @@ var parse = __webpack_require__(145),
     isHtml = utils.isHtml,
     slice = Array.prototype.slice,
     _ = {
-      flatten: __webpack_require__(383),
-      bind: __webpack_require__(215),
-      forEach: __webpack_require__(121)
-    };
+  flatten: __webpack_require__(383),
+  bind: __webpack_require__(215),
+  forEach: __webpack_require__(121)
+};
 
 // Create an array of nodes, recursing into arrays and parsing strings if
 // necessary
@@ -97175,7 +97660,7 @@ exports._makeDomArray = function makeDomArray(elem, clone) {
   } else if (elem.cheerio) {
     return clone ? cloneDom(elem.get(), elem.options) : elem.get();
   } else if (Array.isArray(elem)) {
-    return _.flatten(elem.map(function(el) {
+    return _.flatten(elem.map(function (el) {
       return this._makeDomArray(el, clone);
     }, this));
   } else if (typeof elem === 'string') {
@@ -97185,12 +97670,12 @@ exports._makeDomArray = function makeDomArray(elem, clone) {
   }
 };
 
-var _insert = function(concatenator) {
-  return function() {
+var _insert = function _insert(concatenator) {
+  return function () {
     var elems = slice.call(arguments),
         lastIdx = this.length - 1;
 
-    return domEach(this, function(i, el) {
+    return domEach(this, function (i, el) {
       var dom, domSrc;
 
       if (typeof elems[0] === 'function') {
@@ -97216,7 +97701,7 @@ var _insert = function(concatenator) {
  *
  * @api private
  */
-var uniqueSplice = function(array, spliceIdx, spliceCount, newElems, parent) {
+var uniqueSplice = function uniqueSplice(array, spliceIdx, spliceCount, newElems, parent) {
   var spliceArgs = [spliceIdx, spliceCount].concat(newElems),
       prev = array[spliceIdx - 1] || null,
       next = array[spliceIdx] || null;
@@ -97260,7 +97745,7 @@ var uniqueSplice = function(array, spliceIdx, spliceCount, newElems, parent) {
   return array.splice.apply(array, spliceArgs);
 };
 
-exports.appendTo = function(target) {
+exports.appendTo = function (target) {
   if (!target.cheerio) {
     target = this.constructor.call(this.constructor, target, null, this._originalRoot);
   }
@@ -97270,7 +97755,7 @@ exports.appendTo = function(target) {
   return this;
 };
 
-exports.prependTo = function(target) {
+exports.prependTo = function (target) {
   if (!target.cheerio) {
     target = this.constructor.call(this.constructor, target, null, this._originalRoot);
   }
@@ -97280,22 +97765,25 @@ exports.prependTo = function(target) {
   return this;
 };
 
-exports.append = _insert(function(dom, children, parent) {
+exports.append = _insert(function (dom, children, parent) {
   uniqueSplice(children, children.length, 0, dom, parent);
 });
 
-exports.prepend = _insert(function(dom, children, parent) {
+exports.prepend = _insert(function (dom, children, parent) {
   uniqueSplice(children, 0, 0, dom, parent);
 });
 
-exports.wrap = function(wrapper) {
+exports.wrap = function (wrapper) {
   var wrapperFn = typeof wrapper === 'function' && wrapper,
       lastIdx = this.length - 1;
 
-  _.forEach(this, _.bind(function(el, i) {
+  _.forEach(this, _.bind(function (el, i) {
     var parent = el.parent || el.root,
         siblings = parent.children,
-        wrapperDom, elInsertLocation, j, index;
+        wrapperDom,
+        elInsertLocation,
+        j,
+        index;
 
     if (!parent) {
       return;
@@ -97322,7 +97810,7 @@ exports.wrap = function(wrapper) {
 
       if (elInsertLocation.children[j].type === 'tag') {
         elInsertLocation = elInsertLocation.children[j];
-        j=0;
+        j = 0;
       } else {
         j++;
       }
@@ -97339,11 +97827,11 @@ exports.wrap = function(wrapper) {
   return this;
 };
 
-exports.after = function() {
+exports.after = function () {
   var elems = slice.call(arguments),
       lastIdx = this.length - 1;
 
-  domEach(this, function(i, el) {
+  domEach(this, function (i, el) {
     var parent = el.parent || el.root;
     if (!parent) {
       return;
@@ -97351,7 +97839,8 @@ exports.after = function() {
 
     var siblings = parent.children,
         index = siblings.indexOf(el),
-        domSrc, dom;
+        domSrc,
+        dom;
 
     // If not found, move on
     if (index < 0) return;
@@ -97370,7 +97859,7 @@ exports.after = function() {
   return this;
 };
 
-exports.insertAfter = function(target) {
+exports.insertAfter = function (target) {
   var clones = [],
       self = this;
   if (typeof target === 'string') {
@@ -97378,7 +97867,7 @@ exports.insertAfter = function(target) {
   }
   target = this._makeDomArray(target);
   self.remove();
-  domEach(target, function(i, el) {
+  domEach(target, function (i, el) {
     var clonedSelf = self._makeDomArray(self.clone());
     var parent = el.parent || el.root;
     if (!parent) {
@@ -97398,11 +97887,11 @@ exports.insertAfter = function(target) {
   return this.constructor.call(this.constructor, this._makeDomArray(clones));
 };
 
-exports.before = function() {
+exports.before = function () {
   var elems = slice.call(arguments),
       lastIdx = this.length - 1;
 
-  domEach(this, function(i, el) {
+  domEach(this, function (i, el) {
     var parent = el.parent || el.root;
     if (!parent) {
       return;
@@ -97410,7 +97899,8 @@ exports.before = function() {
 
     var siblings = parent.children,
         index = siblings.indexOf(el),
-        domSrc, dom;
+        domSrc,
+        dom;
 
     // If not found, move on
     if (index < 0) return;
@@ -97430,7 +97920,7 @@ exports.before = function() {
   return this;
 };
 
-exports.insertBefore = function(target) {
+exports.insertBefore = function (target) {
   var clones = [],
       self = this;
   if (typeof target === 'string') {
@@ -97438,7 +97928,7 @@ exports.insertBefore = function(target) {
   }
   target = this._makeDomArray(target);
   self.remove();
-  domEach(target, function(i, el) {
+  domEach(target, function (i, el) {
     var clonedSelf = self._makeDomArray(self.clone());
     var parent = el.parent || el.root;
     if (!parent) {
@@ -97461,14 +97951,13 @@ exports.insertBefore = function(target) {
 /*
   remove([selector])
 */
-exports.remove = function(selector) {
+exports.remove = function (selector) {
   var elems = this;
 
   // Filter if we have selector
-  if (selector)
-    elems = elems.filter(selector);
+  if (selector) elems = elems.filter(selector);
 
-  domEach(elems, function(i, el) {
+  domEach(elems, function (i, el) {
     var parent = el.parent || el.root;
     if (!parent) {
       return;
@@ -97492,10 +97981,10 @@ exports.remove = function(selector) {
   return this;
 };
 
-exports.replaceWith = function(content) {
+exports.replaceWith = function (content) {
   var self = this;
 
-  domEach(this, function(i, el) {
+  domEach(this, function (i, el) {
     var parent = el.parent || el.root;
     if (!parent) {
       return;
@@ -97519,9 +98008,9 @@ exports.replaceWith = function(content) {
   return this;
 };
 
-exports.empty = function() {
-  domEach(this, function(i, el) {
-    _.forEach(el.children, function(child) {
+exports.empty = function () {
+  domEach(this, function (i, el) {
+    _.forEach(el.children, function (child) {
       child.next = child.prev = child.parent = null;
     });
 
@@ -97533,7 +98022,7 @@ exports.empty = function() {
 /**
  * Set/Get the HTML
  */
-exports.html = function(str) {
+exports.html = function (str) {
   if (str === undefined) {
     if (!this[0] || !this[0].children) return null;
     return $.html(this[0].children, this.options);
@@ -97541,8 +98030,8 @@ exports.html = function(str) {
 
   var opts = this.options;
 
-  domEach(this, function(i, el) {
-    _.forEach(el.children, function(child) {
+  domEach(this, function (i, el) {
+    _.forEach(el.children, function (child) {
       child.next = child.prev = child.parent = null;
     });
 
@@ -97554,25 +98043,25 @@ exports.html = function(str) {
   return this;
 };
 
-exports.toString = function() {
+exports.toString = function () {
   return $.html(this, this.options);
 };
 
-exports.text = function(str) {
+exports.text = function (str) {
   // If `str` is undefined, act as a "getter"
   if (str === undefined) {
     return $.text(this);
   } else if (typeof str === 'function') {
     // Function support
-    return domEach(this, function(i, el) {
+    return domEach(this, function (i, el) {
       var $el = [el];
       return exports.text.call($el, str.call(el, i, $.text($el)));
     });
   }
 
   // Append text node to each selected elements
-  domEach(this, function(i, el) {
-    _.forEach(el.children, function(child) {
+  domEach(this, function (i, el) {
+    _.forEach(el.children, function (child) {
       child.next = child.prev = child.parent = null;
     });
 
@@ -97591,10 +98080,9 @@ exports.text = function(str) {
   return this;
 };
 
-exports.clone = function() {
+exports.clone = function () {
   return this._make(cloneDom(this.get(), this.options));
 };
-
 
 /***/ }),
 /* 1008 */
@@ -97626,10 +98114,15 @@ module.exports = isFlattenable;
 /* 1009 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var domEach = __webpack_require__(119).domEach,
     _ = {
-      pick: __webpack_require__(1010),
-    };
+  pick: __webpack_require__(1010)
+};
 
 var toString = Object.prototype.toString;
 
@@ -97642,11 +98135,11 @@ var toString = Object.prototype.toString;
  * @api public
  */
 
-exports.css = function(prop, val) {
+exports.css = function (prop, val) {
   if (arguments.length === 2 ||
-    // When `prop` is a "plain" object
-    (toString.call(prop) === '[object Object]')) {
-    return domEach(this, function(idx, el) {
+  // When `prop` is a "plain" object
+  toString.call(prop) === '[object Object]') {
+    return domEach(this, function (idx, el) {
       setCss(el, prop, val, idx);
     });
   } else {
@@ -97678,8 +98171,8 @@ function setCss(el, prop, val, idx) {
     }
 
     el.attribs.style = stringify(styles);
-  } else if ('object' == typeof prop) {
-    Object.keys(prop).forEach(function(k){
+  } else if ('object' == (typeof prop === 'undefined' ? 'undefined' : _typeof(prop))) {
+    Object.keys(prop).forEach(function (k) {
       setCss(el, k, prop[k]);
     });
   }
@@ -97713,15 +98206,9 @@ function getCss(el, prop) {
  */
 
 function stringify(obj) {
-  return Object.keys(obj || {})
-    .reduce(function(str, prop){
-      return str += ''
-        + (str ? ' ' : '')
-        + prop
-        + ': '
-        + obj[prop]
-        + ';';
-    }, '');
+  return Object.keys(obj || {}).reduce(function (str, prop) {
+    return str += '' + (str ? ' ' : '') + prop + ': ' + obj[prop] + ';';
+  }, '');
 }
 
 /**
@@ -97737,17 +98224,14 @@ function parse(styles) {
 
   if (!styles) return {};
 
-  return styles
-    .split(';')
-    .reduce(function(obj, str){
-      var n = str.indexOf(':');
-      // skip if there is no :, or if it is the first/last character
-      if (n < 1 || n === str.length-1) return obj;
-      obj[str.slice(0,n).trim()] = str.slice(n+1).trim();
-      return obj;
-    }, {});
+  return styles.split(';').reduce(function (obj, str) {
+    var n = str.indexOf(':');
+    // skip if there is no :, or if it is the first/last character
+    if (n < 1 || n === str.length - 1) return obj;
+    obj[str.slice(0, n).trim()] = str.slice(n + 1).trim();
+    return obj;
+  }, {});
 }
-
 
 /***/ }),
 /* 1010 */
@@ -97898,21 +98382,24 @@ module.exports = baseSet;
 /* 1014 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 // https://github.com/jquery/jquery/blob/2.1.3/src/manipulation/var/rcheckableType.js
 // https://github.com/jquery/jquery/blob/2.1.3/src/serialize.js
 var submittableSelector = 'input,select,textarea,keygen',
     r20 = /%20/g,
     rCRLF = /\r?\n/g,
     _ = {
-      map: __webpack_require__(548)
-    };
+  map: __webpack_require__(548)
+};
 
-exports.serialize = function() {
+exports.serialize = function () {
   // Convert form elements into name/value objects
   var arr = this.serializeArray();
 
   // Serialize each element into a key/value string
-  var retArr = _.map(arr, function(data) {
+  var retArr = _.map(arr, function (data) {
     return encodeURIComponent(data.name) + '=' + encodeURIComponent(data.value);
   });
 
@@ -97920,50 +98407,49 @@ exports.serialize = function() {
   return retArr.join('&').replace(r20, '+');
 };
 
-exports.serializeArray = function() {
+exports.serializeArray = function () {
   // Resolve all form elements from either forms or collections of form elements
   var Cheerio = this.constructor;
-  return this.map(function() {
-      var elem = this;
-      var $elem = Cheerio(elem);
-      if (elem.name === 'form') {
-        return $elem.find(submittableSelector).toArray();
-      } else {
-        return $elem.filter(submittableSelector).toArray();
-      }
-    }).filter(
-        // Verify elements have a name (`attr.name`) and are not disabled (`:disabled`)
-        '[name!=""]:not(:disabled)'
-        // and cannot be clicked (`[type=submit]`) or are used in `x-www-form-urlencoded` (`[type=file]`)
-        + ':not(:submit, :button, :image, :reset, :file)'
-        // and are either checked/don't have a checkable state
-        + ':matches([checked], :not(:checkbox, :radio))'
-    // Convert each of the elements to its value(s)
-    ).map(function(i, elem) {
-      var $elem = Cheerio(elem);
-      var name = $elem.attr('name');
-      var value = $elem.val();
+  return this.map(function () {
+    var elem = this;
+    var $elem = Cheerio(elem);
+    if (elem.name === 'form') {
+      return $elem.find(submittableSelector).toArray();
+    } else {
+      return $elem.filter(submittableSelector).toArray();
+    }
+  }).filter(
+  // Verify elements have a name (`attr.name`) and are not disabled (`:disabled`)
+  '[name!=""]:not(:disabled)'
+  // and cannot be clicked (`[type=submit]`) or are used in `x-www-form-urlencoded` (`[type=file]`)
+  + ':not(:submit, :button, :image, :reset, :file)'
+  // and are either checked/don't have a checkable state
+  + ':matches([checked], :not(:checkbox, :radio))'
+  // Convert each of the elements to its value(s)
+  ).map(function (i, elem) {
+    var $elem = Cheerio(elem);
+    var name = $elem.attr('name');
+    var value = $elem.val();
 
-      // If there is no value set (e.g. `undefined`, `null`), then default value to empty
-      if (value == null) {
-        value = '';
-      }
+    // If there is no value set (e.g. `undefined`, `null`), then default value to empty
+    if (value == null) {
+      value = '';
+    }
 
-      // If we have an array of values (e.g. `<select multiple>`), return an array of key/value pairs
-      if (Array.isArray(value)) {
-        return _.map(value, function(val) {
-          // We trim replace any line endings (e.g. `\r` or `\r\n` with `\r\n`) to guarantee consistency across platforms
-          //   These can occur inside of `<textarea>'s`
-          return {name: name, value: val.replace( rCRLF, '\r\n' )};
-        });
+    // If we have an array of values (e.g. `<select multiple>`), return an array of key/value pairs
+    if (Array.isArray(value)) {
+      return _.map(value, function (val) {
+        // We trim replace any line endings (e.g. `\r` or `\r\n` with `\r\n`) to guarantee consistency across platforms
+        //   These can occur inside of `<textarea>'s`
+        return { name: name, value: val.replace(rCRLF, '\r\n') };
+      });
       // Otherwise (e.g. `<input type="text">`, return only one key/value pair
-      } else {
-        return {name: name, value: value.replace( rCRLF, '\r\n' )};
-      }
+    } else {
+      return { name: name, value: value.replace(rCRLF, '\r\n') };
+    }
     // Convert our result to an array
-    }).get();
+  }).get();
 };
-
 
 /***/ }),
 /* 1015 */
@@ -97975,6 +98461,9 @@ module.exports = {"name":"cheerio","version":"1.0.0-rc.2","description":"Tiny, f
 /* 1016 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 /**
  * Combines the features of `saveFiles`, `filterData`, `addData` and  `linkBankOperations`.
  * Will create `io.cozy.bills` objects. The default deduplication keys are
@@ -97985,38 +98474,42 @@ module.exports = {"name":"cheerio","version":"1.0.0-rc.2","description":"Tiny, f
  *  @module  saveBills
  */
 
-const saveFiles = __webpack_require__(288)
-const filterData = __webpack_require__(386)
-const addData = __webpack_require__(387)
-const linkBankOperations = __webpack_require__(388)
-const DOCTYPE = 'io.cozy.bills'
+var saveFiles = __webpack_require__(288);
+var filterData = __webpack_require__(386);
+var addData = __webpack_require__(387);
+var linkBankOperations = __webpack_require__(388);
+var DOCTYPE = 'io.cozy.bills';
 
 // Encapsulate the saving of Bills : saves the files, saves the new data, and associate the files
 // to an existing bank operation
-module.exports = (entries, fields, options = {}) => {
-  if (entries.length === 0) return Promise.resolve()
+module.exports = function (entries, fields) {
+  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+  if (entries.length === 0) return Promise.resolve();
 
   if (typeof fields === 'string') {
-    fields = { folderPath: fields }
+    fields = { folderPath: fields };
   }
 
   // Deduplicate on this keys
-  options.keys = ['date', 'amount', 'vendor']
+  options.keys = ['date', 'amount', 'vendor'];
 
   options.postProcess = function (entry) {
     if (entry.fileobject) {
-      entry.invoice = `io.cozy.files:${entry.fileobject._id}`
+      entry.invoice = 'io.cozy.files:' + entry.fileobject._id;
     }
-    delete entry.fileobject
-    return entry
-  }
+    delete entry.fileobject;
+    return entry;
+  };
 
-  return saveFiles(entries, fields, options)
-    .then(entries => filterData(entries, DOCTYPE, options))
-    .then(entries => addData(entries, DOCTYPE, options))
-    .then(entries => linkBankOperations(entries, DOCTYPE, fields, options))
-}
-
+  return saveFiles(entries, fields, options).then(function (entries) {
+    return filterData(entries, DOCTYPE, options);
+  }).then(function (entries) {
+    return addData(entries, DOCTYPE, options);
+  }).then(function (entries) {
+    return linkBankOperations(entries, DOCTYPE, fields, options);
+  });
+};
 
 /***/ }),
 /* 1017 */
@@ -98280,6 +98773,9 @@ webpackContext.id = 1017;
 /* 1018 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
 /**
  * The goal of this function is create or update the given entries according to if they already
  * exist in the cozy or not
@@ -98293,31 +98789,35 @@ webpackContext.id = 1017;
  *
  * @module updateOrCreate
  */
-const bluebird = __webpack_require__(68)
-const log = __webpack_require__(37).namespace('updateOrCreate')
-const cozy = __webpack_require__(61)
+var bluebird = __webpack_require__(68);
+var log = __webpack_require__(37).namespace('updateOrCreate');
+var cozy = __webpack_require__(61);
 
-module.exports = (entries = [], doctype, matchingAttributes = []) => {
-  return cozy.data.findAll(doctype)
-    .then(existings => bluebird.mapSeries(entries, entry => {
-      log('debug', entry)
+module.exports = function () {
+  var entries = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  var doctype = arguments[1];
+  var matchingAttributes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+
+  return cozy.data.findAll(doctype).then(function (existings) {
+    return bluebird.mapSeries(entries, function (entry) {
+      log('debug', entry);
       // try to find a corresponding existing element
-      const toUpdate = existings.find(doc =>
-        matchingAttributes.reduce((isMatching, matchingAttribute) =>
-          isMatching && doc[matchingAttribute] === entry[matchingAttribute]
-        , true)
-      )
+      var toUpdate = existings.find(function (doc) {
+        return matchingAttributes.reduce(function (isMatching, matchingAttribute) {
+          return isMatching && doc[matchingAttribute] === entry[matchingAttribute];
+        }, true);
+      });
 
       if (toUpdate) {
-        log('debug', 'upating')
-        return cozy.data.updateAttributes(doctype, toUpdate._id, entry)
+        log('debug', 'upating');
+        return cozy.data.updateAttributes(doctype, toUpdate._id, entry);
       } else {
-        log('debug', 'creating')
-        return cozy.data.create(doctype, entry)
+        log('debug', 'creating');
+        return cozy.data.create(doctype, entry);
       }
-    }))
-}
-
+    });
+  });
+};
 
 /***/ }),
 /* 1019 */
