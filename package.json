@@ -105,7 +105,7 @@
     "postcss-discard-duplicates": "2.1.0",
     "postcss-loader": "2.1.4",
     "prop-types": "15.6.1",
-    "react": "15.6.2",
+    "react": "16.3.2",
     "react-addons-test-utils": "15.6.2",
     "react-dom": "15.6.2",
     "react-styleguidist": "6.0.33",
