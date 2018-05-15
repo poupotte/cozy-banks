@@ -1,6 +1,7 @@
 {
   "name": "Banks",
   "slug": "banks",
+  "registry_namespace": "banks",
   "icon": "icon-banks.svg",
   "description": "The banking application for Cozy",
   "category": "cozy",
