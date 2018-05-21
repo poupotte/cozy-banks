@@ -41,6 +41,7 @@
     }
   ],
   "editor": "Cozy",
+  "name_prefix": "Cozy",
   "screenshots": [
     "screenshot1.png"
   ],
