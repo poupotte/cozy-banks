@@ -134,7 +134,7 @@
     "chart.js": "^2.7.0",
     "classificator": "0.3.0",
     "classnames": "^2.2.0",
-    "cordova": "^7.1.0",
+    "cordova": "^8.0.0",
     "cozy-authentication": "1.1.4",
     "cozy-bar": "5.0.1",
     "cozy-client": "0.4.3",
