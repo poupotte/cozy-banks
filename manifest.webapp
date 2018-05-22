@@ -1,10 +1,10 @@
 {
   "name": "Banks",
   "slug": "banks",
+  "registry_namespace": "banks",
   "icon": "icon-banks.svg",
   "description": "The banking application for Cozy",
   "category": "cozy",
-  "version": "0.5.0",
   "licence": "AGPL-3.0",
   "source": "git://github.com/cozy/cozy-banks.git",
   "developer": {
@@ -40,7 +40,8 @@
       "url": "#"
     }
   ],
-  "editor": "Cozy",
+  "editor": "Cozy Cloud",
+  "name_prefix": "Cozy",
   "screenshots": [
     "screenshot1.png"
   ],
@@ -58,9 +59,9 @@
     }
   },
   "services": {
-    "notifications": {
+    "onOperationCreate": {
       "type": "node",
-      "file": "notifications.js",
+      "file": "onOperationCreate.js",
       "trigger": "@event io.cozy.bank.operations:CREATED",
       "debounce": "3m"
     }
