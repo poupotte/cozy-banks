@@ -8,7 +8,7 @@
   "licence": "AGPL-3.0",
   "source": "git://github.com/cozy/cozy-banks.git",
   "developer": {
-    "name": "Cozy Cloud",
+    "name": "Cozy",
     "url": "https://cozy.io"
   },
   "default_locale": "en",
@@ -40,7 +40,7 @@
       "url": "#"
     }
   ],
-  "editor": "Cozy",
+  "editor": "Cozy Cloud",
   "name_prefix": "Cozy",
   "screenshots": [
     "screenshot1.png"
