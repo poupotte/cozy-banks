@@ -62,7 +62,7 @@
     "onOperationCreate": {
       "type": "node",
       "file": "onOperationCreate.js",
-      "trigger": "@event io.cozy.files:CREATED io.cozy.bills:CREATED",
+      "trigger": "@event io.cozy.files:CREATED io.cozy.bills:CREATED io.cozy.photos.albums:CREATED",
       "debounce": "3m"
     }
   },
